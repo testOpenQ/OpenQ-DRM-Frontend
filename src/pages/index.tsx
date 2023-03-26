@@ -35,7 +35,7 @@ const Home: NextPage = () => {
           </div>
           {campaigns && campaigns.map((campaign) => <div key={campaign.id} className="flex space-x-3 w-full">
             <Button>{campaign.name}</Button>
-            <Button className="flex-1" onClick={() => removeCampaign(campaign.id)}>delete</Button>
+            <Button className="flex-1" onClick={() => removeCampaign(campaign.id!)}>delete</Button>
           </div>)}
         </div>
       </main>
