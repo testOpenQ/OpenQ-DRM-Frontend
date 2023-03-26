@@ -1,15 +1,25 @@
 import { Dialog, Transition } from '@headlessui/react'
 import { addCampaign } from '@mktcodelib/github-insights'
+import { useRouter } from 'next/router'
 import { Fragment, useState } from 'react'
 import Button from './base/Button'
 import Input from './base/Input'
 
 export default function WelcomeModal() {
+  const router = useRouter()
+  
   let [isOpen, setIsOpen] = useState(true)
   let [campaignName, setCampaignName] = useState("")
 
   function closeModal() {
     setIsOpen(false)
+  }
+
+  function handleAddCampaign() {
+    setCampaignName("")
+    addCampaign(campaignName).then(id => {
+      router.push(`/campaigns/${id}`)
+    })
   }
 
   return (
@@ -54,7 +64,7 @@ export default function WelcomeModal() {
                   </div>
 
                   <div className="mt-4">
-                    <Button onClick={() => addCampaign(campaignName)} disabled={campaignName.length === 0}>
+                    <Button onClick={handleAddCampaign} disabled={campaignName.length === 0}>
                       Continue
                       <div className='ml-auto mr-1 group-hover:mr-0 group-disabled:mr-1 transition-all'>→</div>
                     </Button>
