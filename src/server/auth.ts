@@ -15,7 +15,10 @@ import { env } from "~/env.mjs";
  */
 declare module "next-auth" {
   interface Session extends DefaultSession {
-    user: DefaultSession["user"];
+    user: {
+      id: string;
+    } & DefaultSession["user"];
+    accessToken: string;
   }
 }
 
@@ -25,6 +28,19 @@ declare module "next-auth" {
  * @see https://next-auth.js.org/configuration/options
  */
 export const authOptions: NextAuthOptions = {
+  callbacks: {
+    async jwt({ token, account }) {
+      if (account) {
+        token.accessToken = account.access_token
+      }
+      return token
+    },
+    async session({ session, token }) {
+      session.accessToken = token.accessToken as string
+      
+      return session
+    }
+  },
   providers: [
     GithubProvider({
       clientId: env.GITHUB_CLIENT_ID,

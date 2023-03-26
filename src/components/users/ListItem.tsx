@@ -1,9 +1,11 @@
 import { lastUserResult, removeUser, Scanner, User, UserEvaluation } from '@mktcodelib/github-insights';
+import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import Card from './Card';
 
 export default function ListItem({ user }: { user: User }) {
-  const accessToken: string | undefined = undefined;
+  const { data } = useSession();
+  const accessToken = data?.accessToken;
 
   const [scanning, setScanning] = useState(false);
   const [userScanResult, setUserScanResult] = useState<UserEvaluation | null>(null);
@@ -44,7 +46,7 @@ export default function ListItem({ user }: { user: User }) {
           { user.login }
         </div>
         <div className="ml-auto flex space-x-2">
-          <button onClick={() => scan(user.id!)} disabled={true}>
+          <button onClick={() => scan(user.id!)} disabled={!accessToken}>
             Scan User
           </button>
           <button
