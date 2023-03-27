@@ -8,8 +8,10 @@ export default function AddUser() {
   const [campaignName, setCampaignName] = useState("");
 
   function handleAddCampaign() {
-    setCampaignName("");
-    addCampaign(campaignName);
+    setCampaignName("")
+    addCampaign(campaignName).catch((err) => {
+      console.log(err)
+    })
   }
 
   return (

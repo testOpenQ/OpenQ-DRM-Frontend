@@ -34,33 +34,33 @@ const RepoDetails = () => {
     if (repoId) {
       getRepository(Number(repoId)).then((repo) => {
         setRepo(repo);
-      });
+      }).catch((err) => console.log(err));
 
-      (async () => {
-        const last = await lastRepoResult(Number(repoId));
-
+      lastRepoResult(Number(repoId)).then((last) => {
         if (last) {
           setRepoScanResult(last);
         }
-      })();
+      }).catch((err) => console.log(err));
     }
   }, [repoId]);
 
-  async function scan() {
+  function scan() {
     if (!accessToken) {
       console.log("No access token set");
       return;
     }
 
     const scanner = new Scanner({ viewerToken: accessToken });
+    const scan = scanner.scanRepoCommits(Number(repoId), oneMonthAgo, now)
 
     setScanning(true);
-    await scanner.scanRepoCommits(Number(repoId), oneMonthAgo, now)(({ result, requestCount, remainingRequests, rateLimit }) => {
+    scan(({ result, requestCount, remainingRequests, rateLimit }) => {
       setRepoScanResult(result);
       setProgress({ requestCount, remainingRequests });
       setRateLimitInfo(rateLimit);
-    });
-    setScanning(false);
+    })
+      .catch((err) => console.log(err))
+      .finally(() => setScanning(false));
   }
 
   if (!repoId) return <>loading...</>;
@@ -74,7 +74,7 @@ const RepoDetails = () => {
       {scanning && progress && rateLimitInfo && (
         <RequestInfo progress={progress} rateLimitInfo={rateLimitInfo} />
       )}
-      <Button onClick={() => scan()}>Scan</Button>
+      <Button onClick={scan}>Scan</Button>
     </>
   );
 };

@@ -5,11 +5,11 @@ export default function ConnectGithub() {
   const { data: session, status } = useSession()
 
   function handleSignIn() {
-    signIn()
+    signIn().catch(console.error)
   }
 
   function handleSignOut() {
-    signOut()
+    signOut().catch(console.error)
   }
 
   if (status === "authenticated") {

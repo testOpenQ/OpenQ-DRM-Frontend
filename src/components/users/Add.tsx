@@ -9,7 +9,7 @@ export default function AddUser() {
 
   function handleAddUser() {
     setUserName("");
-    addUser(userName);
+    addUser(userName).catch((err) => console.log(err));
   }
 
   return (

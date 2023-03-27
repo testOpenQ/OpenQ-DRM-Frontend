@@ -17,9 +17,11 @@ export default function WelcomeModal() {
 
   function handleAddCampaign() {
     setCampaignName("")
-    addCampaign(campaignName).then(id => {
-      router.push(`/campaigns/${id}`)
-    })
+    addCampaign(campaignName)
+      .then((id) => {
+        router.push(`/campaigns/${id.toString()}`).catch((err) => console.log(err))
+      })
+      .catch((err) => console.log(err))
   }
 
   return (

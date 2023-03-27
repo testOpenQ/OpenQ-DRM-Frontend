@@ -12,7 +12,7 @@
   "dependencies": {
     "@headlessui/react": "^1.7.13",
     "@heroicons/react": "^2.0.16",
-    "@mktcodelib/github-insights": "^0.5.7",
+    "@mktcodelib/github-insights": "0.6.0",
     "@next-auth/prisma-adapter": "^1.0.5",
     "@prisma/client": "^4.9.0",
     "chart.js": "^4.2.1",

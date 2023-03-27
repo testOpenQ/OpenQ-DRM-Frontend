@@ -30,33 +30,33 @@ const UserDetails = () => {
     if (userId) {
       getUser(Number(userId)).then((user) => {
         setUser(user);
-      });
+      }).catch((err) => console.log(err));
 
-      (async () => {
-        const last = await lastUserResult(Number(userId));
-
+      lastUserResult(Number(userId)).then((last) => {
         if (last) {
           setUserScanResult(last);
         }
-      })();
+      }).catch((err) => console.log(err));
     }
   }, [userId]);
 
-  async function scan() {
+  function scan() {
     if (!accessToken) {
       console.log("No access token set");
       return;
     }
 
     const scanner = new Scanner({ viewerToken: accessToken });
+    const scan = scanner.scanUser(Number(userId))
 
     setScanning(true);
-    await scanner.scanUser(Number(userId))(({ result, requestCount, remainingRequests, rateLimit }) => {
+    scan(({ result, requestCount, remainingRequests, rateLimit }) => {
       setUserScanResult(result);
       setProgress({ requestCount, remainingRequests });
       setRateLimitInfo(rateLimit);
-    });
-    setScanning(false);
+    })
+      .catch((err) => console.log(err))
+      .finally(() => setScanning(false));
   }
 
   if (!userId) return <>loading...</>;
@@ -70,7 +70,7 @@ const UserDetails = () => {
       {scanning && progress && rateLimitInfo && (
         <RequestInfo progress={progress} rateLimitInfo={rateLimitInfo} />
       )}
-      <Button onClick={() => scan()}>Scan</Button>
+      <Button onClick={scan}>Scan</Button>
     </>
   );
 };

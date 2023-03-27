@@ -12,7 +12,7 @@ export default function Card({ data }: { data: UserEvaluation }) {
         </p>
 
         <p>
-          Your followers' repositories have received
+          Your followers&apos; repositories have received
           <span className="font-bold">{ data.followersStargazerCount }</span>
           stars and have been forked
           <span className="font-bold">{ data.followersForkCount }</span> times.

@@ -9,9 +9,11 @@ const CampaignDetails = () => {
 
   useEffect(() => {
     if (campaignId) {
-      getCampaign(Number(campaignId)).then((existingCampaign) => {
-        setCampaign(existingCampaign);
-      });
+      getCampaign(Number(campaignId))
+        .then((existingCampaign) => {
+          setCampaign(existingCampaign);
+        })
+        .catch((err) => console.log(err));
     }
   }, [campaignId]);
 

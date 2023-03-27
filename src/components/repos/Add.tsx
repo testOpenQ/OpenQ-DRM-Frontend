@@ -11,7 +11,7 @@ export default function AddUser() {
   function handleAddRepo() {
     setOwner("");
     setName("");
-    addRepository(owner, name);
+    addRepository(owner, name).catch((err) => console.log(err));
   }
 
   return (
