@@ -1,4 +1,4 @@
-import { UserEvaluation } from '@mktcodelib/github-insights';
+import type { UserEvaluation } from '@mktcodelib/github-insights';
 
 export default function Card({ data }: { data: UserEvaluation }) {
   return (

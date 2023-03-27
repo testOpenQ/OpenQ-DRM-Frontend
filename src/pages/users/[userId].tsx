@@ -2,8 +2,8 @@ import {
   getUser,
   lastUserResult,
   Scanner,
-  User,
-  UserEvaluation,
+  type User,
+  type UserEvaluation,
 } from "@mktcodelib/github-insights";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";

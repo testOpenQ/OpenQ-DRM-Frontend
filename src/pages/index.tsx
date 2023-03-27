@@ -1,4 +1,4 @@
-import { Campaign, getCampaigns } from "@mktcodelib/github-insights";
+import { getCampaigns, type Campaign } from "@mktcodelib/github-insights";
 import { useObservable } from "dexie-react-hooks";
 import { type NextPage } from "next";
 import Head from "next/head";

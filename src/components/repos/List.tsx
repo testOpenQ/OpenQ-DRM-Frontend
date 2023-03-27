@@ -1,4 +1,4 @@
-import { getRepositories, Repository } from '@mktcodelib/github-insights';
+import { getRepositories, type Repository } from '@mktcodelib/github-insights';
 import { useObservable } from 'dexie-react-hooks';
 import ListItem from './ListItem';
 import Add from './Add';

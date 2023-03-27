@@ -1,5 +1,5 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { Campaign, removeCampaign } from '@mktcodelib/github-insights';
+import { removeCampaign, type Campaign } from '@mktcodelib/github-insights';
 import Link from 'next/link';
 import Button from '../base/Button';
 

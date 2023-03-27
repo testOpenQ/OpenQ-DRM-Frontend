@@ -1,4 +1,4 @@
-import { Campaign, getCampaigns } from '@mktcodelib/github-insights';
+import { getCampaigns, type Campaign } from '@mktcodelib/github-insights';
 import { useObservable } from 'dexie-react-hooks';
 import ListItem from './ListItem';
 import Add from './Add';

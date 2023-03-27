@@ -1,4 +1,4 @@
-import { getUsers, User } from '@mktcodelib/github-insights';
+import { getUsers, type User } from '@mktcodelib/github-insights';
 import { useObservable } from 'dexie-react-hooks';
 import ListItem from './ListItem';
 import Add from './Add';

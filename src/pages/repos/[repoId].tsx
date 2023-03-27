@@ -1,9 +1,9 @@
 import {
   getRepository,
   lastRepoResult,
-  RepoCommitsEvaluation,
-  Repository,
   Scanner,
+  type RepoCommitsEvaluation,
+  type Repository,
 } from "@mktcodelib/github-insights";
 import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";

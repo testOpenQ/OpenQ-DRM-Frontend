@@ -1,4 +1,4 @@
-import { Campaign, getCampaign } from "@mktcodelib/github-insights";
+import { getCampaign, type Campaign } from "@mktcodelib/github-insights";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 

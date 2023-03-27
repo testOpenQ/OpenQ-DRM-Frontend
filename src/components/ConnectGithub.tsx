@@ -1,4 +1,5 @@
 import { useSession, signIn, signOut } from "next-auth/react"
+import Image from "next/image"
 
 export default function ConnectGithub() {
   const { data: session, status } = useSession()
@@ -7,12 +8,18 @@ export default function ConnectGithub() {
     return (
       <>
         {session.user?.image && (
-          <img src={session.user.image} alt="Avatar" className="w-6 h-6 rounded-full mr-3" />
+          <Image
+            src={session.user.image}
+            alt="Avatar"
+            className="rounded-full mr-3"
+            width={24}
+            height={24}
+          />
         )}
-        <button onClick={() => signOut()}>sign out</button>
+        <button onClick={() => signOut}>sign out</button>
       </>
     )
   }
 
-  return <button onClick={() => signIn()}>Connect</button>
+  return <button onClick={() => signIn}>Connect</button>
 }

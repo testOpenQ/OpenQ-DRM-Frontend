@@ -8,8 +8,8 @@ import Input from './base/Input'
 export default function WelcomeModal() {
   const router = useRouter()
   
-  let [isOpen, setIsOpen] = useState(true)
-  let [campaignName, setCampaignName] = useState("")
+  const [isOpen, setIsOpen] = useState(true)
+  const [campaignName, setCampaignName] = useState("")
 
   function closeModal() {
     setIsOpen(false)

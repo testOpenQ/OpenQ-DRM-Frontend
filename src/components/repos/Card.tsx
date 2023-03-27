@@ -1,4 +1,4 @@
-import { RepoCommitsEvaluation } from '@mktcodelib/github-insights';
+import type { RepoCommitsEvaluation } from '@mktcodelib/github-insights';
 import CardActivityChart from './CardActivityChart';
 import CardMembers from './CardMembers';
 import CardScores from './CardScores';

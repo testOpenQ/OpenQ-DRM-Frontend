@@ -1,5 +1,5 @@
 import { TrashIcon } from '@heroicons/react/24/outline';
-import { removeRepository, Repository } from '@mktcodelib/github-insights';
+import { removeRepository, type Repository } from '@mktcodelib/github-insights';
 import Link from 'next/link';
 import Button from '../base/Button';
 
