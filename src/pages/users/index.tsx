@@ -8,7 +8,7 @@ const Users: NextPage = () => {
       <Head>
         <title>OpenQ DRM - Users</title>
       </Head>
-      <h1 className="text-3xl font-bold mb-12">Users</h1>
+      <h1 className="mb-12 text-3xl font-bold">Users</h1>
       <List />
     </>
   );

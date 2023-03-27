@@ -17,26 +17,39 @@ const UserDetails = () => {
   const { userId } = router.query;
 
   const [user, setUser] = useState<User | undefined>(undefined);
-  
+
   const { data } = useSession();
   const accessToken = data?.accessToken;
 
   const [scanning, setScanning] = useState(false);
-  const [userScanResult, setUserScanResult] = useState<UserEvaluation | null>(null);
-  const [progress, setProgress] = useState<{ requestCount: number; remainingRequests: number } | null>(null);
-  const [rateLimitInfo, setRateLimitInfo] = useState<{ used: number; remaining: number; resetAt: string } | null>(null);
+  const [userScanResult, setUserScanResult] = useState<UserEvaluation | null>(
+    null
+  );
+  const [progress, setProgress] = useState<{
+    requestCount: number;
+    remainingRequests: number;
+  } | null>(null);
+  const [rateLimitInfo, setRateLimitInfo] = useState<{
+    used: number;
+    remaining: number;
+    resetAt: string;
+  } | null>(null);
 
   useEffect(() => {
     if (userId) {
-      getUser(Number(userId)).then((user) => {
-        setUser(user);
-      }).catch((err) => console.log(err));
+      getUser(Number(userId))
+        .then((user) => {
+          setUser(user);
+        })
+        .catch((err) => console.log(err));
 
-      lastUserResult(Number(userId)).then((last) => {
-        if (last) {
-          setUserScanResult(last);
-        }
-      }).catch((err) => console.log(err));
+      lastUserResult(Number(userId))
+        .then((last) => {
+          if (last) {
+            setUserScanResult(last);
+          }
+        })
+        .catch((err) => console.log(err));
     }
   }, [userId]);
 
@@ -47,7 +60,7 @@ const UserDetails = () => {
     }
 
     const scanner = new Scanner({ viewerToken: accessToken });
-    const scan = scanner.scanUser(Number(userId))
+    const scan = scanner.scanUser(Number(userId));
 
     setScanning(true);
     scan(({ result, requestCount, remainingRequests, rateLimit }) => {
@@ -65,7 +78,7 @@ const UserDetails = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-12">{user.login}</h1>
+      <h1 className="mb-12 text-3xl font-bold">{user.login}</h1>
       {userScanResult && <Card data={userScanResult} />}
       {scanning && progress && rateLimitInfo && (
         <RequestInfo progress={progress} rateLimitInfo={rateLimitInfo} />

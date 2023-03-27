@@ -23,8 +23,8 @@ const CampaignDetails = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-12">{campaign.name}</h1>
-      <div className="space-y-3 w-full max-w-md flex flex-col items-center">
+      <h1 className="mb-12 text-3xl font-bold">{campaign.name}</h1>
+      <div className="flex w-full max-w-md flex-col items-center space-y-3">
         asd
       </div>
     </>

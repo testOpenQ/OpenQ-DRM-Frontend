@@ -1,4 +1,4 @@
-import CardScore from './CardScore';
+import CardScore from "./CardScore";
 
 function randomScore() {
   return Math.floor(Math.random() * 5) + 1;

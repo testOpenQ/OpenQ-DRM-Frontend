@@ -17,14 +17,22 @@ const RepoDetails = () => {
   const { repoId } = router.query;
 
   const [repo, setRepo] = useState<Repository | undefined>(undefined);
-  
+
   const { data } = useSession();
   const accessToken = data?.accessToken;
 
   const [scanning, setScanning] = useState(false);
-  const [repoScanResult, setRepoScanResult] = useState<RepoCommitsEvaluation | null>(null);
-  const [progress, setProgress] = useState<{ requestCount: number; remainingRequests: number } | null>(null);
-  const [rateLimitInfo, setRateLimitInfo] = useState<{ used: number; remaining: number; resetAt: string } | null>(null);
+  const [repoScanResult, setRepoScanResult] =
+    useState<RepoCommitsEvaluation | null>(null);
+  const [progress, setProgress] = useState<{
+    requestCount: number;
+    remainingRequests: number;
+  } | null>(null);
+  const [rateLimitInfo, setRateLimitInfo] = useState<{
+    used: number;
+    remaining: number;
+    resetAt: string;
+  } | null>(null);
 
   const now = new Date();
   const oneMonthAgo = new Date();
@@ -32,15 +40,19 @@ const RepoDetails = () => {
 
   useEffect(() => {
     if (repoId) {
-      getRepository(Number(repoId)).then((repo) => {
-        setRepo(repo);
-      }).catch((err) => console.log(err));
+      getRepository(Number(repoId))
+        .then((repo) => {
+          setRepo(repo);
+        })
+        .catch((err) => console.log(err));
 
-      lastRepoResult(Number(repoId)).then((last) => {
-        if (last) {
-          setRepoScanResult(last);
-        }
-      }).catch((err) => console.log(err));
+      lastRepoResult(Number(repoId))
+        .then((last) => {
+          if (last) {
+            setRepoScanResult(last);
+          }
+        })
+        .catch((err) => console.log(err));
     }
   }, [repoId]);
 
@@ -51,7 +63,7 @@ const RepoDetails = () => {
     }
 
     const scanner = new Scanner({ viewerToken: accessToken });
-    const scan = scanner.scanRepoCommits(Number(repoId), oneMonthAgo, now)
+    const scan = scanner.scanRepoCommits(Number(repoId), oneMonthAgo, now);
 
     setScanning(true);
     scan(({ result, requestCount, remainingRequests, rateLimit }) => {
@@ -69,7 +81,9 @@ const RepoDetails = () => {
 
   return (
     <>
-      <h1 className="text-3xl font-bold mb-12">{repo.owner}/{repo.name}</h1>
+      <h1 className="mb-12 text-3xl font-bold">
+        {repo.owner}/{repo.name}
+      </h1>
       {repoScanResult && <Card data={repoScanResult} />}
       {scanning && progress && rateLimitInfo && (
         <RequestInfo progress={progress} rateLimitInfo={rateLimitInfo} />

@@ -1,15 +1,15 @@
-import { useSession, signIn, signOut } from "next-auth/react"
-import Image from "next/image"
+import { useSession, signIn, signOut } from "next-auth/react";
+import Image from "next/image";
 
 export default function ConnectGithub() {
-  const { data: session, status } = useSession()
+  const { data: session, status } = useSession();
 
   function handleSignIn() {
-    signIn().catch(console.error)
+    signIn().catch(console.error);
   }
 
   function handleSignOut() {
-    signOut().catch(console.error)
+    signOut().catch(console.error);
   }
 
   if (status === "authenticated") {
@@ -19,15 +19,15 @@ export default function ConnectGithub() {
           <Image
             src={session.user.image}
             alt="Avatar"
-            className="rounded-full mr-3"
+            className="mr-3 rounded-full"
             width={24}
             height={24}
           />
         )}
         <button onClick={handleSignOut}>sign out</button>
       </>
-    )
+    );
   }
 
-  return <button onClick={handleSignIn}>Connect</button>
+  return <button onClick={handleSignIn}>Connect</button>;
 }

@@ -12,8 +12,8 @@ const Home: NextPage = () => {
       <Head>
         <title>OpenQ DRM</title>
       </Head>
-      <h1 className="text-3xl font-bold mb-12">Overview</h1>
-      {!campaigns || campaigns.length === 0 && <WelcomeModal />}
+      <h1 className="mb-12 text-3xl font-bold">Overview</h1>
+      {!campaigns || (campaigns.length === 0 && <WelcomeModal />)}
     </>
   );
 };

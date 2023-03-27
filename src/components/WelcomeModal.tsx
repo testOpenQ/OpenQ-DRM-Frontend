@@ -1,27 +1,29 @@
-import { Dialog, Transition } from '@headlessui/react'
-import { addCampaign } from '@mktcodelib/github-insights'
-import { useRouter } from 'next/router'
-import { Fragment, useState } from 'react'
-import Button from './base/Button'
-import Input from './base/Input'
+import { Dialog, Transition } from "@headlessui/react";
+import { addCampaign } from "@mktcodelib/github-insights";
+import { useRouter } from "next/router";
+import { Fragment, useState } from "react";
+import Button from "./base/Button";
+import Input from "./base/Input";
 
 export default function WelcomeModal() {
-  const router = useRouter()
-  
-  const [isOpen, setIsOpen] = useState(true)
-  const [campaignName, setCampaignName] = useState("")
+  const router = useRouter();
+
+  const [isOpen, setIsOpen] = useState(true);
+  const [campaignName, setCampaignName] = useState("");
 
   function closeModal() {
-    setIsOpen(false)
+    setIsOpen(false);
   }
 
   function handleAddCampaign() {
-    setCampaignName("")
+    setCampaignName("");
     addCampaign(campaignName)
       .then((id) => {
-        router.push(`/campaigns/${id.toString()}`).catch((err) => console.log(err))
+        router
+          .push(`/campaigns/${id.toString()}`)
+          .catch((err) => console.log(err));
       })
-      .catch((err) => console.log(err))
+      .catch((err) => console.log(err));
   }
 
   return (
@@ -58,17 +60,27 @@ export default function WelcomeModal() {
                   >
                     Create your first campaign
                   </Dialog.Title>
-                  <p className="text-sm text-gray-400 mt-2">
-                    A campaign is a collection of repositories and users that you want to track.
+                  <p className="mt-2 text-sm text-gray-400">
+                    A campaign is a collection of repositories and users that
+                    you want to track.
                   </p>
                   <div className="mt-6">
-                    <Input value={campaignName} setValue={setCampaignName} placeholder="My first campaign" />
+                    <Input
+                      value={campaignName}
+                      setValue={setCampaignName}
+                      placeholder="My first campaign"
+                    />
                   </div>
 
                   <div className="mt-4">
-                    <Button onClick={handleAddCampaign} disabled={campaignName.length === 0}>
+                    <Button
+                      onClick={handleAddCampaign}
+                      disabled={campaignName.length === 0}
+                    >
                       Continue
-                      <div className='ml-auto mr-1 group-hover:mr-0 group-disabled:mr-1 transition-all'>→</div>
+                      <div className="ml-auto mr-1 transition-all group-hover:mr-0 group-disabled:mr-1">
+                        →
+                      </div>
                     </Button>
                   </div>
                 </Dialog.Panel>
@@ -78,5 +90,5 @@ export default function WelcomeModal() {
         </Dialog>
       </Transition>
     </>
-  )
+  );
 }
