@@ -14,21 +14,21 @@ export default function Card({ data }: { data: RepoCommitsEvaluation }) {
       <div className="flex flex-col border-b sm:border-b-0 sm:border-r">
         <CardMembers />
         <div
-          className="flex justify-center space-x-1 text-xs text-gray-400 text-center p-3"
+          className="flex justify-center space-x-1 text-xs text-center p-3"
         >
           <span>{ Object.keys(data.commitsByAuthor).length } contributors</span>
-          <span>&bullet;</span>
+          <span>•</span>
           <span>{ numberFormatter.format(data.commitCount) } commits</span>
-          <span>&bullet;</span>
+          <span>•</span>
           <span>{ numberFormatter.format(data.linesChanged) } changes</span>
         </div>
         <CardActivityChart />
       </div>
       <div className="px-5 py-3">
-        <div className="font-bold text-right text-gray-900">
+        <div className="font-bold text-right">
           Submission to hackathon
         </div>
-        <div className="text-right text-xs text-gray-400 mb-3">
+        <div className="text-right text-xs mb-3">
           OpenQDev/OpenQ-Frontend
         </div>
         <CardScores />

@@ -6,7 +6,7 @@ function randomScore() {
 
 export default function CardScores() {
   return (
-    <div className="flex flex-col items-end text-gray-900 text-sm">
+    <div className="flex flex-col items-end text-sm">
       <CardScore
         label="Activity"
         score={randomScore()}

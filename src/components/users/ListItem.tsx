@@ -45,21 +45,13 @@ export default function ListItem({ user }: { user: User }) {
   return (
     <>
       <div className="flex space-x-3 w-full">
-        <Link className="w-full" href={`/repos/${user.id}`}>
+        <Link className="w-full" href={`/users/${user.id}`}>
           <Button>{user.login}</Button>
         </Link>
         <Button className="flex-1" onClick={() => removeUser(user.id!)}>
           <TrashIcon className="h-6 w-6 text-violet-700 group-hover:text-violet-100 transition-all" />
         </Button>
       </div>
-      {/* {userScanResult && <Card data={userScanResult} />}
-      {scanning && progress && rateLimitInfo && <div>
-        <div>Requests: { progress.requestCount }</div>
-        <div>Remaining Requests: { progress.remainingRequests }</div>
-        <div>Rate Limit Used: { rateLimitInfo.used }</div>
-        <div>Rate Limit Remaining: { rateLimitInfo.remaining }</div>
-        <div>Rate Limit Reset At: { rateLimitInfo.resetAt }</div>
-      </div>} */}
     </>
   );
 }
