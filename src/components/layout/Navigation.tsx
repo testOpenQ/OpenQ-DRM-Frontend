@@ -1,4 +1,5 @@
 import Image from "next/image";
+import ConnectGithub from "../ConnectGithub";
 import NavigationLink from "./NavigationLink";
 
 export default function Navigation() {
@@ -8,10 +9,13 @@ export default function Navigation() {
       <div className="font-bold text-xl">
         OpenQ DRM
       </div>
-      <div className="ml-12 space-x-3">
+      <div className="ml-12 mr-6 space-x-3">
         <NavigationLink href="/">Overview</NavigationLink>
         <NavigationLink href="/campaigns">Campaigns</NavigationLink>
+        <NavigationLink href="/repos">Repositories</NavigationLink>
+        <NavigationLink href="/users">Users</NavigationLink>
       </div>
+      <ConnectGithub />
     </div>
   );
 }

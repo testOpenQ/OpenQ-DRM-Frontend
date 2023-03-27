@@ -1,4 +1,4 @@
-export default function Input({ value, setValue, placeholder, className }: { value: string, setValue: (value: string) => void, placeholder?: string, className?: string }) {
+export default function Input({ value, setValue, placeholder, className = '' }: { value: string, setValue: (value: string) => void, placeholder?: string, className?: string }) {
   return (
     <input
       type="text"

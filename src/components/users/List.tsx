@@ -7,13 +7,11 @@ export default function UsersList() {
   const users = useObservable<User[]>(() => getUsers())
 
   return (
-    <>
+    <div className="space-y-3 w-full max-w-md flex flex-col items-center">
       <Add />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-        {users && users.map((user) => (
-          <ListItem key={user.id} user={user} />
-        ))}
-      </div>
-    </>
+      {users && users.map((user) => (
+        <ListItem key={user.id} user={user} />
+      ))}
+    </div>
   );
 }

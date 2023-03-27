@@ -6,11 +6,13 @@ export default function ConnectGithub() {
   if (status === "authenticated") {
     return (
       <>
-        <p>Signed in as {session.user?.name}</p>
-        <button onClick={() => signOut()}>Sign out</button>
+        {session.user?.image && (
+          <img src={session.user.image} alt="Avatar" className="w-6 h-6 rounded-full mr-3" />
+        )}
+        <button onClick={() => signOut()}>sign out</button>
       </>
     )
   }
 
-  return <button onClick={() => signIn()}>Sign in</button>
+  return <button onClick={() => signIn()}>Connect</button>
 }

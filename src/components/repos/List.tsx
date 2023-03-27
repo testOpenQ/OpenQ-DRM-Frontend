@@ -7,13 +7,11 @@ export default function ReposList() {
   const repos = useObservable<Repository[]>(() => getRepositories())
 
   return (
-    <>
+    <div className="space-y-3 w-full max-w-md flex flex-col items-center">
       <Add />
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8">
-        {repos && repos.map((repo) => (
-          <ListItem key={repo.id} repo={repo} />
-        ))}
-      </div>
-    </>
+      {repos && repos.map((repo) => (
+        <ListItem key={repo.id} repo={repo} />
+      ))}
+    </div>
   );
 }
