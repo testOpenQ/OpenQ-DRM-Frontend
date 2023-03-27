@@ -4,6 +4,14 @@ import Image from "next/image"
 export default function ConnectGithub() {
   const { data: session, status } = useSession()
 
+  function handleSignIn() {
+    signIn()
+  }
+
+  function handleSignOut() {
+    signOut()
+  }
+
   if (status === "authenticated") {
     return (
       <>
@@ -16,10 +24,10 @@ export default function ConnectGithub() {
             height={24}
           />
         )}
-        <button onClick={() => signOut}>sign out</button>
+        <button onClick={handleSignOut}>sign out</button>
       </>
     )
   }
 
-  return <button onClick={() => signIn}>Connect</button>
+  return <button onClick={handleSignIn}>Connect</button>
 }
