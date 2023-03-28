@@ -6,7 +6,7 @@ import {
   evaluateUserData,
   getLatestUserScan,
   Scanner,
-  UserEvaluation,
+  type UserEvaluation,
 } from "@mktcodelib/github-insights";
 import Card from "./Card";
 import RequestInfo from "../RequestInfo";
@@ -30,13 +30,14 @@ export default function UserDetails({ userId }: { userId: string }) {
   useEffect(() => {
     if (!user) return;
 
-    (async () => {
-      const latestUserScan = await getLatestUserScan(user.login);
-      if (latestUserScan) {
-        console.log("latestUserScan", latestUserScan);
-        // TODO: setUserScanResult(latestUserScan.data)
-      }
-    })();
+    getLatestUserScan(user.login)
+      .then((latestUserScan) => {
+        if (latestUserScan) {
+          console.log("latestUserScan", latestUserScan);
+          // TODO: setUserScanResult(latestUserScan.data)
+        }
+      })
+      .catch((err) => console.error(err));
   }, [user]);
 
   function scan() {

@@ -5,8 +5,8 @@ import { useEffect, useState } from "react";
 import {
   evaluateRepoData,
   getLatestRepoScan,
-  RepoEvaluation,
   Scanner,
+  type RepoEvaluation,
 } from "@mktcodelib/github-insights";
 import Card from "./Card";
 import RequestInfo from "../RequestInfo";
@@ -27,25 +27,21 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
     remainingRequests: number;
   } | null>(null);
 
-  const now = new Date();
-  const oneMonthAgo = new Date();
-  oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
   useEffect(() => {
     if (!repo) return;
 
-    (async () => {
-      const latestRepoScan = await getLatestRepoScan(
-        repo.owner,
-        repo.name,
-        oneMonthAgo,
-        now
-      );
-      if (latestRepoScan) {
-        console.log("latestRepoScan", latestRepoScan);
-        // TODO: setRepoScanResult(latestRepoScan.data)
-      }
-    })();
+    const now = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+
+    getLatestRepoScan(repo.owner, repo.name, oneMonthAgo, now)
+      .then((latestRepoScan) => {
+        if (latestRepoScan) {
+          console.log("latestRepoScan", latestRepoScan);
+          // TODO: setRepoScanResult(latestRepoScan.data)
+        }
+      })
+      .catch((err) => console.error(err));
   }, [repo]);
 
   function scan() {
@@ -58,6 +54,10 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
       console.log("No repo set");
       return;
     }
+
+    const now = new Date();
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
 
     const scanner = new Scanner({ viewerToken: accessToken });
     const scan = scanner.scanRepo(repo.owner, repo.name, oneMonthAgo, now);

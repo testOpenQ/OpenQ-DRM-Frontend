@@ -1,5 +1,4 @@
-import Dexie, { Table } from "dexie";
-import { useLiveQuery } from "dexie-react-hooks";
+import Dexie, { type Table } from "dexie";
 
 export interface CampaignModel {
   id?: number;
