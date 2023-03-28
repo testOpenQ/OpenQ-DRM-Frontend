@@ -1,6 +1,6 @@
 import Link from "next/link";
 
-export default function NavigationLink({
+export default function SidebarLink({
   children,
   href,
 }: {
@@ -10,8 +10,7 @@ export default function NavigationLink({
   return (
     <Link
       href={href}
-      className="rounded-lg px-3 py-1 transition-all hover:bg-white/5"
-      target="_blank"
+      className="flex items-center rounded-lg p-2 transition-all hover:bg-black/20"
     >
       {children}
     </Link>

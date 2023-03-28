@@ -15,19 +15,31 @@ export default function ConnectGithub() {
   if (status === "authenticated") {
     return (
       <>
+        <button
+          onClick={handleSignOut}
+          className="flex items-center rounded-lg px-3 py-1 transition-all hover:bg-white/5"
+        >
+          sign out
+        </button>
         {session.user?.image && (
           <Image
             src={session.user.image}
             alt="Avatar"
-            className="mr-3 rounded-full"
+            className="ml-3 rounded-full"
             width={24}
             height={24}
           />
         )}
-        <button onClick={handleSignOut}>sign out</button>
       </>
     );
   }
 
-  return <button onClick={handleSignIn}>Connect</button>;
+  return (
+    <button
+      onClick={handleSignIn}
+      className="flex items-center rounded-lg px-3 py-1 transition-all hover:bg-white/5"
+    >
+      Connect
+    </button>
+  );
 }

@@ -3,5 +3,5 @@
 @tailwind utilities;
 
 body {
-  @apply bg-gradient-to-b from-gray-900 to-slate-800 text-white;
+  @apply bg-indigo-900 text-white;
 }

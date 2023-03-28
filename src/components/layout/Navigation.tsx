@@ -4,20 +4,25 @@ import NavigationLink from "./NavigationLink";
 
 export default function Navigation() {
   return (
-    <div className="mt-6 mb-24 flex items-center p-3 text-white">
+    <div className="flex items-center border-b border-zinc-700 bg-zinc-800 px-3 py-2 text-sm text-gray-400">
       <Image
         src="/openq-logo-white.png"
         alt="OpenQ"
-        width="31"
-        height="31"
-        className="mr-3 h-auto w-auto"
+        width="24"
+        height="24"
+        className="mr-3 h-6 w-6"
       />
-      <div className="text-xl font-bold">OpenQ DRM</div>
-      <div className="ml-12 mr-6 space-x-3">
-        <NavigationLink href="/">Overview</NavigationLink>
-        <NavigationLink href="/campaigns">Campaigns</NavigationLink>
-        <NavigationLink href="/repos">Repositories</NavigationLink>
-        <NavigationLink href="/users">Users</NavigationLink>
+      <div className="mr-auto">
+        <NavigationLink href="https://openq.dev">Explore</NavigationLink>
+        <NavigationLink href="https://openq.dev/marketplace">
+          Marketplace
+        </NavigationLink>
+        <NavigationLink href="https://openq.dev/hackathons">
+          Hackathons
+        </NavigationLink>
+        <NavigationLink href="https://openq.dev/good-first-issues">
+          Good First Issues
+        </NavigationLink>
       </div>
       <ConnectGithub />
     </div>
