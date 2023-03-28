@@ -50,12 +50,12 @@ export default function UserDetails({ userId }: { userId: string }) {
       return;
     }
 
+    setScanning(true);
     const scanner = new Scanner({ viewerToken: accessToken });
     const scan = scanner.scanUser(user.login);
 
-    setScanning(true);
     scan((data, requestCount, remainingRequests) => {
-      setUserScanResult(evaluateUserData(data));
+      setUserScanResult(evaluateUserData(data.user));
       setProgress({ requestCount, remainingRequests });
     })
       .catch((err) => console.log(err))

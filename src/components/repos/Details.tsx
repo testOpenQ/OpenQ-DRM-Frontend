@@ -64,7 +64,7 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
 
     setScanning(true);
     scan((data, requestCount, remainingRequests) => {
-      setRepoScanResult(evaluateRepoData(data));
+      setRepoScanResult(evaluateRepoData(data.repository));
       setProgress({ requestCount, remainingRequests });
     })
       .catch((err) => console.log(err))
