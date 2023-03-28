@@ -9,7 +9,6 @@ import {
   type UserEvaluation,
 } from "@mktcodelib/github-insights";
 import Card from "./Card";
-import RequestInfo from "../RequestInfo";
 import Button from "../base/Button";
 
 export default function UserDetails({ userId }: { userId: string }) {
@@ -32,9 +31,8 @@ export default function UserDetails({ userId }: { userId: string }) {
 
     getLatestUserScan(user.login)
       .then((latestUserScan) => {
-        if (latestUserScan) {
-          console.log("latestUserScan", latestUserScan);
-          // TODO: setUserScanResult(latestUserScan.data)
+        if (latestUserScan && latestUserScan.data) {
+          setUserScanResult(evaluateUserData(latestUserScan.data.user));
         }
       })
       .catch((err) => console.error(err));
@@ -72,7 +70,6 @@ export default function UserDetails({ userId }: { userId: string }) {
         asd
       </div>
       {userScanResult && <Card data={userScanResult} />}
-      {scanning && progress && <RequestInfo progress={progress} />}
       <Button onClick={scan}>Scan</Button>
     </>
   );

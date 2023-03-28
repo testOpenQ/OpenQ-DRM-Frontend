@@ -9,8 +9,8 @@ import {
   type RepoEvaluation,
 } from "@mktcodelib/github-insights";
 import Card from "./Card";
-import RequestInfo from "../RequestInfo";
 import Button from "../base/Button";
+import LoadingSpinner from "../LoadingSpinner";
 
 export default function RepoDetails({ repoId }: { repoId: string }) {
   const repo = useLiveQuery(getRepo(repoId));
@@ -36,9 +36,8 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
 
     getLatestRepoScan(repo.owner, repo.name, oneMonthAgo, now)
       .then((latestRepoScan) => {
-        if (latestRepoScan) {
-          console.log("latestRepoScan", latestRepoScan);
-          // TODO: setRepoScanResult(latestRepoScan.data)
+        if (latestRepoScan && latestRepoScan.data) {
+          setRepoScanResult(evaluateRepoData(latestRepoScan.data.repository));
         }
       })
       .catch((err) => console.error(err));
@@ -82,8 +81,10 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
         asd
       </div>
       {repoScanResult && <Card data={repoScanResult} />}
-      {scanning && progress && <RequestInfo progress={progress} />}
-      <Button onClick={scan}>Scan</Button>
+      <Button onClick={scan}>
+        {scanning && <LoadingSpinner />}
+        Scan
+      </Button>
     </>
   );
 }

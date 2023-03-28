@@ -1,9 +1,10 @@
 import SidebarLink from "./SidebarLink";
 import { UsersIcon } from "@heroicons/react/24/outline";
+import RequestInfo from "../RequestInfo";
 
 export default function Sidebar() {
   return (
-    <div className="w-[320px] space-y-1 border-r border-zinc-700 bg-zinc-800 p-3 text-sm">
+    <div className="flex w-[320px] flex-col border-r border-zinc-700 bg-zinc-800 p-3 text-sm">
       <SidebarLink href="/">Dashboard</SidebarLink>
       <SidebarLink href="/campaigns">
         <div className="mr-3 rounded-lg bg-gray-600 p-1">
@@ -23,6 +24,9 @@ export default function Sidebar() {
         </div>
         Users
       </SidebarLink>
+      <div className="mt-auto">
+        <RequestInfo />
+      </div>
     </div>
   );
 }
