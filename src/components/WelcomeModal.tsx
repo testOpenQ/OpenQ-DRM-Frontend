@@ -1,15 +1,24 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { addCampaign } from "@mktcodelib/github-insights";
+import { addCampaign, getCampaigns } from "~/db";
 import { useRouter } from "next/router";
-import { Fragment, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import Button from "./base/Button";
 import Input from "./base/Input";
+import { useLiveQuery } from "dexie-react-hooks";
 
 export default function WelcomeModal() {
   const router = useRouter();
 
-  const [isOpen, setIsOpen] = useState(true);
+  const campaigns = useLiveQuery(getCampaigns);
+
+  const [isOpen, setIsOpen] = useState(false);
   const [campaignName, setCampaignName] = useState("");
+
+  useEffect(() => {
+    if (!campaigns) return;
+    const isOpen = campaigns.length === 0;
+    setIsOpen(isOpen);
+  }, [campaigns]);
 
   function closeModal() {
     setIsOpen(false);
@@ -17,7 +26,7 @@ export default function WelcomeModal() {
 
   function handleAddCampaign() {
     setCampaignName("");
-    addCampaign(campaignName)
+    addCampaign({ name: campaignName })
       .then((id) => {
         router
           .push(`/campaigns/${id.toString()}`)

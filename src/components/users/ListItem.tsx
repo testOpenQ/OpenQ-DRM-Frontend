@@ -1,11 +1,11 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { removeUser, type User } from "@mktcodelib/github-insights";
+import { deleteUser, type User } from "~/db";
 import Link from "next/link";
 import Button from "../base/Button";
 
 export default function ListItem({ user }: { user: User }) {
   function handleRemoveUser() {
-    removeUser(user.id).catch((err) => console.log(err));
+    deleteUser(user.id).catch((err) => console.log(err));
   }
 
   return (

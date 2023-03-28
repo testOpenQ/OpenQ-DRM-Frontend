@@ -1,4 +1,4 @@
-import { addUser } from "@mktcodelib/github-insights";
+import { addUser } from "~/db";
 import { PlusSmallIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Button from "../base/Button";
@@ -9,7 +9,7 @@ export default function AddUser() {
 
   function handleAddUser() {
     setUserName("");
-    addUser(userName).catch((err) => console.log(err));
+    addUser({ login: userName }).catch((err) => console.log(err));
   }
 
   return (

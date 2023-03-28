@@ -1,4 +1,4 @@
-import { addCampaign } from "@mktcodelib/github-insights";
+import { addCampaign } from "~/db";
 import { PlusSmallIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Button from "../base/Button";
@@ -9,7 +9,7 @@ export default function AddUser() {
 
   function handleAddCampaign() {
     setCampaignName("");
-    addCampaign(campaignName).catch((err) => {
+    addCampaign({ name: campaignName }).catch((err) => {
       console.log(err);
     });
   }

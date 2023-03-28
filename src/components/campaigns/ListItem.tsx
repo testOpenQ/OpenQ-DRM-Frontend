@@ -1,11 +1,11 @@
 import { TrashIcon } from "@heroicons/react/24/outline";
-import { removeCampaign, type Campaign } from "@mktcodelib/github-insights";
+import { deleteCampaign, type Campaign } from "~/db";
 import Link from "next/link";
 import Button from "../base/Button";
 
 export default function ListItem({ campaign }: { campaign: Campaign }) {
   function handleRemoveCampaign() {
-    removeCampaign(campaign.id).catch((err) => console.log(err));
+    deleteCampaign(campaign.id).catch((err) => console.log(err));
   }
 
   return (

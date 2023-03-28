@@ -1,10 +1,10 @@
-import { getUsers, type User } from "@mktcodelib/github-insights";
-import { useObservable } from "dexie-react-hooks";
+import { getUsers } from "~/db";
 import ListItem from "./ListItem";
 import Add from "./Add";
+import { useLiveQuery } from "dexie-react-hooks";
 
 export default function UsersList() {
-  const users = useObservable<User[]>(() => getUsers());
+  const users = useLiveQuery(getUsers);
 
   return (
     <div className="flex w-full max-w-md flex-col items-center space-y-3">

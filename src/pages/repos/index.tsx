@@ -1,6 +1,10 @@
 import { type NextPage } from "next";
 import Head from "next/head";
-import List from "~/components/repos/List";
+import dynamic from "next/dynamic";
+
+const List = dynamic(() => import("~/components/repos/List"), {
+  ssr: false,
+});
 
 const Repos: NextPage = () => {
   return (

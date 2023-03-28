@@ -1,10 +1,10 @@
-import { getCampaigns, type Campaign } from "@mktcodelib/github-insights";
-import { useObservable } from "dexie-react-hooks";
+import { getCampaigns } from "~/db";
 import ListItem from "./ListItem";
 import Add from "./Add";
+import { useLiveQuery } from "dexie-react-hooks";
 
 export default function CampaignsList() {
-  const campaigns = useObservable<Campaign[]>(() => getCampaigns());
+  const campaigns = useLiveQuery(getCampaigns);
 
   return (
     <div className="flex w-full max-w-md flex-col items-center space-y-3">

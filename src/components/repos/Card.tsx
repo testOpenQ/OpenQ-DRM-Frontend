@@ -1,4 +1,4 @@
-import type { RepoCommitsEvaluation } from "@mktcodelib/github-insights";
+import type { RepoEvaluation } from "@mktcodelib/github-insights";
 import CardActivityChart from "./CardActivityChart";
 import CardMembers from "./CardMembers";
 import CardScores from "./CardScores";
@@ -8,7 +8,7 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
   compactDisplay: "short",
 });
 
-export default function Card({ data }: { data: RepoCommitsEvaluation }) {
+export default function Card({ data }: { data: RepoEvaluation }) {
   return (
     <div className="flex flex-col rounded-lg border sm:flex-row">
       <div className="flex flex-col border-b sm:border-b-0 sm:border-r">

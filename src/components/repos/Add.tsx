@@ -1,4 +1,4 @@
-import { addRepository } from "@mktcodelib/github-insights";
+import { addRepo } from "~/db";
 import { PlusSmallIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import Button from "../base/Button";
@@ -11,7 +11,7 @@ export default function AddUser() {
   function handleAddRepo() {
     setOwner("");
     setName("");
-    addRepository(owner, name).catch((err) => console.log(err));
+    addRepo({ owner, name }).catch((err) => console.log(err));
   }
 
   return (
