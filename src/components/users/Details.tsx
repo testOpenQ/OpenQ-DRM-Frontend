@@ -6,7 +6,7 @@ import {
   evaluateUserData,
   getLatestUserScan,
   Scanner,
-  UserData,
+  type UserData,
   type UserEvaluation,
 } from "@mktcodelib/github-insights";
 import Card from "./Card";
@@ -57,7 +57,7 @@ export default function UserDetails({ userId }: { userId: string }) {
         }
       })
       .catch((err) => console.error(err));
-  }, [user]);
+  }, [user, accessToken]);
 
   function scan() {
     if (!accessToken) {
