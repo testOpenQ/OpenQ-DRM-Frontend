@@ -1,5 +1,7 @@
 import Navigation from "./Navigation";
-import Sidebar from "./Sidebar";
+import dynamic from "next/dynamic";
+
+const Sidebar = dynamic(() => import("./Sidebar"), { ssr: false });
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (
