@@ -9,7 +9,7 @@ export default function SidebarHeader({
   label: string;
 }) {
   return (
-    <Disclosure>
+    <Disclosure defaultOpen>
       {({ open }) => (
         <>
           <Disclosure.Button className="flex items-center rounded-lg p-2 transition-all hover:bg-black/20">
