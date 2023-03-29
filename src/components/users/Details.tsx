@@ -6,6 +6,7 @@ import {
   evaluateUserData,
   getLatestUserScan,
   Scanner,
+  UserData,
   type UserEvaluation,
 } from "@mktcodelib/github-insights";
 import Card from "./Card";
@@ -33,8 +34,26 @@ export default function UserDetails({ userId }: { userId: string }) {
 
     getLatestUserScan(user.login)
       .then((latestUserScan) => {
-        if (latestUserScan && latestUserScan.data) {
-          setUserScanResult(evaluateUserData(latestUserScan.data.user));
+        if (latestUserScan) {
+          if (latestUserScan.data.user) {
+            setUserScanResult(evaluateUserData(latestUserScan.data.user));
+          }
+          if (!latestUserScan.done && accessToken) {
+            const scanner = new Scanner({ viewerToken: accessToken });
+
+            setScanning(true);
+            scanner
+              .scanContinue<{ user: UserData }>(latestUserScan.id)(
+                (data, requestCount, remainingRequests) => {
+                  setUserScanResult(evaluateUserData(data.user));
+                  setProgress({ requestCount, remainingRequests });
+                }
+              )
+              .finally(() => {
+                setScanning(false);
+                setProgress(null);
+              });
+          }
         }
       })
       .catch((err) => console.error(err));

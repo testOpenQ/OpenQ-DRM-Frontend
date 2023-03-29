@@ -77,12 +77,12 @@
   resolved "https://registry.yarnpkg.com/@kurkle/color/-/color-0.3.2.tgz#5acd38242e8bde4f9986e7913c8fdf49d3aa199f"
   integrity sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==
 
-"@mktcodelib/github-insights@0.8.1":
-  version "0.8.1"
-  resolved "https://registry.yarnpkg.com/@mktcodelib/github-insights/-/github-insights-0.8.1.tgz#b10f9f75f84e2295f03ca6d66313bfe96163103e"
-  integrity sha512-pkTlbZzTUYN7hN0Q/ihHtIdFN9LumsJ8nC/1FeNohHWeH5at6gNnBIizAL8Who/K6147N5VQE8TrgPGMsHEMhg==
+"@mktcodelib/github-insights@0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@mktcodelib/github-insights/-/github-insights-0.9.0.tgz#b8de50d0446a8b2057de2a806ba910087a9a4c35"
+  integrity sha512-BUvQId3A/AaGVrfoUlAHIe2dIld0hWUfV/c1pg31dOhnlr+oR1VU3bwQGv8nJM1hXqZxnxmIGsEna8bANgSpJg==
   dependencies:
-    "@mktcodelib/graphql-fetch-all" "^0.2.2"
+    "@mktcodelib/graphql-fetch-all" "^0.3.0"
     "@octokit/core" "^4.2.0"
     "@octokit/plugin-paginate-rest" "^6.0.0"
     "@types/lodash" "^4.14.191"
@@ -91,10 +91,10 @@
     graphql-tag "^2.12.6"
     lodash "^4.17.21"
 
-"@mktcodelib/graphql-fetch-all@^0.2.2":
-  version "0.2.2"
-  resolved "https://registry.yarnpkg.com/@mktcodelib/graphql-fetch-all/-/graphql-fetch-all-0.2.2.tgz#82154f61b3236cf1088c33ffe2478b6f3121fa43"
-  integrity sha512-tAvYDGTz4bs4uKo8FPUZ7m99Z5Vb1/YzFhHnnkgokLt2PH54SpMfwg5tpiporYzNWti2GI6feixmFULI7hH01Q==
+"@mktcodelib/graphql-fetch-all@^0.3.0":
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/@mktcodelib/graphql-fetch-all/-/graphql-fetch-all-0.3.0.tgz#ea50f00af7be7dc0905df176afc0080a0eaf3268"
+  integrity sha512-ZFGnVtR0zWw0t+YRaa9tlgAojdL0UWM7gC3PwTHgg2PJ6RjjXPGXJFnLF1cJUmxeE5xg5vNMiegrYfO+e3AIsg==
   dependencies:
     "@octokit/graphql" "^5.0.5"
     graphql "^16.6.0"
