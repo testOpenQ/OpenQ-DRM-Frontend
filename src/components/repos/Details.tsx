@@ -1,7 +1,7 @@
 import { getRepo } from "~/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useSession } from "next-auth/react";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   evaluateRepoData,
   getLatestRepoScan,
@@ -11,6 +11,7 @@ import {
 import Card from "./Card";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 export default function RepoDetails({ repoId }: { repoId: string }) {
   const repo = useLiveQuery(getRepo(repoId));
@@ -27,21 +28,31 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
     remainingRequests: number;
   } | null>(null);
 
+  const since = useMemo(() => {
+    const since = new Date();
+    since.setHours(0, 0, 0, 0);
+    since.setMonth(since.getMonth() - 1);
+    return since.toISOString();
+  }, []);
+
+  const until = useMemo(() => {
+    const until = new Date();
+    until.setHours(0, 0, 0, 0);
+    until.setMonth(until.getMonth() + 1);
+    return until.toISOString();
+  }, []);
+
   useEffect(() => {
     if (!repo) return;
 
-    const now = new Date();
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
-    getLatestRepoScan(repo.owner, repo.name, oneMonthAgo, now)
+    getLatestRepoScan(repo.owner, repo.name, since, until)
       .then((latestRepoScan) => {
         if (latestRepoScan && latestRepoScan.data) {
           setRepoScanResult(evaluateRepoData(latestRepoScan.data.repository));
         }
       })
       .catch((err) => console.error(err));
-  }, [repo]);
+  }, [repo, since, until]);
 
   function scan() {
     if (!accessToken) {
@@ -54,12 +65,8 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
       return;
     }
 
-    const now = new Date();
-    const oneMonthAgo = new Date();
-    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
-
     const scanner = new Scanner({ viewerToken: accessToken });
-    const scan = scanner.scanRepo(repo.owner, repo.name, oneMonthAgo, now);
+    const scan = scanner.scanRepo(repo.owner, repo.name, since, until);
 
     setScanning(true);
     scan((data, requestCount, remainingRequests) => {
@@ -67,24 +74,36 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
       setProgress({ requestCount, remainingRequests });
     })
       .catch((err) => console.log(err))
-      .finally(() => setScanning(false));
+      .finally(() => {
+        setScanning(false);
+        setProgress(null);
+      });
   }
 
   if (!repo) return <>Repository does not exist.</>;
 
   return (
     <>
-      <h1 className="mb-12 text-3xl font-bold">
+      <h1 className="mb-12 flex items-center text-3xl font-bold">
         {repo.owner}/{repo.name}
+        <div className="ml-3">
+          <Button onClick={scan}>
+            {scanning && (
+              <>
+                <LoadingSpinner />
+                {progress && (
+                  <span className="ml-2">
+                    {progress.requestCount} /{" "}
+                    {progress.requestCount + progress.remainingRequests}
+                  </span>
+                )}
+              </>
+            )}
+            {!scanning && <ArrowPathIcon className="h-5 w-5 opacity-50" />}
+          </Button>
+        </div>
       </h1>
-      <div className="flex w-full max-w-md flex-col items-center space-y-3">
-        asd
-      </div>
       {repoScanResult && <Card data={repoScanResult} />}
-      <Button onClick={scan}>
-        {scanning && <LoadingSpinner />}
-        Scan
-      </Button>
     </>
   );
 }

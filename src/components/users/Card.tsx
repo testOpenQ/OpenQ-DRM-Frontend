@@ -2,7 +2,7 @@ import type { UserEvaluation } from "@mktcodelib/github-insights";
 
 export default function Card({ data }: { data: UserEvaluation }) {
   return (
-    <div className="rounded-lg border p-3">
+    <div className="rounded-lg p-3">
       <div className="max-w-sm text-center">
         <p>
           Your repositories have received

@@ -10,8 +10,8 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
 
 export default function Card({ data }: { data: RepoEvaluation }) {
   return (
-    <div className="flex flex-col rounded-lg border sm:flex-row">
-      <div className="flex flex-col border-b sm:border-b-0 sm:border-r">
+    <div className="flex flex-col rounded-lg border border-gray-700 bg-gray-800 sm:flex-row">
+      <div className="flex flex-col border-b border-gray-700 sm:border-b-0 sm:border-r">
         <CardMembers />
         <div className="flex justify-center space-x-1 p-3 text-center text-xs">
           <span>{Object.keys(data.commitsByAuthor).length} contributors</span>

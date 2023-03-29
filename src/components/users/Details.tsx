@@ -10,6 +10,8 @@ import {
 } from "@mktcodelib/github-insights";
 import Card from "./Card";
 import Button from "../base/Button";
+import LoadingSpinner from "../LoadingSpinner";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 
 export default function UserDetails({ userId }: { userId: string }) {
   const user = useLiveQuery(getUser(userId));
@@ -58,19 +60,36 @@ export default function UserDetails({ userId }: { userId: string }) {
       setProgress({ requestCount, remainingRequests });
     })
       .catch((err) => console.log(err))
-      .finally(() => setScanning(false));
+      .finally(() => {
+        setScanning(false);
+        setProgress(null);
+      });
   }
 
   if (!user) return <>User does not exist.</>;
 
   return (
     <>
-      <h1 className="mb-12 text-3xl font-bold">{user.login}</h1>
-      <div className="flex w-full max-w-md flex-col items-center space-y-3">
-        asd
-      </div>
+      <h1 className="mb-12 flex items-center text-3xl font-bold">
+        {user.login}
+        <div className="ml-3">
+          <Button onClick={scan}>
+            {scanning && (
+              <>
+                <LoadingSpinner />
+                {progress && (
+                  <span className="ml-2">
+                    {progress.requestCount} /{" "}
+                    {progress.requestCount + progress.remainingRequests}
+                  </span>
+                )}
+              </>
+            )}
+            {!scanning && <ArrowPathIcon className="h-5 w-5 opacity-50" />}
+          </Button>
+        </div>
+      </h1>
       {userScanResult && <Card data={userScanResult} />}
-      <Button onClick={scan}>Scan</Button>
     </>
   );
 }
