@@ -5,7 +5,7 @@ export default function ConnectGithub() {
   const { data: session, status } = useSession();
 
   function handleSignIn() {
-    signIn().catch(console.error);
+    signIn("github").catch(console.error);
   }
 
   function handleSignOut() {
