@@ -44,8 +44,15 @@ export default function UserDetails({ userId }: { userId: string }) {
             setScanning(true);
             scanner
               .scanContinue<{ user: UserData }>(latestUserScan.id)(
-                (data, requestCount, remainingRequests) => {
+                (data, paginators) => {
                   setUserScanResult(evaluateUserData(data.user));
+
+                  const requestCount = Math.max(
+                    ...paginators.map((p) => p.requestCount)
+                  );
+                  const remainingRequests = Math.max(
+                    ...paginators.map((p) => p.remainingRequests)
+                  );
                   setProgress({ requestCount, remainingRequests });
                 }
               )
@@ -70,12 +77,17 @@ export default function UserDetails({ userId }: { userId: string }) {
       return;
     }
 
-    setScanning(true);
     const scanner = new Scanner({ viewerToken: accessToken });
     const scan = scanner.scanUser(user.login);
 
-    scan((data, requestCount, remainingRequests) => {
+    setScanning(true);
+    scan((data, paginators) => {
       setUserScanResult(evaluateUserData(data.user));
+
+      const requestCount = Math.max(...paginators.map((p) => p.requestCount));
+      const remainingRequests = Math.max(
+        ...paginators.map((p) => p.remainingRequests)
+      );
       setProgress({ requestCount, remainingRequests });
     })
       .catch((err) => console.log(err))
@@ -98,8 +110,12 @@ export default function UserDetails({ userId }: { userId: string }) {
                 <LoadingSpinner />
                 {progress && (
                   <span className="ml-2">
-                    {progress.requestCount} /{" "}
-                    {progress.requestCount + progress.remainingRequests}
+                    {(
+                      (progress.requestCount /
+                        (progress.requestCount + progress.remainingRequests)) *
+                      100
+                    ).toFixed(1)}
+                    %
                   </span>
                 )}
               </>

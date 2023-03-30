@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from "react";
 import {
   evaluateRepoData,
   getLatestRepoScan,
+  RepoData,
   Scanner,
   type RepoEvaluation,
 } from "@mktcodelib/github-insights";
@@ -46,13 +47,38 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
     if (!repo) return;
 
     getLatestRepoScan(repo.owner, repo.name, since, until)
-      .then((latestRepoScan) => {
-        if (latestRepoScan && latestRepoScan.data) {
-          setRepoScanResult(evaluateRepoData(latestRepoScan.data.repository));
+      .then((latestUserScan) => {
+        if (latestUserScan) {
+          if (latestUserScan.data.repository) {
+            setRepoScanResult(evaluateRepoData(latestUserScan.data.repository));
+          }
+          if (!latestUserScan.done && accessToken) {
+            const scanner = new Scanner({ viewerToken: accessToken });
+
+            setScanning(true);
+            scanner
+              .scanContinue<{ repo: RepoData }>(latestUserScan.id)(
+                (data, paginators) => {
+                  setRepoScanResult(evaluateRepoData(data.repo));
+
+                  const requestCount = Math.max(
+                    ...paginators.map((p) => p.requestCount)
+                  );
+                  const remainingRequests = Math.max(
+                    ...paginators.map((p) => p.remainingRequests)
+                  );
+                  setProgress({ requestCount, remainingRequests });
+                }
+              )
+              .finally(() => {
+                setScanning(false);
+                setProgress(null);
+              });
+          }
         }
       })
       .catch((err) => console.error(err));
-  }, [repo, since, until]);
+  }, [repo, since, until, accessToken]);
 
   function scan() {
     if (!accessToken) {
@@ -69,8 +95,13 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
     const scan = scanner.scanRepo(repo.owner, repo.name, since, until);
 
     setScanning(true);
-    scan((data, requestCount, remainingRequests) => {
+    scan((data, paginators) => {
       setRepoScanResult(evaluateRepoData(data.repository));
+
+      const requestCount = Math.max(...paginators.map((p) => p.requestCount));
+      const remainingRequests = Math.max(
+        ...paginators.map((p) => p.remainingRequests)
+      );
       setProgress({ requestCount, remainingRequests });
     })
       .catch((err) => console.log(err))
@@ -93,8 +124,12 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
                 <LoadingSpinner />
                 {progress && (
                   <span className="ml-2">
-                    {progress.requestCount} /{" "}
-                    {progress.requestCount + progress.remainingRequests}
+                    {(
+                      (progress.requestCount /
+                        (progress.requestCount + progress.remainingRequests)) *
+                      100
+                    ).toFixed(1)}
+                    %
                   </span>
                 )}
               </>
