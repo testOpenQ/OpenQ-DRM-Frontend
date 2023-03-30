@@ -10,7 +10,7 @@ export default function NavigationLink({
   return (
     <Link
       href={href}
-      className="rounded-lg px-3 py-1 transition-all hover:bg-white/50"
+      className="px-3 py-2 transition-all hover:bg-gray-900"
       target="_blank"
     >
       {children}

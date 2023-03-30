@@ -1,15 +1,10 @@
 import { getPendingScans, type Scan } from "@mktcodelib/github-insights";
 import { useLiveQuery } from "dexie-react-hooks";
-import LoadingSpinner from "./LoadingSpinner";
 
 export default function RequestInfo() {
   const pendingScans = useLiveQuery(() => getPendingScans() as Promise<Scan[]>);
 
-  if (!pendingScans) {
-    return <div>Loading...</div>;
-  }
-
-  if (pendingScans.length === 0) {
+  if (!pendingScans || pendingScans.length === 0) {
     return null;
   }
 

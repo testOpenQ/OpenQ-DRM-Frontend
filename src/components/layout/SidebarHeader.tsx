@@ -13,7 +13,11 @@ export default function SidebarHeader({
     <Disclosure defaultOpen>
       {({ open }) => (
         <>
-          <Disclosure.Button className="flex items-center p-2 transition-all hover:bg-black/20">
+          <Disclosure.Button
+            className={`flex items-center p-2 transition-all hover:bg-gray-900 ${
+              open ? "bg-gray-900" : ""
+            }`}
+          >
             <div className="mr-3 rounded-lg bg-gray-600 p-1">
               <ChartPieIcon className="h-5 w-5 text-gray-300" />
             </div>
@@ -33,7 +37,9 @@ export default function SidebarHeader({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Disclosure.Panel>{children}</Disclosure.Panel>
+            <Disclosure.Panel className="bg-gray-900/30">
+              {children}
+            </Disclosure.Panel>
           </Transition>
         </>
       )}

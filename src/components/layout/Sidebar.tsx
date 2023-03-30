@@ -11,6 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { useLiveQuery } from "dexie-react-hooks";
 import { getCampaigns } from "~/db";
+import SidebarLinkSubmenu from "./SidebarLinkSubmenu";
 
 export default function Sidebar() {
   const campaigns = useLiveQuery(getCampaigns);
@@ -26,9 +27,12 @@ export default function Sidebar() {
       </SidebarLink>
       <SidebarHeader label="Campaigns">
         {campaigns?.map((campaign) => (
-          <SidebarLink key={campaign.id} href={`/campaigns/${campaign.id}`}>
+          <SidebarLinkSubmenu
+            key={campaign.id}
+            href={`/campaigns/${campaign.id}`}
+          >
             {campaign.name}
-          </SidebarLink>
+          </SidebarLinkSubmenu>
         ))}
       </SidebarHeader>
       <SidebarLink href="/users">

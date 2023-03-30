@@ -12,7 +12,7 @@ export default function Navigation() {
         height="24"
         className="h-6 w-6 opacity-30"
       />
-      <div className="mr-auto">
+      <div className="ml-3 mr-auto">
         <NavigationLink href="https://openq.dev">Explore</NavigationLink>
         <NavigationLink href="https://openq.dev/marketplace">
           Marketplace
