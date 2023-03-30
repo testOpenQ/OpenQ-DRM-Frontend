@@ -2,6 +2,7 @@ import SidebarLink from "./SidebarLink";
 import RequestInfo from "../RequestInfo";
 import SidebarHeader from "./SidebarHeader";
 import {
+  ArrowTopRightOnSquareIcon,
   ArrowDownTrayIcon,
   UsersIcon,
   CodeBracketIcon,
@@ -29,35 +30,41 @@ export default function Sidebar() {
         ))}
       </SidebarHeader>
       <SidebarLink href="/users">
-        <div className="mr-3 rounded-lg p-1.5">
+        <div className="mr-3 p-1.5">
           <UsersIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Developers
       </SidebarLink>
       <SidebarLink href="/repos">
-        <div className="mr-3 rounded-lg p-1.5">
+        <div className="mr-3 p-1.5">
           <CodeBracketIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Repositories
       </SidebarLink>
 
       <SidebarLink href="/" className="mt-auto">
-        <div className="mr-3 rounded-lg p-1.5">
+        <div className="mr-3 p-1.5">
           <ArrowDownTrayIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Import
       </SidebarLink>
       <SidebarLink href="/">
-        <div className="mr-3 rounded-lg p-1.5">
+        <div className="mr-3 p-1.5">
           <BookOpenIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Documentation
+        <div className="ml-auto p-1.5">
+          <ArrowTopRightOnSquareIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-500" />
+        </div>
       </SidebarLink>
       <SidebarLink href="/">
-        <div className="mr-3 rounded-lg p-1.5">
+        <div className="mr-3 p-1.5">
           <InformationCircleIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Contact
+        <div className="ml-auto p-1.5">
+          <ArrowTopRightOnSquareIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-500" />
+        </div>
       </SidebarLink>
     </div>
   );

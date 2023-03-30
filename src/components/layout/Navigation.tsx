@@ -7,7 +7,7 @@ export default function Navigation() {
   const [showExternalLinks, setShowExternalLinks] = useState(false);
 
   return (
-    <div className="flex items-center border-b border-gray-700 bg-gray-800 text-sm text-gray-400">
+    <div className="flex items-center border-b border-gray-700 bg-gray-800 text-sm text-gray-500">
       <div
         className={`cursor-pointer px-3 transition-all hover:opacity-100 ${
           showExternalLinks ? "opacity-100" : "opacity-30"
