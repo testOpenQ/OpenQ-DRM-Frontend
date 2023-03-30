@@ -15,17 +15,17 @@ export default function ConnectGithub() {
   if (status === "authenticated") {
     return (
       <>
-        <button
+        <div
           onClick={handleSignOut}
-          className="flex items-center rounded-lg px-3 py-1 transition-all hover:bg-white/5"
+          className="cursor-pointer px-3 py-2 transition-all hover:bg-gray-900"
         >
           sign out
-        </button>
+        </div>
         {session.user?.image && (
           <Image
             src={session.user.image}
             alt="Avatar"
-            className="ml-3 rounded-full"
+            className="mx-3 rounded-full"
             width={24}
             height={24}
           />
@@ -35,11 +35,11 @@ export default function ConnectGithub() {
   }
 
   return (
-    <button
+    <div
       onClick={handleSignIn}
-      className="flex items-center rounded-lg px-3 py-1 transition-all hover:bg-white/5"
+      className="cursor-pointer px-3 py-2 transition-all hover:bg-gray-900"
     >
-      Connect
-    </button>
+      Connect to GitHub
+    </div>
   );
 }

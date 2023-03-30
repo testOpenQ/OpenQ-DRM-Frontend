@@ -12,7 +12,7 @@ export default function SidebarLink({
   return (
     <Link
       href={href}
-      className={`${className} flex items-center p-2 transition-all hover:bg-gray-900`}
+      className={`${className} group flex items-center p-2 text-gray-300 transition-all hover:bg-gray-900 hover:text-gray-100`}
     >
       {children}
     </Link>

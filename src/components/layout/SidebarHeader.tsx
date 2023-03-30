@@ -14,12 +14,16 @@ export default function SidebarHeader({
       {({ open }) => (
         <>
           <Disclosure.Button
-            className={`flex items-center p-2 transition-all hover:bg-gray-900 ${
+            className={`group flex items-center p-2 text-gray-300 transition-all hover:bg-gray-900 hover:text-gray-100 ${
               open ? "bg-gray-900" : ""
             }`}
           >
-            <div className="mr-3 rounded-lg bg-gray-600 p-1">
-              <ChartPieIcon className="h-5 w-5 text-gray-300" />
+            <div className="mr-3 rounded-lg p-1.5">
+              <ChartPieIcon
+                className={`h-5 w-5 transition-all group-hover:text-gray-300 ${
+                  open ? "text-gray-300" : "text-gray-600"
+                }`}
+              />
             </div>
             {label}
             <ChevronUpIcon
@@ -37,7 +41,7 @@ export default function SidebarHeader({
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >
-            <Disclosure.Panel className="bg-gray-900/30">
+            <Disclosure.Panel className="bg-gray-900/30 text-sm">
               {children}
             </Disclosure.Panel>
           </Transition>

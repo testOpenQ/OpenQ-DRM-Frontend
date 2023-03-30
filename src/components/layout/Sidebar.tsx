@@ -7,7 +7,6 @@ import {
   CodeBracketIcon,
   BookOpenIcon,
   InformationCircleIcon,
-  Squares2X2Icon,
 } from "@heroicons/react/24/outline";
 import { useLiveQuery } from "dexie-react-hooks";
 import { getCampaigns } from "~/db";
@@ -19,12 +18,6 @@ export default function Sidebar() {
   return (
     <div className="flex w-[320px] flex-col border-r border-zinc-700 bg-gray-800">
       <RequestInfo />
-      <SidebarLink href="/">
-        <div className="mr-3 rounded-lg bg-gray-600 p-1">
-          <Squares2X2Icon className="h-5 w-5 text-gray-300" />
-        </div>
-        Overview
-      </SidebarLink>
       <SidebarHeader label="Campaigns">
         {campaigns?.map((campaign) => (
           <SidebarLinkSubmenu
@@ -36,33 +29,33 @@ export default function Sidebar() {
         ))}
       </SidebarHeader>
       <SidebarLink href="/users">
-        <div className="mr-3 rounded-lg bg-gray-600 p-1">
-          <UsersIcon className="h-5 w-5 text-gray-300" />
+        <div className="mr-3 rounded-lg p-1.5">
+          <UsersIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Developers
       </SidebarLink>
       <SidebarLink href="/repos">
-        <div className="mr-3 rounded-lg bg-gray-600 p-1">
-          <CodeBracketIcon className="h-5 w-5 text-gray-300" />
+        <div className="mr-3 rounded-lg p-1.5">
+          <CodeBracketIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Repositories
       </SidebarLink>
 
       <SidebarLink href="/" className="mt-auto">
-        <div className="mr-3 rounded-lg bg-gray-600 p-1">
-          <ArrowDownTrayIcon className="h-5 w-5 text-gray-300" />
+        <div className="mr-3 rounded-lg p-1.5">
+          <ArrowDownTrayIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Import
       </SidebarLink>
       <SidebarLink href="/">
-        <div className="mr-3 rounded-lg bg-gray-600 p-1">
-          <BookOpenIcon className="h-5 w-5 text-gray-300" />
+        <div className="mr-3 rounded-lg p-1.5">
+          <BookOpenIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Documentation
       </SidebarLink>
       <SidebarLink href="/">
-        <div className="mr-3 rounded-lg bg-gray-600 p-1">
-          <InformationCircleIcon className="h-5 w-5 text-gray-300" />
+        <div className="mr-3 rounded-lg p-1.5">
+          <InformationCircleIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Contact
       </SidebarLink>
