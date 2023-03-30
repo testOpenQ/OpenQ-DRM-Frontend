@@ -1,5 +1,6 @@
 import { Disclosure, Transition } from "@headlessui/react";
 import { ChevronUpIcon } from "@heroicons/react/20/solid";
+import { ChartPieIcon } from "@heroicons/react/24/outline";
 
 export default function SidebarHeader({
   children,
@@ -12,7 +13,10 @@ export default function SidebarHeader({
     <Disclosure defaultOpen>
       {({ open }) => (
         <>
-          <Disclosure.Button className="flex items-center rounded-lg p-2 transition-all hover:bg-black/20">
+          <Disclosure.Button className="flex items-center p-2 transition-all hover:bg-black/20">
+            <div className="mr-3 rounded-lg bg-gray-600 p-1">
+              <ChartPieIcon className="h-5 w-5 text-gray-300" />
+            </div>
             {label}
             <ChevronUpIcon
               className={`${

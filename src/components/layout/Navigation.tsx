@@ -4,13 +4,13 @@ import NavigationLink from "./NavigationLink";
 
 export default function Navigation() {
   return (
-    <div className="flex items-center border-b border-gray-700 bg-gray-800 px-3 py-2 text-sm text-gray-400">
+    <div className="flex items-center border-b border-gray-700 bg-gray-800 px-3 py-1 text-sm text-gray-400">
       <Image
         src="/openq-logo-white.png"
         alt="OpenQ"
         width="24"
         height="24"
-        className="mr-3 h-6 w-6"
+        className="h-6 w-6 opacity-30"
       />
       <div className="mr-auto">
         <NavigationLink href="https://openq.dev">Explore</NavigationLink>
