@@ -3,6 +3,7 @@
 ## TODO
 
 - [ ] Finish campaign/repository/developer management
+  - [ ] Import (text/csv)
 - [ ] General UX/UI polishing
 - [ ] Implement score comparison
 - [ ] Use workers
