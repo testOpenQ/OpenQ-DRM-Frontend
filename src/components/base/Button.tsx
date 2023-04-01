@@ -13,7 +13,7 @@ export default function Button({
 }) {
   return (
     <button
-      className={`${className} group flex w-full max-w-md items-center whitespace-nowrap rounded-xl bg-indigo-900 px-3 py-2 text-base text-white transition-all hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-900`}
+      className={`${className} group flex max-w-md items-center whitespace-nowrap rounded-xl bg-indigo-900 px-3 py-2 text-base font-bold text-white transition-all hover:bg-indigo-800 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-indigo-900`}
       onClick={onClick}
       disabled={disabled}
     >

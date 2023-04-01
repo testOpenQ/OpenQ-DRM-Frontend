@@ -13,12 +13,14 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { getCampaigns } from "~/db";
 import SidebarLinkSubmenu from "./SidebarLinkSubmenu";
 import SidebarDivider from "./SidebarDivider";
+import ConnectGithub from "../ConnectGithub";
 
 export default function Sidebar() {
   const campaigns = useLiveQuery(getCampaigns);
 
   return (
     <div className="flex w-[320px] flex-col border-r border-zinc-700 bg-gray-800">
+      <ConnectGithub />
       <RequestInfo />
       <SidebarHeader label="Campaigns">
         {campaigns?.map((campaign) => (
@@ -45,7 +47,25 @@ export default function Sidebar() {
         Repositories
       </SidebarLink>
 
-      <SidebarLink href="/" className="mt-auto">
+      <SidebarLink href="https://openq.dev/marketplace" className="mt-auto">
+        <div className="mr-3 p-1.5">
+          <BookOpenIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
+        </div>
+        Marketplace
+        <div className="ml-auto p-1.5">
+          <ArrowTopRightOnSquareIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-500" />
+        </div>
+      </SidebarLink>
+      <SidebarLink href="https://openq.dev/hackathons">
+        <div className="mr-3 p-1.5">
+          <BookOpenIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
+        </div>
+        Hackathons
+        <div className="ml-auto p-1.5">
+          <ArrowTopRightOnSquareIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-500" />
+        </div>
+      </SidebarLink>
+      <SidebarLink href="/">
         <div className="mr-3 p-1.5">
           <BookOpenIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
