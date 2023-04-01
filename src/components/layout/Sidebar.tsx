@@ -19,7 +19,7 @@ export default function Sidebar() {
   const campaigns = useLiveQuery(getCampaigns);
 
   return (
-    <div className="flex w-[320px] flex-col border-r border-zinc-700 bg-gray-800">
+    <div className="flex w-[320px] flex-col bg-gray-800">
       <ConnectGithub />
       <RequestInfo />
       <SidebarHeader label="Campaigns">
@@ -56,6 +56,7 @@ export default function Sidebar() {
           <ArrowTopRightOnSquareIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-500" />
         </div>
       </SidebarLink>
+      <SidebarDivider />
       <SidebarLink href="https://openq.dev/hackathons">
         <div className="mr-3 p-1.5">
           <BookOpenIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
@@ -65,6 +66,7 @@ export default function Sidebar() {
           <ArrowTopRightOnSquareIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-500" />
         </div>
       </SidebarLink>
+      <SidebarDivider />
       <SidebarLink href="/">
         <div className="mr-3 p-1.5">
           <BookOpenIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />

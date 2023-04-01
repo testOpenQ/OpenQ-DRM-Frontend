@@ -44,7 +44,7 @@ export default function ConnectGithub() {
   return (
     <Button
       onClick={handleSignIn}
-      className="w-full justify-center rounded-none !px-6 !py-4 text-xl"
+      className="w-full justify-center !rounded-none !px-6 !py-4 text-xl"
     >
       Connect to GitHub
     </Button>
