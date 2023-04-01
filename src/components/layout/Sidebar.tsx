@@ -12,6 +12,7 @@ import {
 import { useLiveQuery } from "dexie-react-hooks";
 import { getCampaigns } from "~/db";
 import SidebarLinkSubmenu from "./SidebarLinkSubmenu";
+import SidebarDivider from "./SidebarDivider";
 
 export default function Sidebar() {
   const campaigns = useLiveQuery(getCampaigns);
@@ -29,12 +30,14 @@ export default function Sidebar() {
           </SidebarLinkSubmenu>
         ))}
       </SidebarHeader>
+      <SidebarDivider />
       <SidebarLink href="/users">
         <div className="mr-3 p-1.5">
           <UsersIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Developers
       </SidebarLink>
+      <SidebarDivider />
       <SidebarLink href="/repos">
         <div className="mr-3 p-1.5">
           <CodeBracketIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
@@ -48,6 +51,7 @@ export default function Sidebar() {
         </div>
         Import
       </SidebarLink>
+      <SidebarDivider />
       <SidebarLink href="/">
         <div className="mr-3 p-1.5">
           <BookOpenIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
@@ -57,6 +61,7 @@ export default function Sidebar() {
           <ArrowTopRightOnSquareIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-500" />
         </div>
       </SidebarLink>
+      <SidebarDivider />
       <SidebarLink href="/">
         <div className="mr-3 p-1.5">
           <InformationCircleIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />

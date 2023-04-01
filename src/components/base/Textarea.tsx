@@ -1,24 +1,26 @@
-export default function Input({
+export default function Textarea({
   value,
   setValue,
   placeholder,
   className = "",
   disabled = false,
+  rows = 1,
 }: {
   value: string;
   setValue: (value: string) => void;
   placeholder?: string;
   className?: string;
   disabled?: boolean;
+  rows?: number;
 }) {
   return (
-    <input
-      type="text"
+    <textarea
       onChange={(e) => setValue(e.target.value)}
       value={value}
       className={`${className} w-full rounded-md border border-gray-600 bg-gray-800 px-4 py-3 text-xl text-gray-300 shadow-sm transition-all placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-900`}
       placeholder={placeholder}
       disabled={disabled}
+      rows={rows}
     />
   );
 }
