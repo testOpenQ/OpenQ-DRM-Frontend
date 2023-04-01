@@ -13,6 +13,7 @@ import Card from "./Card";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import Headline from "../layout/Headline";
 
 export default function RepoDetails({ repoId }: { repoId: string }) {
   const repo = useLiveQuery(getRepo(repoId));
@@ -115,7 +116,7 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
 
   return (
     <>
-      <h1 className="mb-12 flex items-center text-3xl font-bold">
+      <Headline>
         {repo.owner}/{repo.name}
         <div className="ml-3">
           <Button onClick={scan}>
@@ -137,7 +138,7 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
             {!scanning && <ArrowPathIcon className="h-5 w-5 opacity-50" />}
           </Button>
         </div>
-      </h1>
+      </Headline>
       {repoScanResult && <Card data={repoScanResult} />}
     </>
   );

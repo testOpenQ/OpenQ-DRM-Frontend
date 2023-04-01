@@ -50,8 +50,8 @@ export default function CampaignsDetails({
         Add users and repositories to your campaign.
       </h2>
       <p className="my-6 text-2xl text-gray-500">
-        Paste a list of GitHub URLs or use the search to find developers and
-        repositories you want to track.
+        Paste a list of GitHub URLs or use the search to find individual
+        developers and repositories.
       </p>
       <div className="mb-3">
         <GithubSearch onSelect={onSelectSearchResult} />

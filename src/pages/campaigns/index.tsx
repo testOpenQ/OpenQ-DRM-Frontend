@@ -1,6 +1,7 @@
 import { type NextPage } from "next";
 import Head from "next/head";
 import List from "~/components/campaigns/List";
+import Headline from "~/components/layout/Headline";
 
 const Campaigns: NextPage = () => {
   return (
@@ -8,7 +9,7 @@ const Campaigns: NextPage = () => {
       <Head>
         <title>OpenQ DRM - Campaigns</title>
       </Head>
-      <h1 className="mb-12 text-3xl font-bold">Campaigns</h1>
+      <Headline>Campaigns</Headline>
       <List />
     </>
   );

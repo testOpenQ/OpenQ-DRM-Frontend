@@ -1,12 +1,12 @@
-import { Dialog, Transition } from "@headlessui/react";
 import { addCampaign, getCampaigns } from "~/db";
 import { useRouter } from "next/router";
-import { Fragment, useEffect, useState } from "react";
+import { useState } from "react";
 import Button from "./base/Button";
 import Input from "./base/Input";
 import { useLiveQuery } from "dexie-react-hooks";
+import Headline from "./layout/Headline";
 
-export default function WelcomeModal() {
+export default function Welcome() {
   const router = useRouter();
 
   const campaigns = useLiveQuery(getCampaigns);
@@ -30,8 +30,11 @@ export default function WelcomeModal() {
 
   return (
     <div className="max-w-3xl">
-      <h1 className="text-3xl font-bold">Create your first campaign</h1>
-      <p className="mt-2 text-2xl text-gray-400">
+      <Headline>Welcome</Headline>
+      <h1 className="text-3xl font-bold text-indigo-700">
+        Create your first campaign
+      </h1>
+      <p className="text-2xl text-gray-400">
         Track and compare repositories and developers.
       </p>
       <div className="mt-6">
