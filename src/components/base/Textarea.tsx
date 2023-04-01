@@ -21,6 +21,7 @@ export default function Textarea({
       placeholder={placeholder}
       disabled={disabled}
       rows={rows}
+      spellCheck={false}
     />
   );
 }

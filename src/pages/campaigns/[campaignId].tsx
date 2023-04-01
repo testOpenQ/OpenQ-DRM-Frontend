@@ -1,8 +1,8 @@
 import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
-const CampaignsDetails = dynamic(
-  () => import("~/components/campaigns/Details"),
+const DetailsWrapper = dynamic(
+  () => import("~/components/campaigns/DetailsWrapper"),
   {
     ssr: false,
   }
@@ -18,7 +18,7 @@ export default function Campaign() {
 
   return (
     <>
-      <CampaignsDetails campaignId={campaignId} />
+      <DetailsWrapper campaignId={campaignId} />
     </>
   );
 }

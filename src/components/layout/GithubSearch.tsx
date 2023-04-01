@@ -98,12 +98,12 @@ export default function GithubSearch({
         </Button>
       )}
       {searchResults && searchResults.length > 0 && (
-        <div className="absolute mt-12 hidden max-h-64 w-max flex-col space-y-2 overflow-auto rounded-md border border-gray-600 bg-gray-800 p-3 group-focus-within:flex">
+        <div className="absolute mt-12 hidden max-h-64 grid-cols-3 gap-1 overflow-auto rounded-md border border-gray-600 bg-gray-800 p-1 group-focus-within:grid">
           {searchResults.map((item) => (
             <Button
               key={item.node_id}
-              className="flex-1"
               onClick={() => handleSelectSearchResult(item)}
+              className="!rounded-md"
             >
               <Image
                 src={item.avatar_url || item.owner.avatar_url}
