@@ -13,6 +13,7 @@ export interface RepoModel {
   id?: number;
   name: string;
   owner: string;
+  campaignId?: number;
 }
 
 export interface Repo extends RepoModel {
@@ -22,6 +23,7 @@ export interface Repo extends RepoModel {
 export interface UserModel {
   id?: number;
   login: string;
+  campaignId?: number;
 }
 
 export interface User extends UserModel {
@@ -37,8 +39,8 @@ export class Db extends Dexie {
     super(`openq-drm`);
     this.version(1).stores({
       campaigns: `++id, name`,
-      repos: `++id, name, owner`,
-      users: `++id, login`,
+      repos: `++id, name, owner, campaignId`,
+      users: `++id, login, campaignId`,
     });
   }
 }
@@ -61,8 +63,12 @@ export function deleteCampaign(id: number | string) {
   return db.campaigns.delete(Number(id));
 }
 
-export function getRepos() {
-  return db.repos.toArray() as Promise<Repo[]>;
+export function getRepos(id?: number | string) {
+  return (
+    id
+      ? db.repos.where({ campaignId: Number(id) }).toArray()
+      : db.repos.toArray()
+  ) as Promise<Repo[]>;
 }
 
 export function getRepo(id: number | string) {
@@ -77,8 +83,12 @@ export function deleteRepo(id: number | string) {
   return db.repos.delete(Number(id));
 }
 
-export function getUsers() {
-  return db.users.toArray() as Promise<User[]>;
+export function getUsers(id?: number | string) {
+  return (
+    id
+      ? db.users.where({ campaignId: Number(id) }).toArray()
+      : db.users.toArray()
+  ) as Promise<User[]>;
 }
 
 export function getUser(id: number | string) {
