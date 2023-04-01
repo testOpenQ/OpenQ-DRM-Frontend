@@ -27,7 +27,7 @@ export default function RequestInfo() {
     <>
       <div className="relative overflow-hidden bg-gray-700">
         <div
-          className="h-1 bg-sky-600 transition-all"
+          className="h-1 bg-indigo-600 transition-all"
           style={{ width: `${percentage}%` }}
         />
       </div>

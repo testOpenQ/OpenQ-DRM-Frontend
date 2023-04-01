@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import dynamic from "next/dynamic";
 
 const CampaignsDetails = dynamic(
-  () => import("~/components/campaigns/Datails"),
+  () => import("~/components/campaigns/Details"),
   {
     ssr: false,
   }

@@ -14,7 +14,7 @@ export default function CampaignsDetails({
   const campaign = useLiveQuery(getCampaign(campaignId));
 
   const [textareaInput, setTextareaInput] = useState<string>("");
-  const [textareaInputRows, setTextareaInputRows] = useState<number>(1);
+  const [textareaInputRows, setTextareaInputRows] = useState<number>(2);
 
   function handleSetTextareaInput(value: string) {
     const sanitizedInput = value
@@ -23,7 +23,7 @@ export default function CampaignsDetails({
       .map((url) => url.trim())
       .map((url) => url.replace(/https?:\/\/github\.com\/?/g, ""));
 
-    setTextareaInputRows(sanitizedInput.length + 1);
+    setTextareaInputRows(Math.max(sanitizedInput.length + 1, 2));
     setTextareaInput(sanitizedInput.join("\n") + "\n");
   }
 
@@ -38,17 +38,20 @@ export default function CampaignsDetails({
 
   return (
     <div className="max-w-2xl">
-      <h1 className="mb-12 flex text-3xl font-bold">
+      <h1 className="flex items-center text-5xl font-bold">
         {campaign.name}
         <div className="ml-2">
-          <Button className="bg-transparent hover:!bg-gray-800">
-            <PencilIcon className="h-5 w-5 text-sky-700 transition-all group-hover:text-sky-600" />
+          <Button className="!bg-transparent hover:!bg-gray-800">
+            <PencilIcon className="h-5 w-5 text-indigo-700 transition-all group-hover:text-indigo-600" />
           </Button>
         </div>
       </h1>
-      <p className="my-6 text-gray-600">
-        Enter a list of GitHub URLs or use the search to find developers and
-        repositories.
+      <h2 className="mt-1 flex text-2xl text-indigo-700">
+        Add users and repositories to your campaign.
+      </h2>
+      <p className="my-6 text-2xl text-gray-500">
+        Paste a list of GitHub URLs or use the search to find developers and
+        repositories you want to track.
       </p>
       <div className="mb-3">
         <GithubSearch onSelect={onSelectSearchResult} />
@@ -58,13 +61,9 @@ export default function CampaignsDetails({
           rows={textareaInputRows}
           value={textareaInput}
           setValue={handleSetTextareaInput}
-          placeholder="https://github.com/..."
+          placeholder={`https://github.com/...\nhttps://github.com/...`}
         />
       </div>
-      <Button>
-        <CodeBracketIcon className="mr-2 h-5 w-5 text-sky-700 transition-all group-hover:text-sky-600" />
-        Import
-      </Button>
     </div>
   );
 }

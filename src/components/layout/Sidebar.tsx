@@ -47,13 +47,6 @@ export default function Sidebar() {
 
       <SidebarLink href="/" className="mt-auto">
         <div className="mr-3 p-1.5">
-          <ArrowDownTrayIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
-        </div>
-        Import
-      </SidebarLink>
-      <SidebarDivider />
-      <SidebarLink href="/">
-        <div className="mr-3 p-1.5">
           <BookOpenIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Documentation
