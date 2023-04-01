@@ -16,7 +16,7 @@ export default function Input({
       type="text"
       onChange={(e) => setValue(e.target.value)}
       value={value}
-      className={`${className} w-full rounded-md border border-gray-600 bg-gray-800 px-4 py-3 text-xl text-gray-300 shadow-sm transition-all placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-900`}
+      className={`${className} w-full rounded-xl border border-gray-600 bg-gray-800 px-4 py-3 text-xl text-gray-300 shadow-sm transition-all placeholder:text-gray-600 focus:outline-none focus:ring-2 focus:ring-sky-900`}
       placeholder={placeholder}
       disabled={disabled}
     />
