@@ -22,7 +22,7 @@ export default function Overview({ campaigns }: { campaigns: Campaign[] }) {
   }
 
   return (
-    <div className="max-w-3xl">
+    <>
       <Headline>Overview</Headline>
       <div className="grid grid-cols-2 gap-3">
         {campaigns.map((campaign) => (
@@ -38,6 +38,6 @@ export default function Overview({ campaigns }: { campaigns: Campaign[] }) {
           </Link>
         ))}
       </div>
-    </div>
+    </>
   );
 }

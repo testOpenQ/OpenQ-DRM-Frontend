@@ -67,12 +67,12 @@ export default function GithubSearch({
   }, [debouncedSearchTerm, accessToken]);
 
   return (
-    <div className="group relative flex max-w-2xl space-x-3">
+    <div className="group relative flex space-x-3">
       <Input
         value={searchTerm}
         setValue={setSearchTerm}
         placeholder={`Search for ${searchType}...`}
-        className={`${accessToken ? "" : "cursor-not-allowed opacity-20"}`}
+        className={`${accessToken ? "" : "cursor-not-allowed opacity-20"} grow`}
         disabled={!accessToken}
       />
       {(accessToken && (

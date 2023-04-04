@@ -75,7 +75,7 @@ export default function CampaignsDetails({
   if (!campaign) return <>Campaign does not exist.</>;
 
   return (
-    <div className="max-w-2xl">
+    <>
       <Headline>
         {campaign.name}
         <div className="ml-2">
@@ -108,10 +108,14 @@ export default function CampaignsDetails({
         />
       </div>
       {(users.length > 0 || repos.length > 0) && (
-        <div className="mb-3">
-          <Button onClick={handleContinue}>Continue</Button>
+        <>
+          <div className="flex">
+            <Button className="ml-auto" onClick={handleContinue}>
+              Continue
+            </Button>
+          </div>
 
-          <div className="mt-12 grid grid-cols-2 gap-3">
+          <div className="mt-6 grid grid-cols-2 gap-3">
             {repos.length > 0 && (
               <div>
                 <h2 className="text-xl font-bold text-indigo-700">
@@ -135,8 +139,8 @@ export default function CampaignsDetails({
               </div>
             )}
           </div>
-        </div>
+        </>
       )}
-    </div>
+    </>
   );
 }

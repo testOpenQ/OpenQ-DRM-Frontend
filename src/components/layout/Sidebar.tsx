@@ -1,17 +1,16 @@
 import SidebarLink from "./SidebarLink";
 import RequestInfo from "../RequestInfo";
-import SidebarHeader from "./SidebarHeader";
 import {
   ArrowTopRightOnSquareIcon,
-  ArrowDownTrayIcon,
   UsersIcon,
   CodeBracketIcon,
   BookOpenIcon,
   InformationCircleIcon,
+  ChartPieIcon,
+  RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
 import { useLiveQuery } from "dexie-react-hooks";
 import { getCampaigns } from "~/db";
-import SidebarLinkSubmenu from "./SidebarLinkSubmenu";
 import SidebarDivider from "./SidebarDivider";
 import ConnectGithub from "../ConnectGithub";
 
@@ -22,16 +21,21 @@ export default function Sidebar() {
     <div className="flex w-[320px] flex-col bg-gray-800">
       <ConnectGithub />
       <RequestInfo />
-      <SidebarHeader label="Campaigns">
-        {campaigns?.map((campaign) => (
-          <SidebarLinkSubmenu
-            key={campaign.id}
-            href={`/campaigns/${campaign.id}`}
-          >
-            {campaign.name}
-          </SidebarLinkSubmenu>
-        ))}
-      </SidebarHeader>
+      <SidebarLink href="/">
+        <div className="mr-3 p-1.5">
+          <RectangleGroupIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
+        </div>
+        Overview
+      </SidebarLink>
+      <SidebarDivider />
+      {campaigns?.map((campaign) => (
+        <SidebarLink key={campaign.id} href={`/campaigns/${campaign.id}`}>
+          <div className="mr-3 p-1.5">
+            <ChartPieIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
+          </div>
+          {campaign.name}
+        </SidebarLink>
+      ))}
       <SidebarDivider />
       <SidebarLink href="/users">
         <div className="mr-3 p-1.5">

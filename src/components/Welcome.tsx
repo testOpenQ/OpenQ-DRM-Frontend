@@ -49,11 +49,9 @@ export default function Welcome() {
         <Button
           onClick={handleAddCampaign}
           disabled={campaignName.length === 0}
+          className="ml-auto"
         >
           Continue
-          <div className="ml-auto mr-1 transition-all group-hover:mr-0 group-disabled:mr-1">
-            →
-          </div>
         </Button>
       </div>
     </div>

@@ -1,30 +1,28 @@
 import CardScore from "./CardScore";
 
-function randomScore() {
-  return Math.floor(Math.random() * 5) + 1;
-}
-
-export default function CardScores() {
+export default function CardScores({
+  activity,
+  growth,
+  popularity,
+  reputation,
+}: {
+  activity: number;
+  growth: number;
+  popularity: number;
+  reputation: number;
+}) {
   return (
     <div className="flex flex-col items-end text-sm">
-      <CardScore
-        label="Activity"
-        score={randomScore()}
-        activeClass="bg-lime-500"
-      />
-      <CardScore
-        label="Growth"
-        score={randomScore()}
-        activeClass="bg-cyan-500"
-      />
+      <CardScore label="Activity" score={activity} activeClass="bg-lime-500" />
+      <CardScore label="Growth" score={growth} activeClass="bg-cyan-500" />
       <CardScore
         label="Popularity"
-        score={randomScore()}
+        score={popularity}
         activeClass="bg-violet-500"
       />
       <CardScore
         label="Reputation"
-        score={randomScore()}
+        score={reputation}
         activeClass="bg-rose-500"
       />
     </div>

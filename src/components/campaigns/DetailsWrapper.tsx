@@ -11,16 +11,9 @@ export default function Wrapper({ campaignId }: { campaignId: string }) {
 
   if (!campaign) return <>Campaign does not exist.</>;
 
-  return (
-    <div className="max-w-2xl">
-      {campaign &&
-        repos &&
-        users &&
-        (repos.length + users.length > 0 ? (
-          <Details campaignId={campaignId} repos={repos} users={users} />
-        ) : (
-          <FirstView campaignId={campaignId} />
-        ))}
-    </div>
+  return campaign && repos && users && repos.length + users.length > 0 ? (
+    <Details campaignId={campaignId} repos={repos} users={users} />
+  ) : (
+    <FirstView campaignId={campaignId} />
   );
 }

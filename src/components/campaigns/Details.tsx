@@ -29,7 +29,7 @@ export default function CampaignsDetails({
   if (!campaign) return <>Campaign does not exist.</>;
 
   return (
-    <div className="max-w-2xl">
+    <>
       <Headline>
         {campaign.name}
         <div className="ml-2">
@@ -44,28 +44,26 @@ export default function CampaignsDetails({
         </div>
       </Headline>
 
-      <div className="mt-12 space-y-12">
-        {repos.length > 0 && (
-          <div>
-            <h2 className="text-xl font-bold text-indigo-700">Repositories</h2>
-            <div className="space-y-3">
-              {repos.map((repo) => (
-                <RepoCard key={repo.id} repo={repo} />
-              ))}
-            </div>
+      {repos.length > 0 && (
+        <>
+          <h2 className="text-3xl font-bold text-indigo-700">Repositories</h2>
+          <div className="grap-6 my-6 grid grid-cols-2">
+            {repos.map((repo) => (
+              <RepoCard key={repo.id} repo={repo} />
+            ))}
           </div>
-        )}
-        {users.length > 0 && (
-          <div>
-            <h2 className="text-xl font-bold text-indigo-700">Users</h2>
-            <div className="list-inside list-disc">
-              {users.map((user) => (
-                <UserCard key={user.id} user={user} />
-              ))}
-            </div>
+        </>
+      )}
+      {users.length > 0 && (
+        <>
+          <h2 className="text-3xl font-bold text-indigo-700">Users</h2>
+          <div className="grap-6 my-6 grid grid-cols-2">
+            {users.map((user) => (
+              <UserCard key={user.id} user={user} />
+            ))}
           </div>
-        )}
-      </div>
-    </div>
+        </>
+      )}
+    </>
   );
 }

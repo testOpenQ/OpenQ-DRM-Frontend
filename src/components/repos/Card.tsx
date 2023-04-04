@@ -108,37 +108,40 @@ export default function Card({ repo }: { repo: Repo }) {
 
   if (!repo) return <>Repository does not exist.</>;
 
-  if (!repoScanResult)
-    return (
-      <div>
-        <div>No data fetched yet.</div>
-        <Button onClick={scan}>Scan</Button>
-      </div>
-    );
-
   return (
-    <div className="flex flex-col rounded-lg border border-gray-700 bg-gray-800 sm:flex-row">
-      <div className="flex flex-col border-b border-gray-700 sm:border-b-0 sm:border-r">
-        <CardMembers />
-        <div className="flex justify-center space-x-1 p-3 text-center text-xs">
-          <span>
-            {Object.keys(repoScanResult.commitsByAuthor).length} contributors
-          </span>
-          <span>•</span>
-          <span>
-            {numberFormatter.format(repoScanResult.commitCount)} commits
-          </span>
-          <span>•</span>
-          <span>
-            {numberFormatter.format(repoScanResult.linesChanged)} changes
-          </span>
+    <div className="flex flex-col rounded-lg bg-gray-800 sm:flex-row">
+      <div className="flex grow flex-col p-3">
+        <div className="mb-3 whitespace-nowrap font-bold">
+          {repo.owner}/{repo.name}
         </div>
-        <CardActivityChart />
+        {repoScanResult && (
+          <>
+            <CardMembers />
+            <div className="flex justify-center space-x-1 text-center text-xs">
+              <span>
+                {Object.keys(repoScanResult.commitsByAuthor).length}{" "}
+                contributors
+              </span>
+              <span>•</span>
+              <span>
+                {numberFormatter.format(repoScanResult.commitCount)} commits
+              </span>
+              <span>•</span>
+              <span>
+                {numberFormatter.format(repoScanResult.linesChanged)} changes
+              </span>
+            </div>
+            <CardActivityChart />
+          </>
+        )}
+        {!repoScanResult && (
+          <div className="flex grow items-center justify-center">
+            <Button className="w-full">Scan</Button>
+          </div>
+        )}
       </div>
-      <div className="px-5 py-3">
-        <div className="text-right font-bold">Submission to hackathon</div>
-        <div className="mb-3 text-right text-xs">OpenQDev/OpenQ-Frontend</div>
-        <CardScores />
+      <div className="flex-1 px-5 py-3">
+        <CardScores activity={3} growth={2} popularity={3} reputation={4} />
       </div>
     </div>
   );
