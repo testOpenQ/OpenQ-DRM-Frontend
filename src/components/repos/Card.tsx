@@ -14,6 +14,8 @@ import { Repo, addCommitSummary, getRepoCommitSummaries } from "~/db";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
 import useLocalStorage from "~/hooks/useLocalstorage";
+import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import DiscreetButton from "../base/DiscreetButton";
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
   notation: "compact",
@@ -144,8 +146,22 @@ export default function Card({ repo }: { repo: Repo }) {
 
   return (
     <div className="overflow-hidden rounded-lg bg-gray-800">
+      <div className="flex items-center justify-between bg-gray-900/50 px-3 py-2 font-bold">
+        <div>
+          {repo.owner}/{repo.name}
+        </div>
+        <div className="flex">
+          <DiscreetButton disabled={scanning} onClick={scan}>
+            {scanning && <LoadingSpinner className="h-3 w-3" />}
+            {!scanning && <ArrowPathIcon className="h-4 w-4" />}
+          </DiscreetButton>
+          <DiscreetButton>
+            <XMarkIcon className="h-4 w-4" />
+          </DiscreetButton>
+        </div>
+      </div>
       <div className="flex flex-col sm:flex-row">
-        <div className="flex grow flex-col">
+        <div className="flex grow flex-col items-center justify-center">
           {repoScanResult && <CardMembers />}
           {!repoScanResult && (
             <div className="flex grow items-center justify-center px-12">
@@ -161,7 +177,7 @@ export default function Card({ repo }: { repo: Repo }) {
       </div>
       {repoScanResult && (
         <div className="mb-1 bg-gray-900/50 pt-3">
-          <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs">
+          <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs text-gray-400">
             <div>
               {numberFormatter.format(repoScanResult.commitCount)} commits
               <div className="mr-2 mt-1 h-1 w-full rounded-full bg-white"></div>

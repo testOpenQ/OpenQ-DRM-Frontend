@@ -2,7 +2,7 @@ import CardMember from "./CardMember";
 
 export default function CardMembers() {
   return (
-    <div className="flex items-center justify-center -space-x-3 px-5 pt-3">
+    <div className="flex items-center justify-center -space-x-3 p-3">
       <CardMember
         avatarUrl="https://avatars.githubusercontent.com/u/75732239"
         className="z-10 h-12 w-12"

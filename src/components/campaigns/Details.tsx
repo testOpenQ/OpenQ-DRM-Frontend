@@ -1,11 +1,18 @@
 import { Repo, User, deleteCampaign, getCampaign } from "~/db";
 import { useLiveQuery } from "dexie-react-hooks";
 import Button from "../base/Button";
-import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
+import {
+  TrashIcon,
+  PencilIcon,
+  PlusIcon,
+  UserIcon,
+  CodeBracketIcon,
+} from "@heroicons/react/24/outline";
 import Headline from "../layout/Headline";
 import { useRouter } from "next/router";
 import RepoCard from "../repos/Card";
 import UserCard from "../users/Card";
+import DiscreetButton from "../base/DiscreetButton";
 
 export default function CampaignsDetails({
   campaignId,
@@ -33,14 +40,26 @@ export default function CampaignsDetails({
       <Headline>
         {campaign.name}
         <div className="ml-2">
-          <Button className="!bg-transparent hover:!bg-gray-800">
-            <PencilIcon className="h-5 w-5 text-indigo-700 transition-all group-hover:text-indigo-600" />
-          </Button>
+          <DiscreetButton className="!bg-transparent hover:!bg-gray-800">
+            <PencilIcon className="h-5 w-5" />
+          </DiscreetButton>
         </div>
-        <div className="ml-auto">
-          <Button onClick={() => handleDeleteCampaign(campaign.id)}>
-            <TrashIcon className="h-5 w-5 transition-all" />
-          </Button>
+        <div className="ml-auto flex">
+          <DiscreetButton onClick={() => handleDeleteCampaign(campaign.id)}>
+            <UserIcon className="mr-2 h-5 w-5" />
+            add user
+          </DiscreetButton>
+          <DiscreetButton onClick={() => handleDeleteCampaign(campaign.id)}>
+            <CodeBracketIcon className="mr-2 h-5 w-5" />
+            add repository
+          </DiscreetButton>
+          <DiscreetButton
+            onClick={() => handleDeleteCampaign(campaign.id)}
+            className="hover:!bg-red-700"
+          >
+            <TrashIcon className="mr-2 h-5 w-5" />
+            delete campaign
+          </DiscreetButton>
         </div>
       </Headline>
 
@@ -49,12 +68,7 @@ export default function CampaignsDetails({
           <h2 className="text-3xl font-bold text-indigo-700">Repositories</h2>
           <div className="my-6 grid grid-cols-1 gap-3 xl:grid-cols-2">
             {repos.map((repo) => (
-              <div key={repo.id}>
-                <div className="mb-1 font-bold">
-                  {repo.owner}/{repo.name}
-                </div>
-                <RepoCard repo={repo} />
-              </div>
+              <RepoCard key={repo.id} repo={repo} />
             ))}
           </div>
         </>

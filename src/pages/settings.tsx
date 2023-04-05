@@ -18,9 +18,9 @@ const Settings: NextPage = () => {
         <title>OpenQ DRM - Settings</title>
       </Head>
       <Headline>Settings</Headline>
-      <div className="flex">
+      <div className="mt-6 flex">
         <div>
-          <h1 className="text-3xl font-bold text-indigo-700">ChatGPT</h1>
+          <h1 className="mb-3 text-3xl font-bold text-indigo-700">ChatGPT</h1>
           <p className="text-xl text-gray-400">
             &ldquo;Unlock valuable insights on your projects' progress with our
             pre-defined ChatGPT prompts! Get ready to elevate your analysis
@@ -30,7 +30,9 @@ const Settings: NextPage = () => {
             ChatGPT 4, Apr 5<sup>th</sup> 2023
           </div>
 
-          <h1 className="mt-12 text-3xl font-bold text-indigo-700">GitHub</h1>
+          <h1 className="mt-12 mb-3 text-3xl font-bold text-indigo-700">
+            GitHub
+          </h1>
           <p className="mb-3 text-xl text-gray-400">
             Your GitHub account <span className="italic">{user.name}</span>{" "}
             serves as a means to access information from GitHub. However, please
@@ -49,7 +51,7 @@ const Settings: NextPage = () => {
             restrictions.
           </p>
 
-          <h1 className="mt-12 text-3xl font-bold text-indigo-700">
+          <h1 className="mt-12 mb-3 text-3xl font-bold text-indigo-700">
             Data Storage
           </h1>
           <p className="mb-3 text-xl text-gray-400">
@@ -60,7 +62,9 @@ const Settings: NextPage = () => {
             our pro plan and store it on our servers too.
           </p>
 
-          <h1 className="mt-12 text-3xl font-bold text-indigo-700">Alerts</h1>
+          <h1 className="mt-12 mb-3 text-3xl font-bold text-indigo-700">
+            Alerts
+          </h1>
           <p className="mb-3 text-xl text-gray-400">
             Set up alerts to receive notifications when certain events occur,
             like significant changes in the average activity in a repository.

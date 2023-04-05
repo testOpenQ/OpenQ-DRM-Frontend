@@ -3,6 +3,7 @@ import Image from "next/image";
 import Button from "./base/Button";
 import { Cog6ToothIcon, PowerIcon } from "@heroicons/react/24/outline";
 import Link from "next/link";
+import DiscreetButton from "./base/DiscreetButton";
 
 export default function ConnectGithub() {
   const { data: session, status } = useSession();
@@ -32,16 +33,16 @@ export default function ConnectGithub() {
         </div>
         <div className="absolute top-0 left-0 right-0 flex justify-between p-3">
           <Link href="/settings">
-            <Button className="!bg-gray-800 text-opacity-20 hover:!bg-gray-700 hover:text-opacity-100">
+            <DiscreetButton>
               <Cog6ToothIcon className="h-5 w-5" />
-            </Button>
+            </DiscreetButton>
           </Link>
-          <Button
+          <DiscreetButton
             className="!bg-gray-800 text-opacity-20 hover:!bg-gray-700 hover:text-opacity-100"
             onClick={handleSignOut}
           >
             <PowerIcon className="h-5 w-5" />
-          </Button>
+          </DiscreetButton>
         </div>
       </div>
     );
