@@ -142,7 +142,9 @@ export default function Card({ user }: { user: User }) {
       )}
       {!userScanResult && (
         <div className="flex grow items-center justify-center">
-          <Button className="w-full">Scan</Button>
+          <Button className="w-full" onClick={scan}>
+            Scan
+          </Button>
         </div>
       )}
     </div>
