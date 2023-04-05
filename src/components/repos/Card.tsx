@@ -12,6 +12,7 @@ import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import { Repo } from "~/db";
 import Button from "../base/Button";
+import LoadingSpinner from "../LoadingSpinner";
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
   notation: "compact",
@@ -162,16 +163,22 @@ export default function Card({ repo }: { repo: Repo }) {
       )}
       <div className="text-xs">
         {generatingSummary && (
-          <div className="p-3 text-center">Generating summary...</div>
+          <div className="flex items-center justify-center p-3 text-gray-300">
+            <LoadingSpinner className="mr-2 h-3 w-3" />
+            Generating summary...
+          </div>
         )}
         {commitSummary && (
           <div className="p-3">
-            <div className="mb-2 text-xs font-bold">
-              This summary was generated automatically. The information might
-              not be accurate but indicates the workload and general direction
-              of the project.
-            </div>
             <div className="leading-normal text-gray-300">{commitSummary}</div>
+            <div className="mt-2 text-xs font-bold">
+              This summary was generated automatically. It might not be
+              absolutely perfect but indicates the workload and general
+              direction of the project.{" "}
+              <a href="#" className="font-normal text-indigo-400">
+                Got it! Don't show this message any more.
+              </a>
+            </div>
           </div>
         )}
       </div>
