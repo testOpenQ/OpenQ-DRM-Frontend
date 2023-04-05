@@ -49,17 +49,17 @@ export default function Card({ repo }: { repo: Repo }) {
 
   useEffect(() => {
     getLatestRepoScan(repo.owner, repo.name, since, until)
-      .then((latestUserScan) => {
-        if (latestUserScan) {
-          if (latestUserScan.data.repository) {
-            setRepoScanResult(evaluateRepoData(latestUserScan.data.repository));
+      .then((latestRepoScan) => {
+        if (latestRepoScan) {
+          if (latestRepoScan.data.repository) {
+            setRepoScanResult(evaluateRepoData(latestRepoScan.data.repository));
           }
-          if (!latestUserScan.done && accessToken) {
+          if (!latestRepoScan.done && accessToken) {
             const scanner = new Scanner({ viewerToken: accessToken });
 
             setScanning(true);
             scanner
-              .scanContinue<{ repo: RepoData }>(latestUserScan.id)(
+              .scanContinue<{ repo: RepoData }>(latestRepoScan.id)(
                 (data, paginators) => {
                   setRepoScanResult(evaluateRepoData(data.repo));
 
