@@ -47,7 +47,7 @@ export default function CampaignsDetails({
       {repos.length > 0 && (
         <>
           <h2 className="text-3xl font-bold text-indigo-700">Repositories</h2>
-          <div className="grap-6 my-6 grid grid-cols-2">
+          <div className="my-6 grid grid-cols-1 gap-3 xl:grid-cols-2">
             {repos.map((repo) => (
               <RepoCard key={repo.id} repo={repo} />
             ))}
@@ -57,7 +57,7 @@ export default function CampaignsDetails({
       {users.length > 0 && (
         <>
           <h2 className="text-3xl font-bold text-indigo-700">Users</h2>
-          <div className="grap-6 my-6 grid grid-cols-2">
+          <div className="my-6 grid grid-cols-1 gap-3 xl:grid-cols-2">
             {users.map((user) => (
               <UserCard key={user.id} user={user} />
             ))}
