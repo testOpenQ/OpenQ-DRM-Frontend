@@ -126,36 +126,12 @@ export default function Card({ repo }: { repo: Repo }) {
   if (!repo) return <>Repository does not exist.</>;
 
   return (
-    <div className="rounded-lg bg-gray-800">
+    <div className="overflow-hidden rounded-lg bg-gray-800">
       <div className="flex flex-col sm:flex-row">
         <div className="flex grow flex-col">
-          {repoScanResult && (
-            <>
-              <CardMembers />
-              <div className="flex justify-center space-x-1 text-center text-xs">
-                <span>
-                  {Object.keys(repoScanResult.commitsByAuthor).length}{" "}
-                  contributors
-                </span>
-                <span>•</span>
-                <span>
-                  {numberFormatter.format(repoScanResult.commitCount)} commits
-                </span>
-                <span>•</span>
-                <span>
-                  {numberFormatter.format(repoScanResult.linesChanged)} changes
-                </span>
-              </div>
-              <div className="mt-auto">
-                <CardActivityChart
-                  commitsByDay={repoScanResult.commitsByDay}
-                  commitsByDayNormalized={repoScanResult.commitsByDayNormalized}
-                />
-              </div>
-            </>
-          )}
+          {repoScanResult && <CardMembers />}
           {!repoScanResult && (
-            <div className="flex grow items-center justify-center">
+            <div className="flex grow items-center justify-center px-12">
               <Button className="w-full" onClick={scan}>
                 Scan
               </Button>
@@ -166,6 +142,24 @@ export default function Card({ repo }: { repo: Repo }) {
           <CardScores activity={3} growth={2} popularity={3} reputation={4} />
         </div>
       </div>
+      {repoScanResult && (
+        <div className="mb-1 bg-gray-900/50 pt-3">
+          <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs">
+            <div>
+              {numberFormatter.format(repoScanResult.commitCount)} commits
+              <div className="mr-2 mt-1 h-1 w-full rounded-full bg-white"></div>
+            </div>
+            <div>
+              {numberFormatter.format(repoScanResult.linesChanged)} changes
+              <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-gray-400"></div>
+            </div>
+          </div>
+          <CardActivityChart
+            commitsByDay={repoScanResult.commitsByDay}
+            commitsByDayNormalized={repoScanResult.commitsByDayNormalized}
+          />
+        </div>
+      )}
       <div className="text-xs">
         {generatingSummary && (
           <div className="p-3 text-center">Generating summary...</div>
@@ -177,7 +171,7 @@ export default function Card({ repo }: { repo: Repo }) {
               not be accurate but indicates the workload and general direction
               of the project.
             </div>
-            <div>{commitSummary}</div>
+            <div className="leading-normal text-gray-300">{commitSummary}</div>
           </div>
         )}
       </div>

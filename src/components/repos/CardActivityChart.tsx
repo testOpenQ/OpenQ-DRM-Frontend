@@ -32,25 +32,23 @@ function prepareChartData(
     datasets: [
       {
         data: commits,
-        backgroundColor: "rgba(0, 255, 0, 0.05)",
-        borderColor: "green",
-        borderWidth: 2,
+        borderColor: "white",
+        borderWidth: 3,
         pointBorderWidth: 0,
         pointRadius: 0,
         pointHoverRadius: 0,
         fill: true,
-        tension: 0.2,
+        tension: 0.4,
       },
       {
         data: linesChanged,
-        backgroundColor: "rgba(255, 0, 0, 0.05)",
-        borderColor: "red",
+        borderColor: "gray",
         borderWidth: 2,
         pointBorderWidth: 0,
         pointRadius: 0,
         pointHoverRadius: 0,
         fill: true,
-        tension: 0.2,
+        tension: 0.4,
       },
     ],
   };
@@ -76,7 +74,7 @@ export default function CardActivityChart({
     commitsByDayNormalized
   );
   const options: ChartOptions<"line"> = {
-    aspectRatio: 7,
+    aspectRatio: 15,
     layout: {
       padding: {
         top: 5,
