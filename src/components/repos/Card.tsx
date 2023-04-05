@@ -128,7 +128,7 @@ export default function Card({ repo }: { repo: Repo }) {
   return (
     <div className="rounded-lg bg-gray-800">
       <div className="flex flex-col sm:flex-row">
-        <div className="flex grow flex-col p-3">
+        <div className="flex grow flex-col">
           {repoScanResult && (
             <>
               <CardMembers />
@@ -146,7 +146,12 @@ export default function Card({ repo }: { repo: Repo }) {
                   {numberFormatter.format(repoScanResult.linesChanged)} changes
                 </span>
               </div>
-              <CardActivityChart />
+              <div className="mt-auto">
+                <CardActivityChart
+                  commitsByDay={repoScanResult.commitsByDay}
+                  commitsByDayNormalized={repoScanResult.commitsByDayNormalized}
+                />
+              </div>
             </>
           )}
           {!repoScanResult && (
@@ -161,19 +166,19 @@ export default function Card({ repo }: { repo: Repo }) {
           <CardScores activity={3} growth={2} popularity={3} reputation={4} />
         </div>
       </div>
-      <div className="p-3 text-xs">
+      <div className="text-xs">
         {generatingSummary && (
-          <div className="text-center">Generating summary...</div>
+          <div className="p-3 text-center">Generating summary...</div>
         )}
         {commitSummary && (
-          <>
+          <div className="p-3">
             <div className="mb-2 text-xs font-bold">
               This summary was generated automatically. The information might
               not be accurate but indicates the workload and general direction
               of the project.
             </div>
             <div>{commitSummary}</div>
-          </>
+          </div>
         )}
       </div>
     </div>
