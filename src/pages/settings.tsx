@@ -49,9 +49,8 @@ const Settings: NextPage = () => {
 
         <h1 className="mt-12 text-3xl font-bold text-indigo-700">Alerts</h1>
         <p className="mb-3 text-xl text-gray-400">
-          Set up alerts to receive notifications when certain events occur. For
-          example, you can set up an alert to notify you when the average
-          activity in a repository changes significantly.
+          Set up alerts to receive notifications when certain events occur, like
+          significant changes in the average activity in a repository.
         </p>
         <Button className="mx-auto mt-6 flex flex-col">
           <div>Upgrade to Pro Plan</div>
