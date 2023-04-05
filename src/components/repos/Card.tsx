@@ -26,6 +26,8 @@ export default function Card({ repo }: { repo: Repo }) {
   const [repoScanResult, setRepoScanResult] = useState<RepoEvaluation | null>(
     null
   );
+  const [commitSummary, setCommitSummary] = useState<string>("");
+  const [generatingSummary, setGeneratingSummary] = useState(false);
   const [progress, setProgress] = useState<{
     requestCount: number;
     remainingRequests: number;
@@ -90,8 +92,11 @@ export default function Card({ repo }: { repo: Repo }) {
     const scan = scanner.scanRepo(repo.owner, repo.name, since, until);
 
     setScanning(true);
+    let rawCommits: any[] = [];
     scan((data, paginators) => {
       setRepoScanResult(evaluateRepoData(data.repository));
+
+      rawCommits = data.repository.defaultBranchRef.target.history.nodes;
 
       const requestCount = Math.max(...paginators.map((p) => p.requestCount));
       const remainingRequests = Math.max(
@@ -103,45 +108,76 @@ export default function Card({ repo }: { repo: Repo }) {
       .finally(() => {
         setScanning(false);
         setProgress(null);
+
+        setGeneratingSummary(true);
+
+        fetch("/api/commit-summary", {
+          method: "POST",
+          body: JSON.stringify({ commits: rawCommits }),
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            setCommitSummary(data.summary);
+            setGeneratingSummary(false);
+          });
       });
   }
 
   if (!repo) return <>Repository does not exist.</>;
 
   return (
-    <div className="flex flex-col rounded-lg bg-gray-800 sm:flex-row">
-      <div className="flex grow flex-col p-3">
-        <div className="mb-3 whitespace-nowrap font-bold">
-          {repo.owner}/{repo.name}
-        </div>
-        {repoScanResult && (
-          <>
-            <CardMembers />
-            <div className="flex justify-center space-x-1 text-center text-xs">
-              <span>
-                {Object.keys(repoScanResult.commitsByAuthor).length}{" "}
-                contributors
-              </span>
-              <span>•</span>
-              <span>
-                {numberFormatter.format(repoScanResult.commitCount)} commits
-              </span>
-              <span>•</span>
-              <span>
-                {numberFormatter.format(repoScanResult.linesChanged)} changes
-              </span>
+    <div className="rounded-lg bg-gray-800">
+      <div className="flex flex-col sm:flex-row">
+        <div className="flex grow flex-col p-3">
+          <div className="mb-3 whitespace-nowrap font-bold">
+            {repo.owner}/{repo.name}
+          </div>
+          {repoScanResult && (
+            <>
+              <CardMembers />
+              <div className="flex justify-center space-x-1 text-center text-xs">
+                <span>
+                  {Object.keys(repoScanResult.commitsByAuthor).length}{" "}
+                  contributors
+                </span>
+                <span>•</span>
+                <span>
+                  {numberFormatter.format(repoScanResult.commitCount)} commits
+                </span>
+                <span>•</span>
+                <span>
+                  {numberFormatter.format(repoScanResult.linesChanged)} changes
+                </span>
+              </div>
+              <CardActivityChart />
+            </>
+          )}
+          {!repoScanResult && (
+            <div className="flex grow items-center justify-center">
+              <Button className="w-full" onClick={scan}>
+                Scan
+              </Button>
             </div>
-            <CardActivityChart />
+          )}
+        </div>
+        <div className="flex-1 px-5 py-3">
+          <CardScores activity={3} growth={2} popularity={3} reputation={4} />
+        </div>
+      </div>
+      <div className="p-3 text-xs">
+        {generatingSummary && (
+          <div className="text-center">Generating summary...</div>
+        )}
+        {commitSummary && (
+          <>
+            <div className="mb-2 text-xs font-bold">
+              This summary was generated automatically. The information might
+              not be accurate but indicates the workload and general direction
+              of the project.
+            </div>
+            <div>{commitSummary}</div>
           </>
         )}
-        {!repoScanResult && (
-          <div className="flex grow items-center justify-center">
-            <Button className="w-full">Scan</Button>
-          </div>
-        )}
-      </div>
-      <div className="flex-1 px-5 py-3">
-        <CardScores activity={3} growth={2} popularity={3} reputation={4} />
       </div>
     </div>
   );
