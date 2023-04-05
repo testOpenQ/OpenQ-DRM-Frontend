@@ -129,9 +129,6 @@ export default function Card({ repo }: { repo: Repo }) {
     <div className="rounded-lg bg-gray-800">
       <div className="flex flex-col sm:flex-row">
         <div className="flex grow flex-col p-3">
-          <div className="mb-3 whitespace-nowrap font-bold">
-            {repo.owner}/{repo.name}
-          </div>
           {repoScanResult && (
             <>
               <CardMembers />

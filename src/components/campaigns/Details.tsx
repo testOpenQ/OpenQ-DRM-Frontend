@@ -49,7 +49,12 @@ export default function CampaignsDetails({
           <h2 className="text-3xl font-bold text-indigo-700">Repositories</h2>
           <div className="my-6 grid grid-cols-1 gap-3 xl:grid-cols-2">
             {repos.map((repo) => (
-              <RepoCard key={repo.id} repo={repo} />
+              <div key={repo.id}>
+                <div className="mb-1 font-bold">
+                  {repo.owner}/{repo.name}
+                </div>
+                <RepoCard repo={repo} />
+              </div>
             ))}
           </div>
         </>
