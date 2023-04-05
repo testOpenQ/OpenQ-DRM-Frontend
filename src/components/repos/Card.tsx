@@ -13,6 +13,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Repo, addCommitSummary, getRepoCommitSummaries } from "~/db";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
+import useLocalStorage from "~/hooks/useLocalstorage";
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
   notation: "compact",
@@ -22,6 +23,11 @@ const numberFormatter = new Intl.NumberFormat("en-US", {
 export default function Card({ repo }: { repo: Repo }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
+
+  const [showCommitSummaryInfo, setShowCommitSummaryInfo] = useLocalStorage(
+    "ui.info.commit-summary",
+    true
+  );
 
   const [scanning, setScanning] = useState(false);
   const [repoScanResult, setRepoScanResult] = useState<RepoEvaluation | null>(
@@ -130,6 +136,10 @@ export default function Card({ repo }: { repo: Repo }) {
       });
   }
 
+  function handleHideMessage() {
+    setShowCommitSummaryInfo(false);
+  }
+
   if (!repo) return <>Repository does not exist.</>;
 
   return (
@@ -177,14 +187,20 @@ export default function Card({ repo }: { repo: Repo }) {
         {commitSummary && (
           <div className="p-3">
             <div className="leading-normal text-gray-300">{commitSummary}</div>
-            <div className="mt-2 text-xs font-bold">
-              This summary was generated automatically. It might not be
-              absolutely perfect but indicates the workload and general
-              direction of the project.{" "}
-              <a href="#" className="font-normal text-indigo-400">
-                Got it! Don't show this message any more.
-              </a>
-            </div>
+            {showCommitSummaryInfo && (
+              <div className="mt-2 text-xs font-bold">
+                This summary was generated automatically. It might not be
+                absolutely perfect but indicates the workload and general
+                direction of the project.{" "}
+                <a
+                  href="#"
+                  className="font-normal text-indigo-400"
+                  onClick={handleHideMessage}
+                >
+                  Got it! Don't show this message any more.
+                </a>
+              </div>
+            )}
           </div>
         )}
       </div>
