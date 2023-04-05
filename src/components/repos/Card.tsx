@@ -14,7 +14,12 @@ import { Repo, addCommitSummary, getRepoCommitSummaries } from "~/db";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
 import useLocalStorage from "~/hooks/useLocalstorage";
-import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  ChevronDownIcon,
+  ChevronUpIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import DiscreetButton from "../base/DiscreetButton";
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
@@ -37,6 +42,8 @@ export default function Card({ repo }: { repo: Repo }) {
   );
   const [commitSummary, setCommitSummary] = useState<string>("");
   const [generatingSummary, setGeneratingSummary] = useState(false);
+  const [showCommitSummary, setShowCommitSummary] = useState(false);
+
   const [progress, setProgress] = useState<{
     requestCount: number;
     remainingRequests: number;
@@ -145,7 +152,7 @@ export default function Card({ repo }: { repo: Repo }) {
   if (!repo) return <>Repository does not exist.</>;
 
   return (
-    <div className="overflow-hidden rounded-lg bg-gray-800">
+    <div className="mb-auto overflow-hidden rounded-lg bg-gray-800">
       <div className="flex items-center justify-between bg-gray-900/50 px-3 py-2 font-bold">
         <div>
           {repo.owner}/{repo.name}
@@ -195,29 +202,52 @@ export default function Card({ repo }: { repo: Repo }) {
       )}
       <div className="text-xs">
         {generatingSummary && (
-          <div className="flex items-center justify-center p-3 text-gray-300">
-            <LoadingSpinner className="mr-2 h-3 w-3" />
+          <div className="flex items-center justify-center px-3 py-2 text-gray-300">
+            <LoadingSpinner className="mr-2 !h-3 !w-3" />
             Generating summary...
           </div>
         )}
-        {commitSummary && (
-          <div className="p-3">
-            <div className="leading-normal text-gray-300">{commitSummary}</div>
-            {showCommitSummaryInfo && (
-              <div className="mt-2 text-xs font-bold">
-                This summary was generated automatically. It might not be
-                absolutely perfect but indicates the workload and general
-                direction of the project.{" "}
-                <a
-                  href="#"
-                  className="font-normal text-indigo-400"
-                  onClick={handleHideMessage}
+        {!generatingSummary && commitSummary && (
+          <>
+            {showCommitSummary && (
+              <>
+                <div className="p-3">
+                  <div className="leading-normal text-gray-300">
+                    {commitSummary}
+                  </div>
+                  {showCommitSummaryInfo && (
+                    <div className="mt-2 text-xs font-bold">
+                      This summary was generated automatically. It might not be
+                      absolutely perfect but indicates the workload and general
+                      direction of the project.{" "}
+                      <a
+                        href="#"
+                        className="font-normal text-indigo-400"
+                        onClick={handleHideMessage}
+                      >
+                        Got it! Don't show this message any more.
+                      </a>
+                    </div>
+                  )}
+                </div>
+                <DiscreetButton
+                  className="w-full rounded-t-none"
+                  onClick={() => setShowCommitSummary(false)}
                 >
-                  Got it! Don't show this message any more.
-                </a>
-              </div>
+                  <ChevronUpIcon className="!h-4 !w-4" />
+                </DiscreetButton>
+              </>
             )}
-          </div>
+
+            {!showCommitSummary && (
+              <DiscreetButton
+                className="w-full rounded-t-none"
+                onClick={() => setShowCommitSummary(true)}
+              >
+                <ChevronDownIcon className="!h-4 !w-4" />
+              </DiscreetButton>
+            )}
+          </>
         )}
       </div>
     </div>
