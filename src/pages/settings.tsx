@@ -13,10 +13,14 @@ const Settings: NextPage = () => {
       <div className="max-w-3xl">
         <Headline>Settings</Headline>
         <h1 className="text-3xl font-bold text-indigo-700">ChatGPT</h1>
-        <p className="mb-3 text-xl text-gray-400">
-          Unlock valuable insights on your projects' progress with our
-          pre-defined ChatGPT prompts! Get ready to elevate your analysis game!
+        <p className="text-xl text-gray-400">
+          &ldquo;Unlock valuable insights on your projects' progress with our
+          pre-defined ChatGPT prompts! Get ready to elevate your analysis
+          game!&rdquo;
         </p>
+        <div className="mb-3 text-right italic text-gray-600">
+          ChatGPT 4, Apr 5<sup>th</sup> 2023
+        </div>
         <Button className="mx-auto mt-6 flex flex-col">
           <div>Upgrade to Pro Plan</div>
           <div className="font-normal text-indigo-300">($50/mth)</div>
