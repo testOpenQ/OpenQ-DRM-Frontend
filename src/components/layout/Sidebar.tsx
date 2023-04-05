@@ -18,7 +18,7 @@ export default function Sidebar() {
   const campaigns = useLiveQuery(getCampaigns);
 
   return (
-    <div className="flex w-[320px] flex-col bg-gray-800">
+    <div className="flex w-[320px] flex-col whitespace-nowrap bg-gray-800">
       <ConnectGithub />
       <RequestInfo />
       <SidebarLink href="/">
