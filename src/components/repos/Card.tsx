@@ -10,7 +10,7 @@ import CardMembers from "./CardMembers";
 import CardScores from "./CardScores";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
-import { Repo } from "~/db";
+import { Repo, addCommitSummary, getRepoCommitSummaries } from "~/db";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
 
@@ -49,6 +49,11 @@ export default function Card({ repo }: { repo: Repo }) {
   }, []);
 
   useEffect(() => {
+    getRepoCommitSummaries(repo.id).then((summaries) => {
+      if (summaries[0]) {
+        setCommitSummary(summaries[0].summary);
+      }
+    });
     getLatestRepoScan(repo.owner, repo.name, since, until)
       .then((latestRepoScan) => {
         if (latestRepoScan) {
@@ -120,6 +125,7 @@ export default function Card({ repo }: { repo: Repo }) {
           .then((data) => {
             setCommitSummary(data.summary);
             setGeneratingSummary(false);
+            addCommitSummary({ repoId: repo.id, summary: data.summary });
           });
       });
   }

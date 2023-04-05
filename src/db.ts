@@ -9,6 +9,19 @@ export interface Campaign extends CampaignModel {
   id: number;
 }
 
+export interface CommitSummaryModel {
+  id?: number;
+  repoId?: number;
+  userId?: number;
+  since?: string;
+  until?: string;
+  summary: string;
+}
+
+export interface CommitSummary extends CommitSummaryModel {
+  id: number;
+}
+
 export interface RepoModel {
   id?: number;
   name: string;
@@ -34,6 +47,7 @@ export class Db extends Dexie {
   campaigns!: Table<CampaignModel, number>;
   repos!: Table<RepoModel, number>;
   users!: Table<UserModel, number>;
+  commitSummaries!: Table<CommitSummaryModel, number>;
 
   constructor() {
     super(`openq-drm`);
@@ -41,6 +55,7 @@ export class Db extends Dexie {
       campaigns: `++id, name`,
       repos: `++id, name, owner, campaignId`,
       users: `++id, login, campaignId`,
+      commitSummaries: `++id, repoId, userId`,
     });
   }
 }
@@ -101,4 +116,20 @@ export async function addUser(user: UserModel) {
 
 export function deleteUser(id: number | string) {
   return db.users.delete(Number(id));
+}
+
+export function getRepoCommitSummaries(repoId: number) {
+  return db.commitSummaries.where({ repoId }).toArray() as Promise<
+    CommitSummary[]
+  >;
+}
+
+export function getUserCommitSummaries(userId: number) {
+  return db.commitSummaries.where({ userId }).toArray() as Promise<
+    CommitSummary[]
+  >;
+}
+
+export function addCommitSummary(commitSummary: CommitSummaryModel) {
+  return db.commitSummaries.add(commitSummary);
 }
