@@ -50,11 +50,9 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const tokenCount = countTokens(commitsText);
 
     if (tokenCount > MAX_TOKENS) {
-      res
-        .status(400)
-        .json({
-          error: `Too many tokens (${tokenCount}). Please provide fewer commits.`,
-        });
+      res.status(400).json({
+        error: `Too many tokens (${tokenCount}). Please provide fewer commits.`,
+      });
       return;
     }
 
@@ -72,8 +70,8 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     const completion = await openai.createChatCompletion({
       model: "gpt-3.5-turbo",
       messages,
-      max_tokens: 512,
-      temperature: 0.8,
+      max_tokens: 384,
+      temperature: 0.3,
     });
 
     const summary = completion.data.choices[0]?.message?.content;

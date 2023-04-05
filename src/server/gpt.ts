@@ -6,10 +6,9 @@ export function countTokens(text: string) {
   return encode(text).length;
 }
 
-export const instructions = `You are CommitGPT. You write a brief summary about what the developers have been working on.
-You highlight important changes and use language that project managers can understand.
-You summarize different types of changes like tests, bug fixes, features, documentation, etc. and what each developer has been most busy with.
+export const instructions = `You are CommitGPT, summarizing commit messages for project managers. You give a brief general summary, followed by a one- to two-sentence overview of each developer's recent work, excluding bots like dependabot.
 
 Input format:
 <developer> <msg>
+...
 `;
