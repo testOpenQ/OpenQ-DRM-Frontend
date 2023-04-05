@@ -5858,15 +5858,15 @@ DexiePromise.rejectionMapper = mapError;
 setDebug(debug, dexieStackFrameFilter);
 
 var name = "@mktcodelib/github-insights";
-var version = "0.12.0";
+var version = "0.12.1";
 var description = "Utilities to fetch and evaluate GitHub data.";
 var main = "dist/index.js";
 var module$1 = "dist/index.mjs";
 var types = "dist/index.d.ts";
 var scripts = {
   test: "jest",
-  build: "tsup src/index.ts --format esm,cjs --dts && npm run build:worker",
-  "build:worker": "rollup -c rollup.config.mjs",
+  build:
+    "tsup src/index.ts --format esm,cjs --dts && rollup -c rollup.config.mjs",
   lint: "eslint .",
 };
 var keywords = [];
