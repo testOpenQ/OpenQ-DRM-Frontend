@@ -296,11 +296,11 @@ export default function Card({ repo }: { repo: Repo }) {
                     __html: commitSummary
                       .replace(
                         /(critical|severe|serious|bugs?|hot[ -]?fix|urgent)/gi,
-                        '<strong class="text-red-500">$1</strong>'
+                        '<strong class="text-red-300">$1</strong>'
                       )
                       .replace(
                         /(feature(s)?|fix(e[sd])?|design|test(s)?|terms of use|terms of service|licen[sc]e)/gi,
-                        '<strong class="text-indigo-500">$1</strong>'
+                        '<strong class="text-indigo-300">$1</strong>'
                       ),
                   }}
                 />
