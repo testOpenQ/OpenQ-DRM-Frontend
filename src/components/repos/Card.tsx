@@ -8,7 +8,7 @@ import {
 import CardActivityChart from "./CardActivityChart";
 import CardMembers from "./CardMembers";
 import CardScores from "./CardScores";
-import { useSession } from "next-auth/react";
+import { signIn, useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import {
   Repo,
@@ -158,6 +158,10 @@ export default function Card({ repo }: { repo: Repo }) {
     deleteRepo(repo.id);
   }
 
+  function handleSignIn() {
+    signIn("github").catch(console.error);
+  }
+
   if (!repo) return <>Repository does not exist.</>;
 
   return (
@@ -167,10 +171,12 @@ export default function Card({ repo }: { repo: Repo }) {
           {repo.owner}/{repo.name}
         </div>
         <div className="flex">
-          <DiscreetButton disabled={scanning} onClick={scan}>
-            {scanning && <LoadingSpinner className="!h-4 !w-4" />}
-            {!scanning && <ArrowPathIcon className="h-4 w-4" />}
-          </DiscreetButton>
+          {accessToken && repoScanResult && (
+            <DiscreetButton disabled={scanning} onClick={scan}>
+              {scanning && <LoadingSpinner className="!h-4 !w-4" />}
+              {!scanning && <ArrowPathIcon className="h-4 w-4" />}
+            </DiscreetButton>
+          )}
           <DiscreetButton>
             <XMarkIcon className="h-4 w-4" onClick={handleDeleteRepo} />
           </DiscreetButton>
@@ -181,9 +187,17 @@ export default function Card({ repo }: { repo: Repo }) {
           {repoScanResult && <CardMembers />}
           {!repoScanResult && (
             <div className="flex grow items-center justify-center px-12">
-              <Button className="w-full" onClick={scan}>
-                Scan
-              </Button>
+              {accessToken && (
+                <Button className="w-full" onClick={scan}>
+                  {scanning && <LoadingSpinner className="mr-2" />}
+                  scan repository
+                </Button>
+              )}
+              {!accessToken && (
+                <Button className="w-full" onClick={handleSignIn}>
+                  Connect to GitHub
+                </Button>
+              )}
             </div>
           )}
         </div>

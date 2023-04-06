@@ -1,18 +1,16 @@
 import { addRepo, addUser, deleteCampaign, getCampaign } from "~/db";
+import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import Button from "../base/Button";
 import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
 import GithubSearch from "../layout/GithubSearch";
 import Textarea from "../base/Textarea";
-import { useState } from "react";
 import Headline from "../layout/Headline";
 import { useRouter } from "next/router";
+import DiscreetButton from "../base/DiscreetButton";
+import Link from "next/link";
 
-export default function CampaignsDetails({
-  campaignId,
-}: {
-  campaignId: string;
-}) {
+export default ({ campaignId }: { campaignId: string }) => {
   const router = useRouter();
   const campaign = useLiveQuery(getCampaign(campaignId));
 
@@ -70,6 +68,8 @@ export default function CampaignsDetails({
     users.forEach((user) => {
       addUser({ login: user, campaignId: campaign.id });
     });
+
+    router.push(`/campaigns/${campaign.id}`);
   }
 
   if (!campaign) return <>Campaign does not exist.</>;
@@ -78,15 +78,18 @@ export default function CampaignsDetails({
     <>
       <Headline>
         {campaign.name}
-        <div className="ml-2">
-          <Button className="!bg-transparent hover:!bg-gray-800">
-            <PencilIcon className="h-5 w-5 text-indigo-700 transition-all group-hover:text-indigo-600" />
-          </Button>
-        </div>
-        <div className="ml-auto">
-          <Button onClick={() => handleDeleteCampaign(campaign.id)}>
-            <TrashIcon className="h-5 w-5 transition-all" />
-          </Button>
+        <div className="ml-auto flex">
+          <Link href={`/campaigns/${campaign.id}/edit`}>
+            <DiscreetButton>
+              <PencilIcon className="h-5 w-5" />
+            </DiscreetButton>
+          </Link>
+          <DiscreetButton
+            onClick={() => handleDeleteCampaign(campaign.id)}
+            className="hover:!bg-red-700"
+          >
+            <TrashIcon className="h-5 w-5" />
+          </DiscreetButton>
         </div>
       </Headline>
       <h1 className="text-3xl font-bold text-indigo-700">
@@ -143,4 +146,4 @@ export default function CampaignsDetails({
       )}
     </>
   );
-}
+};

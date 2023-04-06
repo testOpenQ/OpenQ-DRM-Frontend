@@ -1,19 +1,22 @@
 import { getCampaign, getRepos, getUsers } from "~/db";
+import { useRouter } from "next/router";
 import { useLiveQuery } from "dexie-react-hooks";
-import FirstView from "./FirstView";
 import Details from "./Details";
 
 export default function Wrapper({ campaignId }: { campaignId: string }) {
-  const campaign = useLiveQuery(getCampaign(campaignId));
+  const router = useRouter();
 
+  const campaign = useLiveQuery(getCampaign(campaignId));
   const repos = useLiveQuery(() => getRepos(campaignId));
   const users = useLiveQuery(() => getUsers(campaignId));
 
   if (!campaign) return <>Campaign does not exist.</>;
 
-  return campaign && repos && users && repos.length + users.length > 0 ? (
-    <Details campaignId={campaignId} repos={repos} users={users} />
-  ) : (
-    <FirstView campaignId={campaignId} />
-  );
+  if (!repos || !users) return <>Loading...</>;
+
+  if (repos.length + users.length === 0) {
+    router.push(`/campaigns/${campaignId}/edit`);
+  }
+
+  return <Details campaignId={campaignId} repos={repos} users={users} />;
 }

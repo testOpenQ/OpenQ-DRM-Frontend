@@ -74,6 +74,10 @@ export async function addCampaign(campaign: CampaignModel) {
   return await db.campaigns.add(campaign);
 }
 
+export async function saveCampaign(campaign: Campaign) {
+  return await db.campaigns.update(campaign.id, campaign);
+}
+
 export function deleteCampaign(id: number | string) {
   return db.campaigns.delete(Number(id));
 }

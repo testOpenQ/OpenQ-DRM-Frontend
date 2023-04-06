@@ -1,18 +1,20 @@
-import { Repo, User, deleteCampaign, getCampaign } from "~/db";
+import { Repo, User, deleteCampaign, getCampaign, saveCampaign } from "~/db";
 import { useLiveQuery } from "dexie-react-hooks";
-import Button from "../base/Button";
 import {
   TrashIcon,
   PencilIcon,
   PlusIcon,
-  UserIcon,
-  CodeBracketIcon,
+  CheckIcon,
+  XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Headline from "../layout/Headline";
 import { useRouter } from "next/router";
 import RepoCard from "../repos/Card";
 import UserCard from "../users/Card";
 import DiscreetButton from "../base/DiscreetButton";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import Input from "../base/Input";
 
 export default function CampaignsDetails({
   campaignId,
@@ -26,6 +28,21 @@ export default function CampaignsDetails({
   const router = useRouter();
   const campaign = useLiveQuery(getCampaign(campaignId));
 
+  const [editName, setEditName] = useState(false);
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    if (!campaign) return;
+    setName(campaign.name);
+  }, [campaign]);
+
+  function handleSaveName() {
+    if (!campaign) return;
+    setEditName(false);
+    campaign.name = name;
+    saveCampaign(campaign);
+  }
+
   function handleDeleteCampaign(id: number) {
     router
       .push("/")
@@ -38,27 +55,38 @@ export default function CampaignsDetails({
   return (
     <>
       <Headline>
-        {campaign.name}
-        <div className="ml-2">
-          <DiscreetButton className="!bg-transparent hover:!bg-gray-800">
+        <div className="mr-3 flex">
+          {editName && (
+            <Input value={name} setValue={setName} className="my-[21px]" />
+          )}
+          {!editName && <>{campaign.name}</>}
+        </div>
+        {editName && (
+          <>
+            <DiscreetButton onClick={handleSaveName}>
+              <CheckIcon className="h-5 w-5" />
+            </DiscreetButton>
+            <DiscreetButton onClick={() => setEditName(false)}>
+              <XMarkIcon className="h-5 w-5" />
+            </DiscreetButton>
+          </>
+        )}
+        {!editName && (
+          <DiscreetButton onClick={() => setEditName(true)}>
             <PencilIcon className="h-5 w-5" />
           </DiscreetButton>
-        </div>
+        )}
         <div className="ml-auto flex">
-          <DiscreetButton onClick={() => handleDeleteCampaign(campaign.id)}>
-            <UserIcon className="mr-2 h-5 w-5" />
-            add user
-          </DiscreetButton>
-          <DiscreetButton onClick={() => handleDeleteCampaign(campaign.id)}>
-            <CodeBracketIcon className="mr-2 h-5 w-5" />
-            add repository
-          </DiscreetButton>
+          <Link href={`/campaigns/${campaign.id}/edit`} className="ml-3">
+            <DiscreetButton>
+              <PlusIcon className="h-5 w-5" />
+            </DiscreetButton>
+          </Link>
           <DiscreetButton
             onClick={() => handleDeleteCampaign(campaign.id)}
             className="hover:!bg-red-700"
           >
-            <TrashIcon className="mr-2 h-5 w-5" />
-            delete campaign
+            <TrashIcon className="h-5 w-5" />
           </DiscreetButton>
         </div>
       </Headline>
