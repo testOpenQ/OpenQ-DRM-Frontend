@@ -1,5 +1,4 @@
-import { Repo, User, deleteCampaign, getCampaign, saveCampaign } from "~/db";
-import { useLiveQuery } from "dexie-react-hooks";
+import { Campaign, Repo, User, deleteCampaign, saveCampaign } from "~/db";
 import {
   TrashIcon,
   PencilIcon,
@@ -13,28 +12,22 @@ import RepoCard from "../repos/Card";
 import UserCard from "../users/Card";
 import DiscreetButton from "../base/DiscreetButton";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Input from "../base/Input";
 
 export default function CampaignsDetails({
-  campaignId,
+  campaign,
   repos,
   users,
 }: {
-  campaignId: string;
+  campaign: Campaign;
   repos: Repo[];
   users: User[];
 }) {
   const router = useRouter();
-  const campaign = useLiveQuery(getCampaign(campaignId));
 
   const [editName, setEditName] = useState(false);
-  const [name, setName] = useState("");
-
-  useEffect(() => {
-    if (!campaign) return;
-    setName(campaign.name);
-  }, [campaign]);
+  const [name, setName] = useState(campaign.name);
 
   function handleSaveName() {
     if (!campaign) return;
@@ -49,8 +42,6 @@ export default function CampaignsDetails({
       .then(() => deleteCampaign(id))
       .catch((err) => console.log(err));
   }
-
-  if (!campaign) return <>Campaign does not exist.</>;
 
   return (
     <>
@@ -101,6 +92,7 @@ export default function CampaignsDetails({
           </div>
         </>
       )}
+
       {users.length > 0 && (
         <>
           <h2 className="text-3xl font-bold text-indigo-700">Users</h2>

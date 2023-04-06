@@ -6,9 +6,9 @@ import Details from "./Details";
 export default function Wrapper({ campaignId }: { campaignId: string }) {
   const router = useRouter();
 
-  const campaign = useLiveQuery(getCampaign(campaignId));
-  const repos = useLiveQuery(() => getRepos(campaignId));
-  const users = useLiveQuery(() => getUsers(campaignId));
+  const campaign = useLiveQuery(getCampaign(campaignId), [campaignId]);
+  const repos = useLiveQuery(() => getRepos(campaignId), [campaignId]);
+  const users = useLiveQuery(() => getUsers(campaignId), [campaignId]);
 
   if (!campaign) return <>Campaign does not exist.</>;
 
@@ -18,5 +18,5 @@ export default function Wrapper({ campaignId }: { campaignId: string }) {
     router.push(`/campaigns/${campaignId}/edit`);
   }
 
-  return <Details campaignId={campaignId} repos={repos} users={users} />;
+  return <Details campaign={campaign} repos={repos} users={users} />;
 }
