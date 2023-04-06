@@ -232,44 +232,41 @@ export default function Card({ repo }: { repo: Repo }) {
         )}
         {!generatingSummary && commitSummary && (
           <>
-            {showCommitSummary && (
-              <>
-                <div className="p-3">
-                  <div className="leading-normal text-gray-300">
-                    {commitSummary}
-                  </div>
-                  {showCommitSummaryInfo && (
-                    <div className="mt-2 text-xs font-bold">
-                      This summary was generated automatically. It might not be
-                      absolutely perfect but indicates the workload and general
-                      direction of the project.{" "}
-                      <a
-                        href="#"
-                        className="font-normal text-indigo-400"
-                        onClick={handleHideMessage}
-                      >
-                        Got it! Don't show this message any more.
-                      </a>
-                    </div>
-                  )}
+            <div
+              className={`${
+                showCommitSummary ? "max-h-32" : "max-h-0"
+              } overflow-auto transition-all`}
+            >
+              <div className="p-3">
+                <div className="leading-normal text-gray-300">
+                  {commitSummary}
                 </div>
-                <DiscreetButton
-                  className="w-full rounded-t-none"
-                  onClick={() => setShowCommitSummary(false)}
-                >
-                  <ChevronUpIcon className="!h-4 !w-4" />
-                </DiscreetButton>
-              </>
-            )}
-
-            {!showCommitSummary && (
-              <DiscreetButton
-                className="w-full rounded-t-none"
-                onClick={() => setShowCommitSummary(true)}
-              >
-                <ChevronDownIcon className="!h-4 !w-4" />
-              </DiscreetButton>
-            )}
+                {showCommitSummaryInfo && (
+                  <div className="mt-2 text-xs font-bold">
+                    This summary was generated automatically. It might not be
+                    absolutely perfect but indicates the workload and general
+                    direction of the project.{" "}
+                    <a
+                      href="#"
+                      className="font-normal text-indigo-400"
+                      onClick={handleHideMessage}
+                    >
+                      Got it! Don't show this message any more.
+                    </a>
+                  </div>
+                )}
+              </div>
+            </div>
+            <DiscreetButton
+              className="w-full rounded-t-none"
+              onClick={() => setShowCommitSummary(!showCommitSummary)}
+            >
+              {showCommitSummary ? (
+                <ChevronUpIcon className="h-4 w-4" />
+              ) : (
+                <ChevronDownIcon className="h-4 w-4" />
+              )}
+            </DiscreetButton>
           </>
         )}
       </div>
