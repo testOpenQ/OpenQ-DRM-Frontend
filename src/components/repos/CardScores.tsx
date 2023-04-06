@@ -13,17 +13,17 @@ export default function CardScores({
 }) {
   return (
     <div className="flex flex-col items-end text-sm">
-      <CardScore label="Activity" score={activity} activeClass="bg-lime-500" />
-      <CardScore label="Growth" score={growth} activeClass="bg-cyan-500" />
+      <CardScore label="Activity" score={activity} activeClass="bg-lime-700" />
+      <CardScore label="Growth" score={growth} activeClass="bg-cyan-700" />
       <CardScore
         label="Popularity"
         score={popularity}
-        activeClass="bg-violet-500"
+        activeClass="bg-violet-700"
       />
       <CardScore
         label="Reputation"
         score={reputation}
-        activeClass="bg-rose-500"
+        activeClass="bg-red-700"
       />
     </div>
   );
