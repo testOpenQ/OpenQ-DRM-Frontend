@@ -21,6 +21,7 @@ export default function Sidebar() {
     <div className="flex w-[320px] flex-col whitespace-nowrap bg-gray-800">
       <ConnectGithub />
       <RequestInfo />
+      <SidebarDivider />
       <SidebarLink href="/">
         <div className="mr-3 p-1.5">
           <RectangleGroupIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
@@ -29,15 +30,17 @@ export default function Sidebar() {
       </SidebarLink>
       <SidebarDivider />
       {campaigns?.map((campaign) => (
-        <SidebarLink key={campaign.id} href={`/campaigns/${campaign.id}`}>
-          <div className="mr-3 p-1.5">
-            <ChartPieIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
-          </div>
-          {campaign.name}
-        </SidebarLink>
+        <>
+          <SidebarLink key={campaign.id} href={`/campaigns/${campaign.id}`}>
+            <div className="mr-3 p-1.5">
+              <ChartPieIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
+            </div>
+            {campaign.name}
+          </SidebarLink>
+          <SidebarDivider />
+        </>
       ))}
-      <SidebarDivider />
-      <SidebarLink href="/users">
+      {/* <SidebarLink href="/users">
         <div className="mr-3 p-1.5">
           <UsersIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
@@ -49,7 +52,7 @@ export default function Sidebar() {
           <CodeBracketIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
         </div>
         Repositories
-      </SidebarLink>
+      </SidebarLink> */}
 
       <SidebarLink href="https://openq.dev/marketplace" className="mt-auto">
         <div className="mr-3 p-1.5">

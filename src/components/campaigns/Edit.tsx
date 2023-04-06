@@ -79,11 +79,6 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
       <Headline>
         {campaign.name}
         <div className="ml-auto flex">
-          <Link href={`/campaigns/${campaign.id}/edit`}>
-            <DiscreetButton>
-              <PencilIcon className="h-5 w-5" />
-            </DiscreetButton>
-          </Link>
           <DiscreetButton
             onClick={() => handleDeleteCampaign(campaign.id)}
             className="hover:!bg-red-700"
