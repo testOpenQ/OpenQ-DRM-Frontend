@@ -8,6 +8,7 @@ import {
   type ChartOptions,
   type ChartData,
 } from "chart.js";
+import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
 
 interface CommitsByDay {
@@ -69,38 +70,41 @@ export default function CardActivityChart({
     Filler
   );
 
-  const data: ChartData<"line"> = prepareChartData(
-    commitsByDay,
-    commitsByDayNormalized
+  const data: ChartData<"line"> = useMemo(
+    () => prepareChartData(commitsByDay, commitsByDayNormalized),
+    [commitsByDay, commitsByDayNormalized]
   );
-  const options: ChartOptions<"line"> = {
-    aspectRatio: 15,
-    layout: {
-      padding: {
-        top: 5,
+
+  const options: ChartOptions<"line"> = useMemo(() => {
+    return {
+      aspectRatio: 15,
+      layout: {
+        padding: {
+          top: 5,
+        },
       },
-    },
-    plugins: {
-      legend: {
-        display: false,
+      plugins: {
+        legend: {
+          display: false,
+        },
+        title: {
+          display: false,
+        },
+        filler: {
+          drawTime: "beforeDatasetsDraw",
+          propagate: true,
+        },
       },
-      title: {
-        display: false,
+      scales: {
+        x: {
+          display: false,
+        },
+        y: {
+          display: false,
+        },
       },
-      filler: {
-        drawTime: "beforeDatasetsDraw",
-        propagate: true,
-      },
-    },
-    scales: {
-      x: {
-        display: false,
-      },
-      y: {
-        display: false,
-      },
-    },
-  };
+    };
+  }, []);
 
   return <Line data={data} options={options} />;
 }
