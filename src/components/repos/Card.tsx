@@ -290,9 +290,20 @@ export default function Card({ repo }: { repo: Repo }) {
               } overflow-auto transition-all`}
             >
               <div className="p-3">
-                <div className="leading-normal text-gray-300">
-                  {commitSummary}
-                </div>
+                <div
+                  className="leading-normal text-gray-300"
+                  dangerouslySetInnerHTML={{
+                    __html: commitSummary
+                      .replace(
+                        /(critical|severe|serious|bugs?|hot[ -]?fix|urgent)/gi,
+                        '<strong class="text-red-500">$1</strong>'
+                      )
+                      .replace(
+                        /(feature(s)?|fix(e[sd])?|design|test(s)?|terms of use|terms of service|licen[sc]e)/gi,
+                        '<strong class="text-indigo-500">$1</strong>'
+                      ),
+                  }}
+                />
                 {showCommitSummaryInfo && (
                   <div className="mt-2 text-xs font-bold">
                     This summary was generated automatically. It might not be
