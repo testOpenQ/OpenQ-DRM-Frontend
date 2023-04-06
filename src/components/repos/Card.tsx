@@ -10,7 +10,12 @@ import CardMembers from "./CardMembers";
 import CardScores from "./CardScores";
 import { useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
-import { Repo, addCommitSummary, getRepoCommitSummaries } from "~/db";
+import {
+  Repo,
+  addCommitSummary,
+  deleteRepo,
+  getRepoCommitSummaries,
+} from "~/db";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
 import useLocalStorage from "~/hooks/useLocalstorage";
@@ -149,6 +154,10 @@ export default function Card({ repo }: { repo: Repo }) {
     setShowCommitSummaryInfo(false);
   }
 
+  function handleDeleteRepo() {
+    deleteRepo(repo.id);
+  }
+
   if (!repo) return <>Repository does not exist.</>;
 
   return (
@@ -159,11 +168,11 @@ export default function Card({ repo }: { repo: Repo }) {
         </div>
         <div className="flex">
           <DiscreetButton disabled={scanning} onClick={scan}>
-            {scanning && <LoadingSpinner className="h-3 w-3" />}
+            {scanning && <LoadingSpinner className="!h-4 !w-4" />}
             {!scanning && <ArrowPathIcon className="h-4 w-4" />}
           </DiscreetButton>
           <DiscreetButton>
-            <XMarkIcon className="h-4 w-4" />
+            <XMarkIcon className="h-4 w-4" onClick={handleDeleteRepo} />
           </DiscreetButton>
         </div>
       </div>
