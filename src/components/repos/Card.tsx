@@ -51,6 +51,52 @@ export default function Card({ repo }: { repo: Repo }) {
 
   const [members, setMembers] = useState<{ avatarUrl: string }[]>([]);
 
+  /**
+   *
+   * DELETE THIS STUF
+   *
+   */
+  function stringToSeed(seed: string) {
+    let hash = 0;
+    for (let i = 0; i < seed.length; i++) {
+      let charCode = seed.charCodeAt(i);
+      hash = (hash << 5) - hash + charCode;
+      hash |= 0; // Convert to 32-bit integer
+    }
+    return Math.abs(hash);
+  }
+
+  function xorshift(seed: number) {
+    let state = seed;
+
+    return function () {
+      state ^= state << 13;
+      state ^= state >> 17;
+      state ^= state << 5;
+      return Math.abs(state) / Math.pow(2, 32);
+    };
+  }
+
+  function generateNumbersFromString(seed: string) {
+    const random = xorshift(stringToSeed(seed));
+    const numbers = [];
+
+    for (let i = 0; i < 4; i++) {
+      numbers.push(Math.min(Math.floor(random() * 6) + 2, 5));
+    }
+
+    return numbers;
+  }
+
+  const scores = generateNumbersFromString(
+    repo.owner + repo.name + "supersecretse"
+  );
+  /**
+   *
+   * DELETE END
+   *
+   */
+
   const since = useMemo(() => {
     const since = new Date();
     since.setHours(0, 0, 0, 0);
@@ -203,7 +249,12 @@ export default function Card({ repo }: { repo: Repo }) {
           )}
         </div>
         <div className="flex-1 px-5 py-3">
-          <CardScores activity={3} growth={2} popularity={3} reputation={4} />
+          <CardScores
+            activity={scores[0] || 0}
+            growth={scores[1] || 0}
+            popularity={scores[2] || 0}
+            reputation={scores[3] || 0}
+          />
         </div>
       </div>
       {repoScanResult && (
