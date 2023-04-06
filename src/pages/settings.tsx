@@ -1,11 +1,10 @@
-import { type NextPage } from "next";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import Button from "~/components/base/Button";
 import Input from "~/components/base/Input";
 import Headline from "~/components/layout/Headline";
 
-const Settings: NextPage = () => {
+export default function SettingsPage() {
   const { data } = useSession();
 
   const user = data?.user;
@@ -22,8 +21,8 @@ const Settings: NextPage = () => {
         <div>
           <h1 className="mb-3 text-3xl font-bold text-indigo-700">ChatGPT</h1>
           <p className="text-xl text-gray-400">
-            &ldquo;Unlock valuable insights on your projects' progress with our
-            pre-defined ChatGPT prompts! Get ready to elevate your analysis
+            &ldquo;Unlock valuable insights on your projects&apos; progress with
+            our pre-defined ChatGPT prompts! Get ready to elevate your analysis
             game!&rdquo;
           </p>
           <div className="mb-3 text-right italic text-gray-600">
@@ -187,6 +186,4 @@ const Settings: NextPage = () => {
       </div>
     </>
   );
-};
-
-export default Settings;
+}

@@ -1,10 +1,10 @@
-import { Campaign, getRepos, getUsers } from "~/db";
+import { type Campaign, getRepos, getUsers } from "~/db";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../base/DiscreetButton";
 import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 
-export default ({ campaign }: { campaign: Campaign }) => {
+export default function CampaignCard({ campaign }: { campaign: Campaign }) {
   const repos = useLiveQuery(() => getRepos(campaign.id));
   const users = useLiveQuery(() => getUsers(campaign.id));
 
@@ -27,4 +27,4 @@ export default ({ campaign }: { campaign: Campaign }) => {
       </div>
     </div>
   );
-};
+}

@@ -8,7 +8,7 @@ const DetailsWrapper = dynamic(
   }
 );
 
-export default function Campaign() {
+export default function CampaignPage() {
   const router = useRouter();
   const { campaignId } = router.query;
 

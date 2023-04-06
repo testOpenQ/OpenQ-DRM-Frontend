@@ -1,4 +1,3 @@
-import { type NextPage } from "next";
 import Head from "next/head";
 import dynamic from "next/dynamic";
 
@@ -6,7 +5,7 @@ const Frontpage = dynamic(() => import("~/components/Frontpage"), {
   ssr: false,
 });
 
-const Home: NextPage = () => {
+export default function HomePage() {
   return (
     <>
       <Head>
@@ -15,6 +14,4 @@ const Home: NextPage = () => {
       <Frontpage />
     </>
   );
-};
-
-export default Home;
+}

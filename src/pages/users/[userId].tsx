@@ -5,7 +5,7 @@ const UserDetails = dynamic(() => import("~/components/users/Details"), {
   ssr: false,
 });
 
-export default function User() {
+export default function UserPage() {
   const router = useRouter();
   const { userId } = router.query;
 

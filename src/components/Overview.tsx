@@ -1,4 +1,4 @@
-import { Campaign } from "~/db";
+import type { Campaign } from "~/db";
 import Headline from "./layout/Headline";
 import Card from "./campaigns/Card";
 import DiscreetButton from "./base/DiscreetButton";

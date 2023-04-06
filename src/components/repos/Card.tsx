@@ -1,6 +1,6 @@
 import {
-  RepoData,
-  RepoEvaluation,
+  type RepoData,
+  type RepoEvaluation,
   Scanner,
   evaluateRepoData,
   getLatestRepoScan,
@@ -11,7 +11,7 @@ import CardScores from "./CardScores";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import {
-  Repo,
+  type Repo,
   addCommitSummary,
   deleteRepo,
   getRepoCommitSummaries,

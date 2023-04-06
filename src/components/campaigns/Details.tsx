@@ -1,4 +1,10 @@
-import { Campaign, Repo, User, deleteCampaign, saveCampaign } from "~/db";
+import {
+  type Campaign,
+  type Repo,
+  type User,
+  deleteCampaign,
+  saveCampaign,
+} from "~/db";
 import {
   TrashIcon,
   PencilIcon,
@@ -33,7 +39,7 @@ export default function CampaignsDetails({
     if (!campaign) return;
     setEditName(false);
     campaign.name = name;
-    saveCampaign(campaign);
+    saveCampaign(campaign).catch(console.log);
   }
 
   function handleDeleteCampaign(id: number) {

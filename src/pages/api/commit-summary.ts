@@ -2,9 +2,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import {
   OpenAIApi,
   Configuration,
-  ChatCompletionResponseMessage,
   ChatCompletionRequestMessageRoleEnum,
-  ChatCompletionRequestMessage,
+  type ChatCompletionRequestMessage,
+  type ChatCompletionResponseMessage,
 } from "openai";
 import { MAX_TOKENS, countTokens, instructions } from "~/server/gpt";
 
@@ -13,16 +13,61 @@ type Data = {
   error?: string;
 };
 
+type ValidCommit = {
+  message: string;
+  author: {
+    user: {
+      login: string;
+    };
+  };
+};
+
+type ValidBody = {
+  commits: ValidCommit[];
+};
+
+function isValidCommit(commit: unknown): commit is ValidCommit {
+  return (
+    typeof commit === "object" &&
+    commit !== null &&
+    "message" in commit &&
+    "author" in commit &&
+    typeof commit.message === "string" &&
+    typeof commit.author === "object" &&
+    commit.author !== null &&
+    "user" in commit.author &&
+    typeof commit.author.user === "object" &&
+    commit.author.user !== null &&
+    "login" in commit.author.user &&
+    typeof commit.author.user.login === "string"
+  );
+}
+
+function isValidBody(body: unknown): body is ValidBody {
+  return (
+    typeof body === "object" &&
+    body !== null &&
+    "commits" in body &&
+    typeof body.commits === "object" &&
+    Array.isArray(body.commits) &&
+    body.commits.every(isValidCommit)
+  );
+}
+
 const openai = new OpenAIApi(
   new Configuration({
     apiKey: process.env.OPENAI_API_KEY,
   })
 );
 
-export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
+export default async function CommitSummary(
+  req: NextApiRequest,
+  res: NextApiResponse<Data>
+) {
   try {
     const body = JSON.parse(req.body);
-    if (!body.commits || !body.commits.length || !Array.isArray(body.commits)) {
+
+    if (!isValidBody(body)) {
       res.status(400).json({ error: "No valid commits array provided." });
       return;
     }
@@ -91,4 +136,4 @@ export default async (req: NextApiRequest, res: NextApiResponse<Data>) => {
         "An unexpected error occured. Unable to generate summary.",
     });
   }
-};
+}

@@ -4,6 +4,6 @@ const New = dynamic(() => import("~/components/campaigns/New"), {
   ssr: false,
 });
 
-export default () => {
+export default function NewCampaignPage() {
   return <New />;
-};
+}

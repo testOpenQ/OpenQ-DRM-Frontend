@@ -1,7 +1,7 @@
 import {
   Scanner,
-  UserData,
-  UserEvaluation,
+  type UserData,
+  type UserEvaluation,
   evaluateUserData,
   getLatestUserScan,
 } from "@mktcodelib/github-insights";

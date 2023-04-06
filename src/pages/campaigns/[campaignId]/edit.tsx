@@ -5,7 +5,7 @@ const Edit = dynamic(() => import("~/components/campaigns/Edit"), {
   ssr: false,
 });
 
-export default () => {
+export default function EditCampaignPage() {
   const router = useRouter();
   const { campaignId } = router.query;
 
@@ -18,4 +18,4 @@ export default () => {
       <Edit campaignId={campaignId} />
     </>
   );
-};
+}

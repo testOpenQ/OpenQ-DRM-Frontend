@@ -10,7 +10,7 @@ import { useRouter } from "next/router";
 import DiscreetButton from "../base/DiscreetButton";
 import Link from "next/link";
 
-export default ({ campaignId }: { campaignId: string }) => {
+export default function EditCampaign({ campaignId }: { campaignId: string }) {
   const router = useRouter();
   const campaign = useLiveQuery(getCampaign(campaignId));
 
@@ -146,4 +146,4 @@ export default ({ campaignId }: { campaignId: string }) => {
       )}
     </>
   );
-};
+}
