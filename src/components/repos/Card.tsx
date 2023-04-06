@@ -49,10 +49,7 @@ export default function Card({ repo }: { repo: Repo }) {
   const [generatingSummary, setGeneratingSummary] = useState(false);
   const [showCommitSummary, setShowCommitSummary] = useState(false);
 
-  const [progress, setProgress] = useState<{
-    requestCount: number;
-    remainingRequests: number;
-  } | null>(null);
+  const [members, setMembers] = useState<{ avatarUrl: string }[]>([]);
 
   const since = useMemo(() => {
     const since = new Date();
@@ -67,6 +64,28 @@ export default function Card({ repo }: { repo: Repo }) {
     until.setMonth(until.getMonth() + 1);
     return until.toISOString();
   }, []);
+
+  useEffect(() => {
+    (async () => {
+      if (repoScanResult) {
+        const members = Object.keys(repoScanResult.commitsByAuthor);
+
+        Promise.all(
+          members.map((member) =>
+            fetch(`https://api.github.com/users/${member}`, {
+              headers: {
+                Authorization: `token ${accessToken}`,
+              },
+            }).then((res) => res.json())
+          )
+        ).then((members) => {
+          setMembers(
+            members.map((member) => ({ avatarUrl: member.avatar_url }))
+          );
+        });
+      }
+    })();
+  }, [repoScanResult]);
 
   useEffect(() => {
     getRepoCommitSummaries(repo.id).then((summaries) => {
@@ -85,22 +104,11 @@ export default function Card({ repo }: { repo: Repo }) {
 
             setScanning(true);
             scanner
-              .scanContinue<{ repo: RepoData }>(latestRepoScan.id)(
-                (data, paginators) => {
-                  setRepoScanResult(evaluateRepoData(data.repo));
-
-                  const requestCount = Math.max(
-                    ...paginators.map((p) => p.requestCount)
-                  );
-                  const remainingRequests = Math.max(
-                    ...paginators.map((p) => p.remainingRequests)
-                  );
-                  setProgress({ requestCount, remainingRequests });
-                }
-              )
+              .scanContinue<{ repo: RepoData }>(latestRepoScan.id)((data) => {
+                setRepoScanResult(evaluateRepoData(data.repo));
+              })
               .finally(() => {
                 setScanning(false);
-                setProgress(null);
               });
           }
         }
@@ -119,21 +127,14 @@ export default function Card({ repo }: { repo: Repo }) {
 
     setScanning(true);
     let rawCommits: any[] = [];
-    scan((data, paginators) => {
+    scan((data) => {
       setRepoScanResult(evaluateRepoData(data.repository));
 
       rawCommits = data.repository.defaultBranchRef.target.history.nodes;
-
-      const requestCount = Math.max(...paginators.map((p) => p.requestCount));
-      const remainingRequests = Math.max(
-        ...paginators.map((p) => p.remainingRequests)
-      );
-      setProgress({ requestCount, remainingRequests });
     })
       .catch((err) => console.log(err))
       .finally(() => {
         setScanning(false);
-        setProgress(null);
 
         setGeneratingSummary(true);
 
@@ -184,7 +185,7 @@ export default function Card({ repo }: { repo: Repo }) {
       </div>
       <div className="flex flex-col sm:flex-row">
         <div className="flex grow flex-col items-center justify-center">
-          {repoScanResult && <CardMembers />}
+          {repoScanResult && <CardMembers members={members} />}
           {!repoScanResult && (
             <div className="flex grow items-center justify-center px-12">
               {accessToken && (
