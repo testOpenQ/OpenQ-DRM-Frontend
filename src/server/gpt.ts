@@ -1,6 +1,13 @@
 import { encode } from "gpt-3-encoder";
+import { Configuration, OpenAIApi } from "openai";
 
-export const MAX_TOKENS = 8192;
+export const gpt = new OpenAIApi(
+  new Configuration({
+    apiKey: process.env.OPENAI_API_KEY,
+  })
+);
+
+export const MAX_TOKENS = 8192 * 0.7;
 
 export function countTokens(text: string) {
   return encode(text).length;
