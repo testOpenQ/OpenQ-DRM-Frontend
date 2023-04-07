@@ -19,12 +19,7 @@ import {
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
 import useLocalStorage from "~/hooks/useLocalstorage";
-import {
-  ArrowPathIcon,
-  ChevronDownIcon,
-  ChevronUpIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../base/DiscreetButton";
 
 const numberFormatter = new Intl.NumberFormat("en-US", {
@@ -271,7 +266,7 @@ export default function Card({ repo }: { repo: Repo }) {
         </div>
       </div>
       {repoScanResult && (
-        <div className="mb-1 bg-gray-900/50 pt-3">
+        <div className="bg-gray-900/50 pt-3">
           <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs text-gray-400">
             <div>
               {numberFormatter.format(repoScanResult.commitCount)} commits
@@ -297,6 +292,32 @@ export default function Card({ repo }: { repo: Repo }) {
         )}
         {!generatingSummary && commitSummary && (
           <>
+            <div className="flex">
+              <DiscreetButton
+                className="w-full rounded-none text-sm font-normal"
+                onClick={() => setShowCommitSummary(!showCommitSummary)}
+              >
+                recent changes
+              </DiscreetButton>
+              <DiscreetButton
+                className="w-full rounded-none text-sm font-normal"
+                onClick={() => setShowCommitSummary(!showCommitSummary)}
+              >
+                closed issues
+              </DiscreetButton>
+              <DiscreetButton
+                className="w-full rounded-none text-sm font-normal"
+                onClick={() => setShowCommitSummary(!showCommitSummary)}
+              >
+                recent discussions
+              </DiscreetButton>
+              <DiscreetButton
+                className="w-full rounded-none text-sm font-normal"
+                onClick={() => setShowCommitSummary(!showCommitSummary)}
+              >
+                developers
+              </DiscreetButton>
+            </div>
             <div
               className={`${
                 showCommitSummary ? "max-h-40" : "max-h-0"
@@ -333,39 +354,6 @@ export default function Card({ repo }: { repo: Repo }) {
                 )}
               </div>
             </div>
-            <DiscreetButton
-              className="w-full rounded-none text-sm font-normal"
-              onClick={() => setShowCommitSummary(!showCommitSummary)}
-            >
-              recent changes
-              {showCommitSummary ? (
-                <ChevronUpIcon className="ml-2 h-4 w-4" />
-              ) : (
-                <ChevronDownIcon className="ml-2 h-4 w-4" />
-              )}
-            </DiscreetButton>
-            <DiscreetButton
-              className="w-full rounded-none text-sm font-normal"
-              onClick={() => setShowCommitSummary(!showCommitSummary)}
-            >
-              recently closed issues
-              {showCommitSummary ? (
-                <ChevronUpIcon className="ml-2 h-4 w-4" />
-              ) : (
-                <ChevronDownIcon className="ml-2 h-4 w-4" />
-              )}
-            </DiscreetButton>
-            <DiscreetButton
-              className="w-full rounded-t-none text-sm font-normal"
-              onClick={() => setShowCommitSummary(!showCommitSummary)}
-            >
-              recent discussions
-              {showCommitSummary ? (
-                <ChevronUpIcon className="ml-2 h-4 w-4" />
-              ) : (
-                <ChevronDownIcon className="ml-2 h-4 w-4" />
-              )}
-            </DiscreetButton>
           </>
         )}
       </div>
