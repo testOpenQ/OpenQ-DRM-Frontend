@@ -27,6 +27,8 @@ export type UserSearchResult = {
   html_url: string;
 };
 
+export type SearchResult = RepoSearchResult | UserSearchResult;
+
 function isRepoSearchResult(item: unknown): item is RepoSearchResult {
   return typeof item === "object" && item !== null && "owner" in item;
 }
@@ -38,12 +40,10 @@ function isUserSearchResult(item: unknown): item is UserSearchResult {
 export default function GithubSearch({
   onSelect,
 }: {
-  onSelect: (item: UserSearchResult | RepoSearchResult) => void;
+  onSelect: (item: SearchResult) => void;
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<
-    (UserSearchResult | RepoSearchResult)[]
-  >([]);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
   const [searchType, setSearchType] = useState<"users" | "repos">("users");
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -60,7 +60,7 @@ export default function GithubSearch({
     setSearchType(type);
   }
 
-  function handleSelectSearchResult(item: UserSearchResult | RepoSearchResult) {
+  function handleSelectSearchResult(item: SearchResult) {
     onSelect(item);
     setSearchResults([]);
     setSearchTerm("");

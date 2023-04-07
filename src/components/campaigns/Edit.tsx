@@ -3,10 +3,7 @@ import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import Button from "../base/Button";
 import { TrashIcon } from "@heroicons/react/24/outline";
-import GithubSearch, {
-  type RepoSearchResult,
-  type UserSearchResult,
-} from "../layout/GithubSearch";
+import GithubSearch, { type SearchResult } from "../layout/GithubSearch";
 import Textarea from "../base/Textarea";
 import Headline from "../layout/Headline";
 import { useRouter } from "next/router";
@@ -43,7 +40,7 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
     setTextareaInput(sanitizedInput.join("\n") + "\n");
   }
 
-  function onSelectSearchResult(item: UserSearchResult | RepoSearchResult) {
+  function onSelectSearchResult(item: SearchResult) {
     const newInput = textareaInput.split("\n").filter(Boolean);
     newInput.push(item.html_url);
 
