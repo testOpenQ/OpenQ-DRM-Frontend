@@ -37,10 +37,7 @@ export default function ConnectGithub() {
               <Cog6ToothIcon className="h-5 w-5" />
             </DiscreetButton>
           </Link>
-          <DiscreetButton
-            className="!bg-gray-800 text-opacity-20 hover:!bg-gray-700 hover:text-opacity-100"
-            onClick={handleSignOut}
-          >
+          <DiscreetButton onClick={handleSignOut}>
             <PowerIcon className="h-5 w-5" />
           </DiscreetButton>
         </div>

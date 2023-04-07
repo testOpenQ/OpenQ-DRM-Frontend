@@ -1,5 +1,11 @@
-export default function SidebarDivider() {
+export default function SidebarDivider({
+  className = "",
+}: {
+  className?: string;
+}) {
   return (
-    <div className="h-[1px] bg-gradient-to-r from-gray-800 via-gray-700 to-gray-800" />
+    <div
+      className={`${className} h-[1px] bg-gradient-to-r from-transparent via-gray-900 to-transparent`}
+    />
   );
 }
