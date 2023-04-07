@@ -334,13 +334,36 @@ export default function Card({ repo }: { repo: Repo }) {
               </div>
             </div>
             <DiscreetButton
-              className="w-full rounded-t-none"
+              className="w-full rounded-none text-sm font-normal"
               onClick={() => setShowCommitSummary(!showCommitSummary)}
             >
+              recent changes
               {showCommitSummary ? (
-                <ChevronUpIcon className="h-4 w-4" />
+                <ChevronUpIcon className="ml-2 h-4 w-4" />
               ) : (
-                <ChevronDownIcon className="h-4 w-4" />
+                <ChevronDownIcon className="ml-2 h-4 w-4" />
+              )}
+            </DiscreetButton>
+            <DiscreetButton
+              className="w-full rounded-none text-sm font-normal"
+              onClick={() => setShowCommitSummary(!showCommitSummary)}
+            >
+              recently closed issues
+              {showCommitSummary ? (
+                <ChevronUpIcon className="ml-2 h-4 w-4" />
+              ) : (
+                <ChevronDownIcon className="ml-2 h-4 w-4" />
+              )}
+            </DiscreetButton>
+            <DiscreetButton
+              className="w-full rounded-t-none text-sm font-normal"
+              onClick={() => setShowCommitSummary(!showCommitSummary)}
+            >
+              recent discussions
+              {showCommitSummary ? (
+                <ChevronUpIcon className="ml-2 h-4 w-4" />
+              ) : (
+                <ChevronDownIcon className="ml-2 h-4 w-4" />
               )}
             </DiscreetButton>
           </>
