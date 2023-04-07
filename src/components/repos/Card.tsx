@@ -136,8 +136,9 @@ export default function Card({ repo }: { repo: Repo }) {
   useEffect(() => {
     getRepoCommitSummaries(repo.id)
       .then((summaries) => {
-        if (summaries[0]) {
-          setCommitSummary(summaries[0].summary);
+        const last = summaries.pop();
+        if (last) {
+          setCommitSummary(last.summary);
         }
       })
       .catch(console.error);
@@ -298,7 +299,7 @@ export default function Card({ repo }: { repo: Repo }) {
           <>
             <div
               className={`${
-                showCommitSummary ? "max-h-32" : "max-h-0"
+                showCommitSummary ? "max-h-40" : "max-h-0"
               } overflow-auto transition-all`}
             >
               <div className="p-3">
