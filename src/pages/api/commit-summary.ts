@@ -52,33 +52,57 @@ function isValidBody(body: unknown): body is ValidBody {
   );
 }
 
-function prepareCommits(commits: ValidCommit[]) {
+function sanitizeCommits(commits: ValidCommit[]) {
   return commits
     .map((commit) => {
-      const message = commit.message
-        .replace(/https?:\/\//g, "")
-        .replace(/\r/g, " ")
-        .replace(/\n/g, " ")
-        .replace(/\s+/g, " ")
-        .replace(/[^\w\s]/gi, "")
-        .trim();
-
-      if (
-        message.startsWith("Merge branch") ||
-        message.startsWith("Merge pull request")
-      ) {
-        return "";
-      }
-
-      return `${commit.author.user.login} ${message}`;
+      return {
+        ...commit,
+        message: commit.message
+          .replace(/https?:\/\//g, "")
+          .replace(/\r/g, " ")
+          .replace(/\n/g, " ")
+          .replace(/\s+/g, " ")
+          .replace(/[^\w\s]/gi, "")
+          .trim(),
+      };
     })
-    .filter((m) => m);
+    .filter((commit) => commit.message !== "");
 }
 
-const commitSummaryInstruction =
-  "You are CommitGPT: You summarize commit messages.";
-const summarySummaryInstruction =
-  "You are TechCommunicatorGPT: You summarize a technical text for project managers.";
+function filterCommits(commits: ValidCommit[]) {
+  return commits.filter((commit) => {
+    return (
+      !commit.message.startsWith("Merge branch") &&
+      !commit.message.startsWith("Merge pull request")
+    );
+  });
+}
+
+function prepareCommits(commits: ValidCommit[], renderAuthor: boolean) {
+  return commits.map((commit) => {
+    return renderAuthor
+      ? `${commit.author.user.login} ${commit.message}`
+      : `${commit.message}`;
+  });
+}
+
+const degender = `You infer a developer's gender from the username and use only he or she. If the username doesn't indicate the gender, you use "he" or the username.`;
+function degenderSolo(name: string) {
+  return `You infer ${name}'s gender from the username. If "${name}" doesn't indicate the gender, you use "he" or "${name}".`;
+}
+const commitSummaryInstruction = `You are ChangeLogGPT: You summarize commit messages into a changelog for each developer. ${degender}`;
+
+function teamReportInstruction(authorNames: string[]) {
+  return `You are ChangeReportGPT: You summarize the changelog of a git repository for the project manager. You give a very brief, well formulated, general summary, followed by one or two short sentences about each developer's recent work. You start with the words: "The team has been working on" and then, for the developers ${authorNames.join(
+    ", "
+  )}: "<Name> ...". ${degender}`;
+}
+
+function soloDevReportInstruction(name: string) {
+  return `You are ChangeReportGPT: You write a very brief and vell formulated summary for a project manager, about developer ${name}'s recent work. ${degenderSolo(
+    name
+  )} Start with: "${name} ..."`;
+}
 
 function chunkCommits(commits: string[]) {
   const chunks: string[][] = [];
@@ -114,8 +138,16 @@ export default async function CommitSummary(
     return;
   }
 
-  const sanitizedCommits = prepareCommits(body.commits);
-  const chunks = chunkCommits(sanitizedCommits);
+  const sanitizedCommits = sanitizeCommits(body.commits);
+  const filteredCommits = filterCommits(sanitizedCommits);
+  const authorNames = filteredCommits
+    .map((commit) => commit.author.user.login)
+    .filter((name, index, array) => array.indexOf(name) === index);
+  const preparedCommits = prepareCommits(
+    filteredCommits,
+    authorNames.length > 1
+  );
+  const chunks = chunkCommits(preparedCommits);
   const summaries: string[] = [];
 
   for (const chunk of chunks) {
@@ -135,7 +167,7 @@ export default async function CommitSummary(
         model: "gpt-3.5-turbo",
         messages,
         max_tokens: 256,
-        temperature: 0.5,
+        temperature: 0.3,
       });
 
       const summary = completion.data.choices[0]?.message?.content;
@@ -176,7 +208,10 @@ export default async function CommitSummary(
   const messages: ChatCompletionRequestMessage[] = [
     {
       role: ChatCompletionRequestMessageRoleEnum.System,
-      content: summarySummaryInstruction,
+      content:
+        authorNames.length === 1
+          ? soloDevReportInstruction(authorNames[0] as string)
+          : teamReportInstruction(authorNames),
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
@@ -189,7 +224,7 @@ export default async function CommitSummary(
       model: "gpt-4",
       messages,
       max_tokens: 384,
-      temperature: 0.5,
+      temperature: 0.6,
     });
 
     const summary = completion.data.choices[0]?.message?.content;
