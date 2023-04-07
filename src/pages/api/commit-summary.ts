@@ -4,7 +4,7 @@ import {
   type ChatCompletionRequestMessage,
   type ChatCompletionResponseMessage,
 } from "openai";
-import { gpt, MAX_TOKENS, countTokens } from "~/server/gpt";
+import { gpt, MAX_TOKENS_GPT3_5, countTokens } from "~/server/gpt";
 
 type Data = {
   summary?: ChatCompletionResponseMessage | string;
@@ -87,9 +87,9 @@ function chunkCommits(commits: string[]) {
   const instructionTokenCount = countTokens(commitSummaryInstruction);
   const totalTokenCount = promptTokenCount + instructionTokenCount;
 
-  if (totalTokenCount > MAX_TOKENS) {
+  if (totalTokenCount > MAX_TOKENS_GPT3_5) {
     const numberOfChunks = Math.ceil(
-      promptTokenCount / (MAX_TOKENS - instructionTokenCount)
+      promptTokenCount / (MAX_TOKENS_GPT3_5 - instructionTokenCount)
     );
     const chunkSize = Math.ceil(commits.length / numberOfChunks);
 
@@ -132,7 +132,7 @@ export default async function CommitSummary(
 
     try {
       const completion = await gpt.createChatCompletion({
-        model: "gpt-4",
+        model: "gpt-3.5-turbo",
         messages,
         max_tokens: 256,
         temperature: 0.5,
@@ -173,53 +173,49 @@ export default async function CommitSummary(
     );
   }
 
-  if (summaries.length === 1) {
-    res.status(200).json({ summary: summaries[0] });
-  } else {
-    const messages: ChatCompletionRequestMessage[] = [
-      {
-        role: ChatCompletionRequestMessageRoleEnum.System,
-        content: summarySummaryInstruction,
-      },
-      {
-        role: ChatCompletionRequestMessageRoleEnum.User,
-        content: summaries.join("\n"),
-      },
-    ];
+  const messages: ChatCompletionRequestMessage[] = [
+    {
+      role: ChatCompletionRequestMessageRoleEnum.System,
+      content: summarySummaryInstruction,
+    },
+    {
+      role: ChatCompletionRequestMessageRoleEnum.User,
+      content: summaries.join("\n"),
+    },
+  ];
 
-    try {
-      const completion = await gpt.createChatCompletion({
-        model: "gpt-4",
-        messages,
-        max_tokens: 384,
-        temperature: 0.5,
-      });
+  try {
+    const completion = await gpt.createChatCompletion({
+      model: "gpt-4",
+      messages,
+      max_tokens: 384,
+      temperature: 0.5,
+    });
 
-      const summary = completion.data.choices[0]?.message?.content;
+    const summary = completion.data.choices[0]?.message?.content;
 
-      if (!summary) {
-        throw new Error("An unexpected error occured. No final summary.");
-      } else {
-        res.status(200).json({ summary });
-        return;
-      }
-    } catch (error: unknown) {
-      if (
-        typeof error === "object" &&
-        error !== null &&
-        "response" in error &&
-        typeof error.response === "object" &&
-        error.response !== null &&
-        "data" in error.response &&
-        typeof error.response.data === "string"
-      ) {
-        console.error(error.response.data);
-      }
-
-      res
-        .status(500)
-        .json({ error: "An unexpected error occured. Final summary failed." });
+    if (!summary) {
+      throw new Error("An unexpected error occured. No final summary.");
+    } else {
+      res.status(200).json({ summary });
       return;
     }
+  } catch (error: unknown) {
+    if (
+      typeof error === "object" &&
+      error !== null &&
+      "response" in error &&
+      typeof error.response === "object" &&
+      error.response !== null &&
+      "data" in error.response &&
+      typeof error.response.data === "string"
+    ) {
+      console.error(error.response.data);
+    }
+
+    res
+      .status(500)
+      .json({ error: "An unexpected error occured. Final summary failed." });
+    return;
   }
 }
