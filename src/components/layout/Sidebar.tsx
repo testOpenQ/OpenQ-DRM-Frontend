@@ -28,15 +28,15 @@ export default function Sidebar() {
       </SidebarLink>
       <SidebarDivider />
       {campaigns?.map((campaign) => (
-        <>
-          <SidebarLink key={campaign.id} href={`/campaigns/${campaign.id}`}>
+        <div key={campaign.id}>
+          <SidebarLink href={`/campaigns/${campaign.id}`}>
             <div className="mr-3 p-1.5">
               <ChartPieIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
             </div>
             {campaign.name}
           </SidebarLink>
           <SidebarDivider />
-        </>
+        </div>
       ))}
       {/* <SidebarLink href="/users">
         <div className="mr-3 p-1.5">
