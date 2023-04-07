@@ -2,8 +2,6 @@ import SidebarLink from "./SidebarLink";
 import RequestInfo from "../RequestInfo";
 import {
   ArrowTopRightOnSquareIcon,
-  UsersIcon,
-  CodeBracketIcon,
   BookOpenIcon,
   InformationCircleIcon,
   ChartPieIcon,

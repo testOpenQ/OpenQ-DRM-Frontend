@@ -59,7 +59,7 @@ export default function Card({ repo }: { repo: Repo }) {
   function stringToSeed(seed: string) {
     let hash = 0;
     for (let i = 0; i < seed.length; i++) {
-      let charCode = seed.charCodeAt(i);
+      const charCode = seed.charCodeAt(i);
       hash = (hash << 5) - hash + charCode;
       hash |= 0; // Convert to 32-bit integer
     }
@@ -112,33 +112,35 @@ export default function Card({ repo }: { repo: Repo }) {
   }, []);
 
   useEffect(() => {
-    (async () => {
-      if (repoScanResult) {
-        const members = Object.keys(repoScanResult.commitsByAuthor);
+    if (repoScanResult && accessToken) {
+      const members = Object.keys(repoScanResult.commitsByAuthor);
 
-        Promise.all(
-          members.map((member) =>
-            fetch(`https://api.github.com/users/${member}`, {
-              headers: {
-                Authorization: `token ${accessToken}`,
-              },
-            }).then((res) => res.json())
-          )
-        ).then((members) => {
+      Promise.all(
+        members.map((member) =>
+          fetch(`https://api.github.com/users/${member}`, {
+            headers: {
+              Authorization: `token ${accessToken}`,
+            },
+          }).then((res) => res.json())
+        )
+      )
+        .then((members: { avatar_url: string }[]) => {
           setMembers(
             members.map((member) => ({ avatarUrl: member.avatar_url }))
           );
-        });
-      }
-    })();
-  }, [repoScanResult]);
+        })
+        .catch(console.error);
+    }
+  }, [repoScanResult, accessToken]);
 
   useEffect(() => {
-    getRepoCommitSummaries(repo.id).then((summaries) => {
-      if (summaries[0]) {
-        setCommitSummary(summaries[0].summary);
-      }
-    });
+    getRepoCommitSummaries(repo.id)
+      .then((summaries) => {
+        if (summaries[0]) {
+          setCommitSummary(summaries[0].summary);
+        }
+      })
+      .catch(console.error);
     getLatestRepoScan(repo.owner, repo.name, since, until)
       .then((latestRepoScan) => {
         if (latestRepoScan) {
@@ -172,7 +174,8 @@ export default function Card({ repo }: { repo: Repo }) {
     const scan = scanner.scanRepo(repo.owner, repo.name, since, until);
 
     setScanning(true);
-    let rawCommits: any[] = [];
+    let rawCommits: RepoData["defaultBranchRef"]["target"]["history"]["nodes"] =
+      [];
     scan((data) => {
       setRepoScanResult(evaluateRepoData(data.repository));
 
@@ -186,14 +189,23 @@ export default function Card({ repo }: { repo: Repo }) {
 
         fetch("/api/commit-summary", {
           method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
           body: JSON.stringify({ commits: rawCommits }),
         })
           .then((res) => res.json())
-          .then((data) => {
+          .then((data: { summary: string }) => {
+            if (!data.summary || typeof data.summary !== "string") {
+              throw new Error("Invalid summary response");
+            }
             setCommitSummary(data.summary);
             setGeneratingSummary(false);
-            addCommitSummary({ repoId: repo.id, summary: data.summary });
-          });
+            addCommitSummary({ repoId: repo.id, summary: data.summary }).catch(
+              console.error
+            );
+          })
+          .catch(console.error);
       });
   }
 
@@ -202,7 +214,7 @@ export default function Card({ repo }: { repo: Repo }) {
   }
 
   function handleDeleteRepo() {
-    deleteRepo(repo.id);
+    deleteRepo(repo.id).catch(console.error);
   }
 
   function handleSignIn() {
@@ -314,7 +326,7 @@ export default function Card({ repo }: { repo: Repo }) {
                       className="font-normal text-indigo-400"
                       onClick={handleHideMessage}
                     >
-                      Got it! Don't show this message any more.
+                      Got it! Don&apos;t show this message any more.
                     </a>
                   </div>
                 )}

@@ -7,8 +7,9 @@ import {
 } from "@mktcodelib/github-insights";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import { User } from "~/db";
+import type { User } from "~/db";
 import Button from "../base/Button";
+import LoadingSpinner from "../LoadingSpinner";
 
 export default function Card({ user }: { user: User }) {
   const { data } = useSession();
@@ -18,10 +19,6 @@ export default function Card({ user }: { user: User }) {
   const [userScanResult, setUserScanResult] = useState<UserEvaluation | null>(
     null
   );
-  const [progress, setProgress] = useState<{
-    requestCount: number;
-    remainingRequests: number;
-  } | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -37,22 +34,11 @@ export default function Card({ user }: { user: User }) {
 
             setScanning(true);
             scanner
-              .scanContinue<{ user: UserData }>(latestUserScan.id)(
-                (data, paginators) => {
-                  setUserScanResult(evaluateUserData(data.user));
-
-                  const requestCount = Math.max(
-                    ...paginators.map((p) => p.requestCount)
-                  );
-                  const remainingRequests = Math.max(
-                    ...paginators.map((p) => p.remainingRequests)
-                  );
-                  setProgress({ requestCount, remainingRequests });
-                }
-              )
+              .scanContinue<{ user: UserData }>(latestUserScan.id)((data) => {
+                setUserScanResult(evaluateUserData(data.user));
+              })
               .finally(() => {
                 setScanning(false);
-                setProgress(null);
               });
           }
         }
@@ -75,19 +61,12 @@ export default function Card({ user }: { user: User }) {
     const scan = scanner.scanUser(user.login);
 
     setScanning(true);
-    scan((data, paginators) => {
+    scan((data) => {
       setUserScanResult(evaluateUserData(data.user));
-
-      const requestCount = Math.max(...paginators.map((p) => p.requestCount));
-      const remainingRequests = Math.max(
-        ...paginators.map((p) => p.remainingRequests)
-      );
-      setProgress({ requestCount, remainingRequests });
     })
       .catch((err) => console.log(err))
       .finally(() => {
         setScanning(false);
-        setProgress(null);
       });
   }
 
@@ -143,6 +122,7 @@ export default function Card({ user }: { user: User }) {
       {!userScanResult && (
         <div className="flex grow items-center justify-center">
           <Button className="w-full" onClick={scan}>
+            {scanning && <LoadingSpinner className="mr-2" />}
             Scan
           </Button>
         </div>

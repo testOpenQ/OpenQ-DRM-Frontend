@@ -5,13 +5,45 @@ import Button from "../base/Button";
 import useDebounce from "~/hooks/useDebounce";
 import Image from "next/image";
 
+export type RepoSearchResult = {
+  id: number;
+  node_id: string;
+  name: string;
+  full_name: string;
+  description: string;
+  html_url: string;
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
+};
+
+export type UserSearchResult = {
+  id: number;
+  node_id: string;
+  login: string;
+  avatar_url: string;
+  bio: string;
+  html_url: string;
+};
+
+function isRepoSearchResult(item: unknown): item is RepoSearchResult {
+  return typeof item === "object" && item !== null && "owner" in item;
+}
+
+function isUserSearchResult(item: unknown): item is UserSearchResult {
+  return typeof item === "object" && item !== null && "login" in item;
+}
+
 export default function GithubSearch({
   onSelect,
 }: {
-  onSelect: (result: Record<string, any>) => void;
+  onSelect: (item: UserSearchResult | RepoSearchResult) => void;
 }) {
   const [searchTerm, setSearchTerm] = useState<string>("");
-  const [searchResults, setSearchResults] = useState<Record<string, any>[]>([]);
+  const [searchResults, setSearchResults] = useState<
+    (UserSearchResult | RepoSearchResult)[]
+  >([]);
   const [searchType, setSearchType] = useState<"users" | "repos">("users");
 
   const debouncedSearchTerm = useDebounce(searchTerm, 500);
@@ -28,8 +60,8 @@ export default function GithubSearch({
     setSearchType(type);
   }
 
-  function handleSelectSearchResult(result: Record<string, any>) {
-    onSelect(result);
+  function handleSelectSearchResult(item: UserSearchResult | RepoSearchResult) {
+    onSelect(item);
     setSearchResults([]);
     setSearchTerm("");
   }
@@ -58,13 +90,23 @@ export default function GithubSearch({
       },
     })
       .then((res) => res.json())
-      .then((res) => {
-        if (!res.items) return;
+      .then((res: unknown) => {
+        if (
+          !res ||
+          typeof res !== "object" ||
+          !("items" in res) ||
+          !Array.isArray(res.items) ||
+          !res.items.every(
+            (item: unknown) =>
+              isRepoSearchResult(item) || isUserSearchResult(item)
+          )
+        )
+          throw new Error("Unknown GitHub API response");
 
         setSearchResults(res.items);
       })
       .catch(console.error);
-  }, [debouncedSearchTerm, accessToken]);
+  }, [searchType, debouncedSearchTerm, accessToken]);
 
   return (
     <div className="group relative flex space-x-3">
@@ -99,22 +141,29 @@ export default function GithubSearch({
       )}
       {searchResults && searchResults.length > 0 && (
         <div className="absolute mt-12 hidden max-h-64 grid-cols-3 gap-1 overflow-auto rounded-md border border-gray-600 bg-gray-800 p-1 group-focus-within:grid">
-          {searchResults.map((item) => (
-            <Button
-              key={item.node_id}
-              onClick={() => handleSelectSearchResult(item)}
-              className="!rounded-md"
-            >
-              <Image
-                src={item.avatar_url || item.owner.avatar_url}
-                alt="Avatar"
-                width={24}
-                height={24}
-                className="mr-2 rounded-full"
-              />
-              <div className="truncate">{item.login || item.full_name}</div>
-            </Button>
-          ))}
+          {searchResults.map((item) => {
+            const avatarUrl = isRepoSearchResult(item)
+              ? item.owner.avatar_url
+              : item.avatar_url;
+            const name = isRepoSearchResult(item) ? item.full_name : item.login;
+
+            return (
+              <Button
+                key={item.node_id}
+                onClick={() => handleSelectSearchResult(item)}
+                className="!rounded-md"
+              >
+                <Image
+                  src={avatarUrl}
+                  alt="Avatar"
+                  width={24}
+                  height={24}
+                  className="mr-2 rounded-full"
+                />
+                <div className="truncate">{name}</div>
+              </Button>
+            );
+          })}
         </div>
       )}
     </div>

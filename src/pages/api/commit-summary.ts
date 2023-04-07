@@ -10,7 +10,7 @@ import { MAX_TOKENS, countTokens, instructions } from "~/server/gpt";
 
 type Data = {
   summary?: ChatCompletionResponseMessage | string;
-  error?: string;
+  error?: unknown;
 };
 
 type ValidCommit = {
@@ -65,7 +65,7 @@ export default async function CommitSummary(
   res: NextApiResponse<Data>
 ) {
   try {
-    const body = JSON.parse(req.body);
+    const body = req.body as ValidBody;
 
     if (!isValidBody(body)) {
       res.status(400).json({ error: "No valid commits array provided." });
@@ -73,8 +73,8 @@ export default async function CommitSummary(
     }
 
     const commitsText = body.commits
-      .map((commit: any) => {
-        let message = commit.message
+      .map((commit: ValidCommit) => {
+        const message = commit.message
           .replace(/\n/g, " ")
           .replace(/\s+/g, " ")
           .replace(/[^\w\s]/gi, "")
@@ -126,14 +126,7 @@ export default async function CommitSummary(
     }
 
     res.status(200).json({ summary });
-  } catch (e: any) {
-    console.log(e.response.data);
-    res.status(200).json({
-      error:
-        e.response.data.error.message ||
-        e.response.message ||
-        e.message ||
-        "An unexpected error occured. Unable to generate summary.",
-    });
+  } catch (error: unknown) {
+    res.status(500).json({ error });
   }
 }

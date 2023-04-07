@@ -40,8 +40,14 @@ export default function SettingsPage() {
             of OpenQ DRM, you can set a limit here.
           </p>
           <div className="my-6 flex items-center justify-center text-xl">
-            <Input value="100" setValue={() => {}} className="mr-2 !w-24" /> %
-            of hourly limit
+            <Input
+              value="100"
+              setValue={() => {
+                /** TODO: implement */
+              }}
+              className="mr-2 !w-24"
+            />{" "}
+            % of hourly limit
           </div>
           <p className="mb-3 text-xl text-gray-400">
             Consider upgrading to our Pro Plan for an enhanced experience with

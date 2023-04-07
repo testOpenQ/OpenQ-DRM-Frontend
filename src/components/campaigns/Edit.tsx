@@ -2,13 +2,15 @@ import { addRepo, addUser, deleteCampaign, getCampaign } from "~/db";
 import { useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import Button from "../base/Button";
-import { TrashIcon, PencilIcon } from "@heroicons/react/24/outline";
-import GithubSearch from "../layout/GithubSearch";
+import { TrashIcon } from "@heroicons/react/24/outline";
+import GithubSearch, {
+  type RepoSearchResult,
+  type UserSearchResult,
+} from "../layout/GithubSearch";
 import Textarea from "../base/Textarea";
 import Headline from "../layout/Headline";
 import { useRouter } from "next/router";
 import DiscreetButton from "../base/DiscreetButton";
-import Link from "next/link";
 
 export default function EditCampaign({ campaignId }: { campaignId: string }) {
   const router = useRouter();
@@ -41,9 +43,9 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
     setTextareaInput(sanitizedInput.join("\n") + "\n");
   }
 
-  function onSelectSearchResult(result: Record<string, any>) {
+  function onSelectSearchResult(item: UserSearchResult | RepoSearchResult) {
     const newInput = textareaInput.split("\n").filter(Boolean);
-    newInput.push(result.html_url);
+    newInput.push(item.html_url);
 
     handleSetTextareaInput(newInput.join("\n"));
   }
@@ -62,14 +64,14 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
       const [owner, name] = repo.split("/");
       if (!owner || !name) return;
 
-      addRepo({ owner, name, campaignId: campaign.id });
+      addRepo({ owner, name, campaignId: campaign.id }).catch(console.error);
     });
 
     users.forEach((user) => {
-      addUser({ login: user, campaignId: campaign.id });
+      addUser({ login: user, campaignId: campaign.id }).catch(console.error);
     });
 
-    router.push(`/campaigns/${campaign.id}`);
+    router.push(`/campaigns/${campaign.id}`).catch(console.error);
   }
 
   if (!campaign) return <>Campaign does not exist.</>;

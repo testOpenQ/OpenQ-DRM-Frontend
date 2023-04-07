@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function SidebarLink({
   children,
   href,
-  className,
+  className = "",
 }: {
   children: React.ReactNode;
   href: string;

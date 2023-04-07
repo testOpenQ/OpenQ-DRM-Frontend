@@ -15,7 +15,7 @@ export default function Wrapper({ campaignId }: { campaignId: string }) {
   if (!repos || !users) return <>Loading...</>;
 
   if (repos.length + users.length === 0) {
-    router.push(`/campaigns/${campaignId}/edit`).catch(console.log);
+    router.push(`/campaigns/${campaignId}/edit`).catch(console.error);
   }
 
   return <Details campaign={campaign} repos={repos} users={users} />;

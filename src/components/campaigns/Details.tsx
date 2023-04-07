@@ -39,14 +39,14 @@ export default function CampaignsDetails({
     if (!campaign) return;
     setEditName(false);
     campaign.name = name;
-    saveCampaign(campaign).catch(console.log);
+    saveCampaign(campaign).catch(console.error);
   }
 
   function handleDeleteCampaign(id: number) {
     router
       .push("/")
       .then(() => deleteCampaign(id))
-      .catch((err) => console.log(err));
+      .catch(console.error);
   }
 
   return (
