@@ -141,12 +141,9 @@ export default async function CommitSummary(
       const summary = completion.data.choices[0]?.message?.content;
 
       if (!summary) {
-        res
-          .status(500)
-          .json({
-            error:
-              "An unexpected error occured. Commit summary has no content.",
-          });
+        res.status(500).json({
+          error: "An unexpected error occured. Commit summary has no content.",
+        });
         return;
       }
 
@@ -189,8 +186,6 @@ export default async function CommitSummary(
         content: summaries.join("\n"),
       },
     ];
-
-    console.log(summaries.join("\n"));
 
     try {
       const completion = await gpt.createChatCompletion({
