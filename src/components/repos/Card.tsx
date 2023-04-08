@@ -22,6 +22,7 @@ import useLocalStorage from "~/hooks/useLocalstorage";
 import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../base/DiscreetButton";
 import numberFormatter from "~/lib/numberFormatter";
+import { generateFakeScores } from "~/lib/scores";
 
 export default function Card({ repo }: { repo: Repo }) {
   const { data } = useSession();
@@ -42,51 +43,7 @@ export default function Card({ repo }: { repo: Repo }) {
 
   const [members, setMembers] = useState<{ avatarUrl: string }[]>([]);
 
-  /**
-   *
-   * DELETE THIS STUF
-   *
-   */
-  function stringToSeed(seed: string) {
-    let hash = 0;
-    for (let i = 0; i < seed.length; i++) {
-      const charCode = seed.charCodeAt(i);
-      hash = (hash << 5) - hash + charCode;
-      hash |= 0; // Convert to 32-bit integer
-    }
-    return Math.abs(hash);
-  }
-
-  function xorshift(seed: number) {
-    let state = seed;
-
-    return function () {
-      state ^= state << 13;
-      state ^= state >> 17;
-      state ^= state << 5;
-      return Math.abs(state) / Math.pow(2, 32);
-    };
-  }
-
-  function generateNumbersFromString(seed: string) {
-    const random = xorshift(stringToSeed(seed));
-    const numbers = [];
-
-    for (let i = 0; i < 4; i++) {
-      numbers.push(Math.min(Math.floor(random() * 6) + 2, 5));
-    }
-
-    return numbers;
-  }
-
-  const scores = generateNumbersFromString(
-    repo.owner + repo.name + "supersecretse"
-  );
-  /**
-   *
-   * DELETE END
-   *
-   */
+  const scores = generateFakeScores(repo);
 
   const since = useMemo(() => {
     const since = new Date();
