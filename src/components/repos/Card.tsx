@@ -10,38 +10,28 @@ import CardMembers from "./CardMembers";
 import CardScores from "./CardScores";
 import { signIn, useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
-import {
-  type Repo,
-  addCommitSummary,
-  deleteRepo,
-  getRepoCommitSummaries,
-} from "~/db";
+import { type Repo } from "~/db";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
-import useLocalStorage from "~/hooks/useLocalstorage";
-import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import DiscreetButton from "../base/DiscreetButton";
 import numberFormatter from "~/lib/numberFormatter";
 import { generateFakeScores } from "~/lib/scores";
+import CardHeader from "./card/Header";
+import CardNav from "./card/Nav";
+import ChangesTab from "./card/tabs/Changes";
 
 export default function Card({ repo }: { repo: Repo }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
 
-  const [showCommitSummaryInfo, setShowCommitSummaryInfo] = useLocalStorage(
-    "ui.info.commit-summary",
-    true
-  );
-
   const [scanning, setScanning] = useState(false);
   const [repoScanResult, setRepoScanResult] = useState<RepoEvaluation | null>(
     null
   );
-  const [commitSummary, setCommitSummary] = useState<string>("");
-  const [generatingSummary, setGeneratingSummary] = useState(false);
-  const [showCommitSummary, setShowCommitSummary] = useState(false);
 
-  const [members, setMembers] = useState<{ avatarUrl: string }[]>([]);
+  const [showCommitSummary, setShowCommitSummary] = useState(false);
+  const [showIssues, setShowIssues] = useState(false);
+  const [showDiscussions, setShowDiscussions] = useState(false);
+  const [showDevelopers, setShowDevelopers] = useState(false);
 
   const scores = generateFakeScores(repo);
 
@@ -60,41 +50,12 @@ export default function Card({ repo }: { repo: Repo }) {
   }, []);
 
   useEffect(() => {
-    if (repoScanResult && accessToken) {
-      const members = Object.keys(repoScanResult.commitsByAuthor);
-
-      Promise.all(
-        members.map((member) =>
-          fetch(`https://api.github.com/users/${member}`, {
-            headers: {
-              Authorization: `token ${accessToken}`,
-            },
-          }).then((res) => res.json())
-        )
-      )
-        .then((members: { avatar_url: string }[]) => {
-          setMembers(
-            members.map((member) => ({ avatarUrl: member.avatar_url }))
-          );
-        })
-        .catch(console.error);
-    }
-  }, [repoScanResult, accessToken]);
-
-  useEffect(() => {
-    getRepoCommitSummaries(repo.id)
-      .then((summaries) => {
-        const last = summaries.pop();
-        if (last) {
-          setCommitSummary(last.summary);
-        }
-      })
-      .catch(console.error);
     getLatestRepoScan(repo.owner, repo.name, since, until)
       .then((latestRepoScan) => {
         if (latestRepoScan) {
           if (latestRepoScan.data.repository) {
-            setRepoScanResult(evaluateRepoData(latestRepoScan.data.repository));
+            const evaluation = evaluateRepoData(latestRepoScan.data.repository);
+            setRepoScanResult(evaluation);
           }
           if (!latestRepoScan.done && accessToken) {
             const scanner = new Scanner({ viewerToken: accessToken });
@@ -123,47 +84,13 @@ export default function Card({ repo }: { repo: Repo }) {
     const scan = scanner.scanRepo(repo.owner, repo.name, since, until);
 
     setScanning(true);
-    let rawCommits: RepoData["defaultBranchRef"]["target"]["history"]["nodes"] =
-      [];
     scan((data) => {
       setRepoScanResult(evaluateRepoData(data.repository));
-
-      rawCommits = data.repository.defaultBranchRef.target.history.nodes;
     })
       .catch((err) => console.log(err))
       .finally(() => {
         setScanning(false);
-
-        setGeneratingSummary(true);
-
-        fetch("/api/commit-summary", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ commits: rawCommits }),
-        })
-          .then((res) => res.json())
-          .then((data: { summary: string }) => {
-            if (!data.summary || typeof data.summary !== "string") {
-              throw new Error("Invalid summary response");
-            }
-            setCommitSummary(data.summary);
-            setGeneratingSummary(false);
-            addCommitSummary({ repoId: repo.id, summary: data.summary }).catch(
-              console.error
-            );
-          })
-          .catch(console.error);
       });
-  }
-
-  function handleHideMessage() {
-    setShowCommitSummaryInfo(false);
-  }
-
-  function handleDeleteRepo() {
-    deleteRepo(repo.id).catch(console.error);
   }
 
   function handleSignIn() {
@@ -174,25 +101,12 @@ export default function Card({ repo }: { repo: Repo }) {
 
   return (
     <div className="mb-auto overflow-hidden rounded-lg bg-gray-800">
-      <div className="flex items-center justify-between bg-gray-900/50 px-3 py-2 font-bold">
-        <div>
-          {repo.owner}/{repo.name}
-        </div>
-        <div className="flex">
-          {accessToken && repoScanResult && (
-            <DiscreetButton disabled={scanning} onClick={scan}>
-              {scanning && <LoadingSpinner className="!h-4 !w-4" />}
-              {!scanning && <ArrowPathIcon className="h-4 w-4" />}
-            </DiscreetButton>
-          )}
-          <DiscreetButton>
-            <XMarkIcon className="h-4 w-4" onClick={handleDeleteRepo} />
-          </DiscreetButton>
-        </div>
-      </div>
+      <CardHeader repo={repo} />
       <div className="flex flex-col sm:flex-row">
         <div className="flex grow flex-col items-center justify-center">
-          {repoScanResult && <CardMembers members={members} />}
+          {repoScanResult && (
+            <CardMembers members={repoScanResult.authors.map((a) => a.user)} />
+          )}
           {!repoScanResult && (
             <div className="flex grow items-center justify-center px-12">
               {accessToken && (
@@ -237,78 +151,19 @@ export default function Card({ repo }: { repo: Repo }) {
         </div>
       )}
       <div className="text-xs">
-        {generatingSummary && (
-          <div className="flex items-center justify-center px-3 py-2 text-gray-300">
-            <LoadingSpinner className="mr-2 !h-3 !w-3" />
-            Generating summary...
-          </div>
-        )}
-        {!generatingSummary && commitSummary && (
-          <>
-            <div className="flex">
-              <DiscreetButton
-                className="w-full rounded-none text-sm font-normal"
-                onClick={() => setShowCommitSummary(!showCommitSummary)}
-              >
-                recent changes
-              </DiscreetButton>
-              <DiscreetButton
-                className="w-full rounded-none text-sm font-normal"
-                onClick={() => setShowCommitSummary(!showCommitSummary)}
-              >
-                closed issues
-              </DiscreetButton>
-              <DiscreetButton
-                className="w-full rounded-none text-sm font-normal"
-                onClick={() => setShowCommitSummary(!showCommitSummary)}
-              >
-                recent discussions
-              </DiscreetButton>
-              <DiscreetButton
-                className="w-full rounded-none text-sm font-normal"
-                onClick={() => setShowCommitSummary(!showCommitSummary)}
-              >
-                developers
-              </DiscreetButton>
-            </div>
-            <div
-              className={`${
-                showCommitSummary ? "max-h-40" : "max-h-0"
-              } overflow-auto transition-all`}
-            >
-              <div className="p-3">
-                <div
-                  className="leading-normal text-gray-300"
-                  dangerouslySetInnerHTML={{
-                    __html: commitSummary
-                      .replace(
-                        /(critical|severe|serious|bugs?|hot[ -]?fix|urgent)/gi,
-                        '<strong class="text-red-300">$1</strong>'
-                      )
-                      .replace(
-                        /(feature(s)?|fix(e[sd])?|design|test(s)?|terms of use|terms of service|licen[sc]e)/gi,
-                        '<strong class="text-indigo-300">$1</strong>'
-                      ),
-                  }}
-                />
-                {showCommitSummaryInfo && (
-                  <div className="mt-2 text-xs font-bold">
-                    This summary was generated automatically. It might not be
-                    absolutely perfect but indicates the workload and general
-                    direction of the project.{" "}
-                    <a
-                      href="#"
-                      className="font-normal text-indigo-400"
-                      onClick={handleHideMessage}
-                    >
-                      Got it! Don&apos;t show this message any more.
-                    </a>
-                  </div>
-                )}
-              </div>
-            </div>
-          </>
-        )}
+        <CardNav
+          onClickChanges={() => setShowCommitSummary(!showCommitSummary)}
+          onClickIssues={() => setShowIssues(!showIssues)}
+          onClickDiscussions={() => setShowDiscussions(!showDiscussions)}
+          onClickDevelopers={() => setShowDevelopers(!showDevelopers)}
+        />
+        <div
+          className={`${
+            showCommitSummary ? "max-h-40" : "max-h-0"
+          } overflow-auto transition-all`}
+        >
+          <ChangesTab repo={repo} since={since} until={until} />
+        </div>
       </div>
     </div>
   );
