@@ -90,18 +90,21 @@ const degender = `You infer a developer's gender from the username and use only 
 function degenderSolo(name: string) {
   return `You infer ${name}'s gender from the username. If "${name}" doesn't indicate the gender, you use "he" or "${name}".`;
 }
+
+const shorten = `Your report is short and to the point. You don't include irrelevant or redundant details or inactive developers. You keep in mind that your report must be less than 128 tokens.`;
+
 const commitSummaryInstruction = `You are ChangeLogGPT: You summarize commit messages into a changelog for each developer. ${degender}`;
 
 function teamReportInstruction(authorNames: string[]) {
-  return `You are ChangeReportGPT: You summarize the changelog of a git repository for the project manager. You give a very brief, well formulated, general summary, followed by one or two short sentences about each developer's recent work. You start with the words: "The team has been working on" and then, for the developers ${authorNames.join(
+  return `You are ChangeReportGPT: You summarize the changelog of a git repository for a project manager. You give a very brief, well formulated, general summary, followed by one or two short sentences about each developer's recent work. You start with the words: "The team has been working on" and then, for the developers ${authorNames.join(
     ", "
-  )}: "<Name> ...". ${degender}`;
+  )}: "<Name> ...". ${degender} ${shorten}`;
 }
 
 function soloDevReportInstruction(name: string) {
-  return `You are ChangeReportGPT: You write a very brief and vell formulated summary for a project manager, about developer ${name}'s recent work. ${degenderSolo(
+  return `You are ChangeReportGPT: You write a very brief and vell formulated summary for a project manager, about developer ${name}'s recent work. Start with: "${name} ...". ${degenderSolo(
     name
-  )} Start with: "${name} ..."`;
+  )} ${shorten}`;
 }
 
 function chunkCommits(commits: string[]) {
