@@ -21,11 +21,7 @@ import LoadingSpinner from "../LoadingSpinner";
 import useLocalStorage from "~/hooks/useLocalstorage";
 import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../base/DiscreetButton";
-
-const numberFormatter = new Intl.NumberFormat("en-US", {
-  notation: "compact",
-  compactDisplay: "short",
-});
+import numberFormatter from "~/lib/numberFormatter";
 
 export default function Card({ repo }: { repo: Repo }) {
   const { data } = useSession();
