@@ -20,6 +20,8 @@ export default function Card({ user }: { user: User }) {
     null
   );
 
+  const [searchingEmail, setSearchingEmail] = useState(false);
+
   useEffect(() => {
     if (!user) return;
 
@@ -67,6 +69,55 @@ export default function Card({ user }: { user: User }) {
       .catch((err) => console.log(err))
       .finally(() => {
         setScanning(false);
+      });
+  }
+
+  function findEmail() {
+    if (!accessToken) {
+      console.log("No access token set");
+      return;
+    }
+
+    if (!user) {
+      console.log("No user set");
+      return;
+    }
+
+    setSearchingEmail(true);
+    const url = `https://api.github.com/users/${user.login}`;
+    fetch(url, {
+      headers: {
+        Authorization: "token " + accessToken,
+      },
+    })
+      .then((res) => res.json())
+      .then(
+        (userData: {
+          login: string;
+          blog: string;
+          twitter_username: string;
+        }) => {
+          fetch("/api/find-email", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              username: userData.login,
+              website: userData.blog,
+              twitter: userData.twitter_username,
+            }),
+          })
+            .then((res) => res.json())
+            .then((data: { email: string | undefined; reason: string }) => {
+              console.log(data);
+            })
+            .catch(console.error);
+        }
+      )
+      .catch(console.error)
+      .finally(() => {
+        setSearchingEmail(false);
       });
   }
 
@@ -124,6 +175,10 @@ export default function Card({ user }: { user: User }) {
           <Button className="w-full" onClick={scan}>
             {scanning && <LoadingSpinner className="mr-2" />}
             Scan
+          </Button>
+          <Button className="w-full" onClick={findEmail}>
+            {scanning && <LoadingSpinner className="mr-2" />}
+            Find email
           </Button>
         </div>
       )}

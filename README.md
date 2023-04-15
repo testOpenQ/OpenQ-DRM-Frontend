@@ -8,6 +8,19 @@
 - [ ] Implement score comparison
 - [ ] Use workers
 
+# Email Address Finder
+
+- first "manual"/script-based search
+  - look for email in public github profile data via API
+  - if found: Yes! The user is kind to us.
+  - if not:
+    - look for website (blog) and twitter in github profile via API
+    - fetch user's profile repo REDME and bio
+    - if twitter:
+      - look for website via twitter API
+      - fetch recent tweets (no retweets)
+    - collect all email addresses and URLs found in these contents (regex)
+
 # Create T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
