@@ -35,7 +35,22 @@ export default class HTMLPage {
   }
 
   getFooter(): Element | null {
-    return this.dom.querySelector("footer");
+    const footerElement = this.dom.querySelector("footer");
+    if (footerElement) {
+      return footerElement;
+    }
+
+    const divWithFooterClass = this.dom.querySelector("div.footer");
+    if (divWithFooterClass) {
+      return divWithFooterClass;
+    }
+
+    const divWithFooterId = this.dom.querySelector("div#footer");
+    if (divWithFooterId) {
+      return divWithFooterId;
+    }
+
+    return null;
   }
 
   getAllEmailAddresses(): string[] {

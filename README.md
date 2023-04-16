@@ -2,11 +2,22 @@
 
 ## TODO
 
-- [ ] Finish campaign/repository/developer management
-  - [ ] Import (text/csv)
-- [ ] General UX/UI polishing
-- [ ] Implement score comparison
-- [ ] Use workers
+- Import (text/csv) 2d
+- Score calculation 2d
+- Email client 5d
+- Stripe 3d
+  - For what purpose? On-demand, like ETH? Or fixed amount for a fixed quota?
+- GPT prompt improvement 3d
+  - Email research
+  - Commit analysis
+- GitHub fetching solidity 2d
+- Overall UI 3d
+
+**next:**
+
+Pay Button -> Get email button -> send E-Mail button
+-> UI for that
+-> codemocks for that
 
 # Email Address Finder
 
