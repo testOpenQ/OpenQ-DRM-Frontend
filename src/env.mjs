@@ -21,6 +21,10 @@ const server = z.object({
   // Add `.min(1) on ID and SECRET if you want to make sure they're not empty
   GITHUB_CLIENT_ID: z.string(),
   GITHUB_CLIENT_SECRET: z.string(),
+
+  TWITTER_API_KEY: z.string(),
+  TWITTER_API_SECRET: z.string(),
+  TWITTER_API_BEARER_TOKEN: z.string(),
 });
 
 /**
@@ -44,7 +48,9 @@ const processEnv = {
   NEXTAUTH_URL: process.env.NEXTAUTH_URL,
   GITHUB_CLIENT_ID: process.env.GITHUB_CLIENT_ID,
   GITHUB_CLIENT_SECRET: process.env.GITHUB_CLIENT_SECRET,
-  // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+  TWITTER_API_KEY: process.env.TWITTER_API_KEY,
+  TWITTER_API_SECRET: process.env.TWITTER_API_SECRET,
+  TWITTER_API_BEARER_TOKEN: process.env.TWITTER_API_BEARER_TOKEN,
 };
 
 // Don't touch the part below

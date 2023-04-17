@@ -1,5 +1,6 @@
 import { encode } from "gpt-3-encoder";
-import { Configuration, OpenAIApi } from "openai";
+import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
+import { ChatCompletionResponseBody } from "~/pages/api/chat-completion";
 
 export const gpt = new OpenAIApi(
   new Configuration({
@@ -14,9 +15,22 @@ export function countTokens(text: string) {
   return encode(text).length;
 }
 
-export const instructions = `You are CommitGPT, summarizing commit messages for project managers. You give a brief general summary, followed by a one- to two-sentence overview of each developer's recent work, excluding bots like dependabot.
+export async function completeChat(
+  context: ChatCompletionRequestMessage[],
+  maxResponseTokens: number,
+  temperature: number
+): Promise<ChatCompletionResponseBody> {
+  const res = await fetch("/api/chat-completion", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      context,
+      maxResponseTokens,
+      temperature,
+    }),
+  });
 
-Input format:
-<developer> <msg>
-...
-`;
+  return await res.json();
+}

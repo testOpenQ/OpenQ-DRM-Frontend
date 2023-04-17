@@ -72,7 +72,7 @@ export default function Card({ user }: { user: User }) {
       });
   }
 
-  function findEmail() {
+  async function findEmail() {
     if (!accessToken) {
       console.log("No access token set");
       return;
@@ -84,41 +84,35 @@ export default function Card({ user }: { user: User }) {
     }
 
     setSearchingEmail(true);
-    const url = `https://api.github.com/users/${user.login}`;
-    fetch(url, {
+    const userDataUrl = `https://api.github.com/users/${user.login}`;
+    const userData = await fetch(userDataUrl, {
       headers: {
         Authorization: "token " + accessToken,
       },
+    }).then((res) => res.json());
+
+    if (userData.email) {
+      setSearchingEmail(false);
+      return;
+    }
+
+    const userReadmeUrl = `https://raw.githubusercontent.com/${user.login}/${user.login}/master/README.md`;
+    userData.readme = await fetch(userReadmeUrl).then((res) => res.text());
+
+    fetch("/api/find-email", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(userData),
     })
       .then((res) => res.json())
-      .then(
-        (userData: {
-          login: string;
-          blog: string;
-          twitter_username: string;
-        }) => {
-          fetch("/api/find-email", {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-              username: userData.login,
-              website: userData.blog,
-              twitter: userData.twitter_username,
-            }),
-          })
-            .then((res) => res.json())
-            .then((data: { email: string | undefined; reason: string }) => {
-              console.log(data);
-            })
-            .catch(console.error);
-        }
-      )
-      .catch(console.error)
-      .finally(() => {
-        setSearchingEmail(false);
-      });
+      .then((data: { email: string | undefined; reason: string }) => {
+        console.log(data);
+      })
+      .catch(console.error);
+
+    setSearchingEmail(false);
   }
 
   if (!user) return <>User does not exist.</>;

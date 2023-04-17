@@ -3,286 +3,276 @@ import {
   ChatCompletionRequestMessageRoleEnum,
   type ChatCompletionRequestMessage,
 } from "openai";
-import { gpt } from "~/server/gpt";
-import { JSDOM } from "jsdom";
-import { htmlToText } from "html-to-text";
+import { fetchTwitterAccountWebsite } from "~/server/utils/twitter";
+import { emailFinder } from "~/server/gpt/system";
+import {
+  extractEmailTextSnippets,
+  extractUrlTextSnippets,
+  htmlToMarkdown,
+  markdownToText,
+} from "~/server/utils/text";
+import { completeChat } from "~/server/gpt";
+import HTMLPage from "~/server/utils/htmlPage";
 
-interface ExtractedInfo {
-  title: string;
-  description: string;
-  emails: { [topic: string]: string[] };
-  urls: { [topic: string]: { label: string; url: string }[] };
-}
-
-function findTopic(element: Element): string {
-  const heading = element.closest("h1, h2, h3, h4, h5, h6");
-  if (heading) {
-    return heading.textContent?.trim() || "";
-  }
-  return "Other";
-}
-
-function extractUrlsAndEmails(html: string): ExtractedInfo {
-  const dom = new JSDOM(html);
-  const doc = dom.window.document;
-
-  const extractedInfo: ExtractedInfo = {
-    title: doc.title,
-    description:
-      doc.querySelector('meta[name="description"]')?.getAttribute("content") ||
-      "",
-    emails: {},
-    urls: {},
-  };
-
-  const bodyText = htmlToText(html);
-
-  // Extract all links
-  const links = bodyText.match(/(https?:\/\/[^\s]+)/g);
-  const emails = bodyText.match(
-    /([a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.[a-zA-Z0-9_-]+)/g
-  );
-
-  links.forEach((link) => {
-    const href = link.href;
-    const label = link.textContent?.trim() || href;
-
-    // Determine if the link is an email or URL
-    if (href.startsWith("mailto:")) {
-      const email = href.replace("mailto:", "");
-      const topic = findTopic(link);
-
-      // Add the email to the extractedInfo object
-      if (!extractedInfo.emails[topic]) {
-        extractedInfo.emails[topic] = [];
-      }
-
-      extractedInfo.emails[topic]!.push(email);
-    } else if (href.startsWith("http://") || href.startsWith("https://")) {
-      if (/github\.com/.test(href)) {
-        return;
-      }
-      if (/twitter\.com/.test(href)) {
-        return;
-      }
-
-      if (/\.(png|jpg|jpeg|gif)$/i.test(href)) {
-        return;
-      }
-
-      const topic = findTopic(link);
-
-      // Add the URL to the extractedInfo object
-      if (!extractedInfo.urls[topic]) {
-        extractedInfo.urls[topic] = [];
-      }
-
-      extractedInfo.urls[topic]!.push({ label, url: href });
-    }
-  });
-
-  return extractedInfo;
-}
-
-type ValidBody = {
-  username: string;
-  website?: string;
-  twitter?: string;
+type GithubUserWithReadme = {
+  login: string;
+  name: string;
   bio?: string;
+  twitter_username?: string;
+  blog?: string;
   readme?: string;
 };
 
-function isCommands(input: string) {
-  return input.startsWith("<click:");
-}
+type FoundEmail = {
+  email: string;
+  confidence: number;
+  reason?: string;
+};
 
-function isEmail(input: string) {
-  const EMAIL_REGEX =
-    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/;
+type FindEmailResponse = {
+  candidates: FoundEmail[];
+  finalContext: ChatCompletionRequestMessage[];
+  googleSearches: string[];
+  clickedUrls: string[];
+};
 
-  return EMAIL_REGEX.test(input);
-}
-
-function formatExtractedInfo(extractedInfo: ExtractedInfo) {
-  const emailsText = Object.entries(extractedInfo.emails)
-    .map(([topic, emails]) => {
-      return `${topic}: ${emails.join("\n")}`;
-    })
-    .join("\n");
-
-  const urlTexts = Object.entries(extractedInfo.urls)
-    .map(([topic, urls]) => {
-      return `${topic}: ${urls
-        .map((url) => `${url.label}: ${url.url}`)
-        .join("\n")}`;
-    })
-    .join("\n");
-
-  return `${extractedInfo.title}
-${extractedInfo.description}
-
-${emailsText}
-
-${urlTexts}`;
-}
-
-function extractUrlsFromClickCommands(input: string) {
-  const urls = [];
-  let match;
-  let matches = input.matchAll(/<click:(.*?)>/g);
-
-  for (match of matches) {
-    urls.push(match[1] as string);
+function getGoogleSearchQuery(input: string): string | null {
+  if (input.startsWith("google:")) {
+    return input.substring(7);
+  } else {
+    return null;
   }
-
-  return urls;
 }
 
-const systemInstructions = `You discover a GitHub user's email address online.
-You receive a GitHub username and then email addresses and URLs (with labels, ordered by topic).
-You can click on a link to gather more links, and potential email addresses.
-If you can't find any obvious email addresses, you can also pick one from a project/company, but try a few websites first.
-If you found an email address, you assign a confidence score between 0 and 1.
-1 means you are sure that this is an email address over which you can contact the developer.
-If you are provided with empty content, you pick another link.
-After clicking 10 links and not finding an email address, you give up and return a final "surrender"-statement.
-Input:
-<github user>
+function getClickedUrl(input: string): string | null {
+  if (input.startsWith("click:")) {
+    return input.substring(6);
+  } else {
+    return null;
+  }
+}
 
-or
+function getFoundEmail(input: string): FoundEmail | null {
+  if (input.startsWith("email:")) {
+    input = input.substring(6);
+    const [email, confidence, reason] = input.split(" ");
 
-<links/email addresses>
+    if (!email || !confidence) {
+      return null;
+    }
 
-Output:
-<the email address> <confidence score>
+    return {
+      email,
+      confidence: Number(confidence),
+      reason,
+    };
+  } else {
+    return null;
+  }
+}
 
-or
+async function searchEmailOnline(
+  initialContext: ChatCompletionRequestMessage[]
+): Promise<FindEmailResponse> {
+  const candidates: FoundEmail[] = [];
+  const googleSearches: string[] = [];
+  const clickedUrls: string[] = [];
+  const maxTries = 10;
+  let tries = 0;
+  let context = initialContext;
 
-<click:url>
-...`;
+  while (
+    candidates.filter((c) => c.confidence > 0.5).length === 0 &&
+    tries < maxTries
+  ) {
+    tries++;
 
-async function searchEmail(context: ChatCompletionRequestMessage[]): Promise<{
-  candidates: string[];
-  context: ChatCompletionRequestMessage[];
-}> {
-  try {
-    const completion = await gpt.createChatCompletion({
-      model: "gpt-4",
-      messages: context,
-      max_tokens: 150,
-      temperature: 0,
+    const { response, newContext } = await completeChat(context, 100, 0.3);
+    context = newContext;
+
+    const nextGoogleSearches: string[] = [];
+    const nextClickedUrls: string[] = [];
+
+    response.split("\n").forEach((line) => {
+      const candidate = getFoundEmail(line);
+      if (candidate) {
+        candidates.push(candidate);
+      }
+
+      const googleSearchQuery = getGoogleSearchQuery(line);
+      if (googleSearchQuery) {
+        nextGoogleSearches.push(googleSearchQuery);
+        googleSearches.push(googleSearchQuery);
+      }
+
+      const clickedUrl = getClickedUrl(line);
+      if (clickedUrl) {
+        nextClickedUrls.push(clickedUrl);
+        clickedUrls.push(clickedUrl);
+      }
     });
 
-    const response = completion.data.choices[0]?.message?.content;
+    if (nextGoogleSearches.length === 0 && nextClickedUrls.length === 0) {
+      break;
+    }
 
-    if (!response) {
-      throw new Error("An unexpected error occured. AI is unresponsive.");
-    } else {
-      context.push({
-        role: ChatCompletionRequestMessageRoleEnum.Assistant,
-        content: response,
-      });
+    const emailTextSnippets: string[] = [];
+    const urlTextSnippets: string[] = [];
 
-      if (isEmail(response)) {
-        console.log(response);
-        const [email, confidence] = response.split(" ");
-        console.log(email, confidence);
-
-        return {
-          candidates: [email],
-          confidences: [confidence],
-          context,
-        };
-      } else if (isCommands(response)) {
-        const urls = extractUrlsFromClickCommands(response);
-        if (urls.length === 0) {
-          throw new Error(
-            "An unexpected error occured. AI returns invalid urls."
-          );
-        }
-        const textContents = await Promise.all(
-          urls.map((url) => {
-            return fetch(url)
-              .then((res) => res.text())
-              .then(extractUrlsAndEmails)
-              .then(formatExtractedInfo);
-          })
-        );
-
-        context.push({
-          role: ChatCompletionRequestMessageRoleEnum.User,
-          content: textContents.join("\n"),
-        });
-        return searchEmail(context);
-      } else {
-        return {
-          candidates: [],
-          context,
-        };
+    if (nextGoogleSearches.length > 0) {
+      for (const query of nextGoogleSearches) {
+        const searchResult = await fetch(
+          `https://google.com/search?q=${encodeURIComponent(query)}`
+        )
+          .then((res) => res.text())
+          .then((html) => new HTMLPage(html));
+        const bodyText = markdownToText(htmlToMarkdown(searchResult.getBody()));
+        emailTextSnippets.push(...extractEmailTextSnippets(bodyText));
+        urlTextSnippets.push(...extractUrlTextSnippets(bodyText));
       }
     }
-  } catch (error: any) {
-    console.error(error, error.response);
-    return {
-      candidates: [],
-      context,
-    };
+
+    if (nextClickedUrls.length > 0) {
+      for (const url of nextClickedUrls) {
+        const clickedPage = await fetch(url)
+          .then((res) => res.text())
+          .then((html) => new HTMLPage(html));
+        const bodyText = markdownToText(htmlToMarkdown(clickedPage.getBody()));
+        emailTextSnippets.push(...extractEmailTextSnippets(bodyText));
+        urlTextSnippets.push(...extractUrlTextSnippets(bodyText));
+      }
+    }
+
+    if (emailTextSnippets.length > 0) {
+      context.push({
+        role: ChatCompletionRequestMessageRoleEnum.User,
+        content: emailTextSnippets.join(""),
+      });
+    }
+
+    if (urlTextSnippets.length > 0) {
+      context.push({
+        role: ChatCompletionRequestMessageRoleEnum.User,
+        content: urlTextSnippets.join(""),
+      });
+    }
   }
+
+  return {
+    candidates,
+    googleSearches,
+    clickedUrls,
+    finalContext: context,
+  };
 }
 
 export default async function FindEmail(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponse<FindEmailResponse>
 ) {
-  const { username, website, twitter, bio, readme } = req.body as ValidBody;
+  const {
+    login: username,
+    blog: websiteFromGithub,
+    twitter_username: twitterHandle,
+    bio,
+    readme,
+  } = req.body as GithubUserWithReadme;
 
   if (!username) {
     throw new Error("No username provided.");
   }
 
-  if (!website && !twitter) {
-    throw new Error("No website or Twitter provided.");
-  }
-
-  if (!website) {
-    // TODO: Look up website from Twitter
-  }
-
-  if (!website) {
-    throw new Error("No website found on twitter. Ending search.");
-  }
-
-  const absoluteWebsiteUrl = website.startsWith("http")
-    ? website
-    : `https://${website}`;
-
-  const html = await fetch(absoluteWebsiteUrl).then((res) => res.text());
-
-  if (!html) {
-    throw new Error("No data found at website. Ending search.");
-  }
-
-  const dataText = formatExtractedInfo(extractUrlsAndEmails(htmlToText(html)));
-  console.log(dataText);
-
-  process.exit();
-
   const initialContext: ChatCompletionRequestMessage[] = [
     {
       role: ChatCompletionRequestMessageRoleEnum.System,
-      content: systemInstructions,
+      content: emailFinder(),
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
       content: username,
     },
-    {
-      role: ChatCompletionRequestMessageRoleEnum.User,
-      content: dataText,
-    },
   ];
 
-  const result = await searchEmail(initialContext);
+  const websiteFromTwitter = await fetchTwitterAccountWebsite(twitterHandle);
 
-  res.status(200).json(result);
+  const definitiveWebsites = [
+    websiteFromGithub,
+    websiteFromTwitter,
+    // ...potentially other websites
+  ]
+    .map((website) => "https://" + website.replace(/https?:\/\//, ""))
+    .filter((website) => website);
+
+  const uniqueDefinitiveWebsites = [...new Set(definitiveWebsites)];
+
+  if (uniqueDefinitiveWebsites.length === 0) {
+    const bioText = bio ? markdownToText(bio) : "";
+    const readmeText = readme ? markdownToText(readme) : "";
+
+    const otherEmailsFromGithubProfile = extractEmailTextSnippets(
+      [bioText, readmeText].join("\n\n")
+    );
+    const otherWebsitesFromGithubProfile = extractUrlTextSnippets(
+      [bioText, readmeText].join("\n\n")
+    );
+
+    initialContext.push({
+      role: ChatCompletionRequestMessageRoleEnum.User,
+      content: otherEmailsFromGithubProfile.join("\n\n"),
+    });
+
+    initialContext.push({
+      role: ChatCompletionRequestMessageRoleEnum.User,
+      content: otherWebsitesFromGithubProfile.join("\n\n"),
+    });
+
+    res.status(200).json(await searchEmailOnline(initialContext));
+  }
+
+  const websites = await Promise.all(
+    uniqueDefinitiveWebsites.map((url) =>
+      fetch(url)
+        .then((res) => res.text())
+        .then((html) => new HTMLPage(html))
+    )
+  );
+  const websitesText = websites.map((website) => {
+    let title = website.getTitle();
+    if (title.length > 100) {
+      title = title.substring(0, 100) + "...";
+    }
+
+    let description = website.getDescription();
+    if (description.length > 250) {
+      description = description.substring(0, 100) + "...";
+    }
+
+    const bodyText = markdownToText(htmlToMarkdown(website.getBody()));
+    const emailTextSnippets = extractEmailTextSnippets(bodyText);
+    const urlTextSnippets = extractUrlTextSnippets(bodyText);
+
+    return `${title}\n${description}\n\n${emailTextSnippets.join(
+      "\n\n"
+    )}\n\n${urlTextSnippets.join("\n\n")}`;
+  });
+
+  if (websitesText.length === 0) {
+    res
+      .status(200)
+      .json({
+        candidates: [],
+        finalContext: initialContext,
+        googleSearches: [],
+        clickedUrls: [],
+      });
+  }
+
+  websitesText.forEach((websiteText) => {
+    initialContext.push({
+      role: ChatCompletionRequestMessageRoleEnum.User,
+      content: websiteText,
+    });
+  });
+
+  res.status(200).json(await searchEmailOnline(initialContext));
 }

@@ -19,6 +19,20 @@ Pay Button -> Get email button -> send E-Mail button
 -> UI for that
 -> codemocks for that
 
+Stripe Payment
+
+- Demo payment integration
+- On settings page, just continuing this demo flow
+- No purpose yet
+
+Tab in repo card for devs' emails
+
+- fetch unknown via ai (fetch all button)
+- Checkboxes
+- note from AI
+- choose/edit template
+- send button
+
 # Email Address Finder
 
 - first "manual"/script-based search
