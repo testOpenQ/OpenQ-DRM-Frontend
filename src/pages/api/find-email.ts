@@ -91,15 +91,13 @@ async function searchEmailOnline(
 
   while (tries < maxTries) {
     tries++;
-    if (tries === maxTries) {
-      console.log("(last try)");
-    }
+    tries === maxTries && console.log("(last try)");
 
-    const {
-      response,
-      newContext: newChatContext,
-      consumedTokens,
-    } = await completeChat(chatContext, 100, 0);
+    const { response, newChatContext, consumedTokens } = await completeChat(
+      chatContext,
+      100,
+      0
+    );
     chatContext = newChatContext;
     totalConsumedTokens += consumedTokens;
 

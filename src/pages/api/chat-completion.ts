@@ -13,7 +13,7 @@ export type ChatCompletionRequestBody = {
 
 export type ChatCompletionResponseBody = {
   response: string;
-  newContext: ChatCompletionRequestMessage[];
+  newChatContext: ChatCompletionRequestMessage[];
   consumedTokens: number;
 };
 
@@ -85,7 +85,7 @@ export default async function ChatCompletion(
 
   res.status(200).json({
     response,
-    newContext: context,
+    newChatContext: context,
     consumedTokens,
   });
 }
