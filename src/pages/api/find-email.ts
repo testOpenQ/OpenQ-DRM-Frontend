@@ -3,7 +3,7 @@ import {
   ChatCompletionRequestMessageRoleEnum,
   type ChatCompletionRequestMessage,
 } from "openai";
-import { fetchTwitterAccountWebsite } from "~/server/utils/twitter";
+import { fetchTwitterAccountWebsites } from "~/server/utils/twitter";
 import { emailFinder } from "~/server/gpt/system";
 import {
   extractEmailTextSnippets,
@@ -11,7 +11,11 @@ import {
   htmlToMarkdown,
   markdownToText,
 } from "~/server/utils/text";
-import { completeChat } from "~/server/gpt";
+import {
+  MAX_TOKENS_GPT4,
+  completeChat,
+  countContextTokens,
+} from "~/server/gpt";
 import HTMLPage from "~/server/utils/htmlPage";
 
 type GithubUserWithReadme = {
@@ -29,11 +33,12 @@ type FoundEmail = {
   reason?: string;
 };
 
-type FindEmailResponse = {
+export type FindEmailResponse = {
   candidates: FoundEmail[];
   finalContext: ChatCompletionRequestMessage[];
   googleSearches: string[];
   clickedUrls: string[];
+  totalConsumedTokens: number;
 };
 
 function getGoogleSearchQuery(input: string): string | null {
@@ -80,15 +85,18 @@ async function searchEmailOnline(
   const maxTries = 10;
   let tries = 0;
   let context = initialContext;
+  let totalConsumedTokens = 0;
 
-  while (
-    candidates.filter((c) => c.confidence > 0.5).length === 0 &&
-    tries < maxTries
-  ) {
+  while (tries < maxTries) {
     tries++;
 
-    const { response, newContext } = await completeChat(context, 100, 0.3);
+    const { response, newContext, consumedTokens } = await completeChat(
+      context,
+      100,
+      0.5
+    );
     context = newContext;
+    totalConsumedTokens += consumedTokens;
 
     const nextGoogleSearches: string[] = [];
     const nextClickedUrls: string[] = [];
@@ -112,7 +120,11 @@ async function searchEmailOnline(
       }
     });
 
-    if (nextGoogleSearches.length === 0 && nextClickedUrls.length === 0) {
+    if (
+      nextGoogleSearches.length === 0 &&
+      nextClickedUrls.length === 0 &&
+      candidates.some((c) => c.confidence > 0.5)
+    ) {
       break;
     }
 
@@ -121,12 +133,11 @@ async function searchEmailOnline(
 
     if (nextGoogleSearches.length > 0) {
       for (const query of nextGoogleSearches) {
-        const searchResult = await fetch(
-          `https://google.com/search?q=${encodeURIComponent(query)}`
-        )
+        const searchUrl = `google.com/search?q=${encodeURIComponent(query)}`;
+        const searchResult = await fetch("https://" + searchUrl)
           .then((res) => res.text())
-          .then((html) => new HTMLPage(html));
-        const bodyText = markdownToText(htmlToMarkdown(searchResult.getBody()));
+          .then((html) => new HTMLPage(html, searchUrl));
+        const bodyText = htmlToMarkdown(searchResult.getBody());
         emailTextSnippets.push(...extractEmailTextSnippets(bodyText));
         urlTextSnippets.push(...extractUrlTextSnippets(bodyText));
       }
@@ -134,10 +145,10 @@ async function searchEmailOnline(
 
     if (nextClickedUrls.length > 0) {
       for (const url of nextClickedUrls) {
-        const clickedPage = await fetch(url)
+        const clickedPage = await fetch("https://" + url)
           .then((res) => res.text())
-          .then((html) => new HTMLPage(html));
-        const bodyText = markdownToText(htmlToMarkdown(clickedPage.getBody()));
+          .then((html) => new HTMLPage(html, url));
+        const bodyText = htmlToMarkdown(clickedPage.getBody());
         emailTextSnippets.push(...extractEmailTextSnippets(bodyText));
         urlTextSnippets.push(...extractUrlTextSnippets(bodyText));
       }
@@ -156,6 +167,10 @@ async function searchEmailOnline(
         content: urlTextSnippets.join(""),
       });
     }
+
+    if (countContextTokens(context) > MAX_TOKENS_GPT4) {
+      break;
+    }
   }
 
   return {
@@ -163,6 +178,7 @@ async function searchEmailOnline(
     googleSearches,
     clickedUrls,
     finalContext: context,
+    totalConsumedTokens,
   };
 }
 
@@ -189,90 +205,128 @@ export default async function FindEmail(
     },
     {
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: username,
+      content: "GitHub username: " + username,
     },
   ];
 
-  const websiteFromTwitter = await fetchTwitterAccountWebsite(twitterHandle);
+  const websitesFromTwitter = await fetchTwitterAccountWebsites(twitterHandle);
 
-  const definitiveWebsites = [
-    websiteFromGithub,
-    websiteFromTwitter,
-    // ...potentially other websites
-  ]
-    .map((website) => "https://" + website.replace(/https?:\/\//, ""))
-    .filter((website) => website);
+  let definitiveWebsites = websitesFromTwitter;
+
+  if (websiteFromGithub) {
+    definitiveWebsites.push(websiteFromGithub);
+  }
+
+  definitiveWebsites = definitiveWebsites
+    .filter((website) => website)
+    .map((website) => website.replace(/https?:\/\//, ""));
 
   const uniqueDefinitiveWebsites = [...new Set(definitiveWebsites)];
 
   if (uniqueDefinitiveWebsites.length === 0) {
-    const bioText = bio ? markdownToText(bio) : "";
-    const readmeText = readme ? markdownToText(readme) : "";
+    const bioText = markdownToText(bio);
+    const readmeText = markdownToText(readme);
 
-    const otherEmailsFromGithubProfile = extractEmailTextSnippets(
-      [bioText, readmeText].join("\n\n")
+    const emailSnippets = extractEmailTextSnippets(
+      `${bioText}\n\n${readmeText}`
     );
-    const otherWebsitesFromGithubProfile = extractUrlTextSnippets(
-      [bioText, readmeText].join("\n\n")
-    );
+    const urlSnippets = extractUrlTextSnippets(`${bioText}\n\n${readmeText}`);
 
-    initialContext.push({
-      role: ChatCompletionRequestMessageRoleEnum.User,
-      content: otherEmailsFromGithubProfile.join("\n\n"),
-    });
-
-    initialContext.push({
-      role: ChatCompletionRequestMessageRoleEnum.User,
-      content: otherWebsitesFromGithubProfile.join("\n\n"),
-    });
-
-    res.status(200).json(await searchEmailOnline(initialContext));
-  }
-
-  const websites = await Promise.all(
-    uniqueDefinitiveWebsites.map((url) =>
-      fetch(url)
-        .then((res) => res.text())
-        .then((html) => new HTMLPage(html))
-    )
-  );
-  const websitesText = websites.map((website) => {
-    let title = website.getTitle();
-    if (title.length > 100) {
-      title = title.substring(0, 100) + "...";
-    }
-
-    let description = website.getDescription();
-    if (description.length > 250) {
-      description = description.substring(0, 100) + "...";
-    }
-
-    const bodyText = markdownToText(htmlToMarkdown(website.getBody()));
-    const emailTextSnippets = extractEmailTextSnippets(bodyText);
-    const urlTextSnippets = extractUrlTextSnippets(bodyText);
-
-    return `${title}\n${description}\n\n${emailTextSnippets.join(
-      "\n\n"
-    )}\n\n${urlTextSnippets.join("\n\n")}`;
-  });
-
-  if (websitesText.length === 0) {
-    res
-      .status(200)
-      .json({
+    if (emailSnippets.length + urlSnippets.length === 0) {
+      res.status(200).json({
         candidates: [],
-        finalContext: initialContext,
         googleSearches: [],
         clickedUrls: [],
+        finalContext: initialContext,
+        totalConsumedTokens: 0,
       });
+      return;
+    }
+
+    initialContext.push({
+      role: ChatCompletionRequestMessageRoleEnum.User,
+      content: `github.com/${username}`,
+    });
+
+    initialContext.push({
+      role: ChatCompletionRequestMessageRoleEnum.User,
+      content: `${urlSnippets.join("\n\n")}\n\n${emailSnippets.join("\n\n")}`,
+    });
+
+    const result = await searchEmailOnline(initialContext);
+
+    res.status(200).json(result);
+    return;
   }
 
-  websitesText.forEach((websiteText) => {
+  const fetchedWebsites = await Promise.all(
+    uniqueDefinitiveWebsites.map((url) =>
+      fetch("https://" + url, {
+        headers: {
+          "User-Agent":
+            "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/112.0",
+        },
+      })
+        .then((res) => res.text())
+        .then((html) => new HTMLPage(html, url))
+    )
+  );
+
+  const websitesText = fetchedWebsites
+    .map((fetchedWebsite) => {
+      let title = fetchedWebsite.getTitle();
+      if (title.length > 100) {
+        title = title.substring(0, 100) + "...";
+      }
+
+      let description = fetchedWebsite.getDescription();
+      if (description.length > 250) {
+        description = description.substring(0, 100) + "...";
+      }
+
+      const bodyText = htmlToMarkdown(fetchedWebsite.getBody());
+      const emailTextSnippets = extractEmailTextSnippets(bodyText);
+      const urlTextSnippets = extractUrlTextSnippets(bodyText);
+      console.log(urlTextSnippets);
+
+      if (emailTextSnippets.length + urlTextSnippets.length === 0) {
+        return "";
+      }
+
+      return `${title}\n${description}\n\n${[
+        ...emailTextSnippets,
+        ...urlTextSnippets,
+      ].join("\n\n")}`;
+    })
+    .filter((websiteText) => websiteText);
+
+  if (websitesText.length === 0) {
+    res.status(200).json({
+      candidates: [],
+      finalContext: initialContext,
+      googleSearches: [],
+      clickedUrls: [],
+      totalConsumedTokens: 0,
+    });
+    return;
+  }
+
+  websitesText.forEach((websiteText, index) => {
+    const website = uniqueDefinitiveWebsites[index];
+    if (website) {
+      initialContext.push({
+        role: ChatCompletionRequestMessageRoleEnum.User,
+        content: website,
+      });
+    }
+
     initialContext.push({
       role: ChatCompletionRequestMessageRoleEnum.User,
       content: websiteText,
     });
   });
 
-  res.status(200).json(await searchEmailOnline(initialContext));
+  const result = await searchEmailOnline(initialContext);
+
+  res.status(200).json(result);
 }

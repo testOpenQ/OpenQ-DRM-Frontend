@@ -12,7 +12,7 @@ export function markdownToText(markdown: string | undefined) {
     return "";
   }
 
-  return markdownToTxt(markdown);
+  return markdownToTxt(markdown, { mangle: false });
 }
 
 export function htmlToText(html: string) {
@@ -75,9 +75,7 @@ export function extractEmailTextSnippets(
   filter: (line: string) => boolean = () => true,
   maxLineLength = 30
 ) {
-  // https://www.regextester.com/19
-  const EMAIL_PATTERN =
-    /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/g;
+  const EMAIL_PATTERN = /([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)/g;
 
   const snippets = extractTextSnippet(text, EMAIL_PATTERN, maxLineLength);
   return snippets.filter(filter);
@@ -88,9 +86,8 @@ export function extractUrlTextSnippets(
   filter: (line: string) => boolean = () => true,
   maxLineLength = 30
 ) {
-  // https://www.regextester.com/19
   const URL_PATTERN =
-    /(?:(?:https?):\/\/|www\.)(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[-A-Z0-9+&@#\/%=~_|$?!:,.])*(?:\([-A-Z0-9+&@#\/%=~_|$?!:,.]*\)|[A-Z0-9+&@#\/%=~_|$])/g;
+    /https?:\/\/([^:\/\s]+)(:\d+)?(((\/\w+)*\/)([\w\-\.]+[^#?\s]+)([^\s#]*)?)?/g;
 
   const snippets = extractTextSnippet(text, URL_PATTERN, maxLineLength);
   return snippets.filter(filter);

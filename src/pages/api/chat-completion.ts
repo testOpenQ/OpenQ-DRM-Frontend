@@ -3,7 +3,7 @@ import {
   ChatCompletionRequestMessageRoleEnum,
   type ChatCompletionRequestMessage,
 } from "openai";
-import { gpt } from "~/server/gpt";
+import { countContextTokens, gpt } from "~/server/gpt";
 
 export type ChatCompletionRequestBody = {
   context: ChatCompletionRequestMessage[];
@@ -14,6 +14,7 @@ export type ChatCompletionRequestBody = {
 export type ChatCompletionResponseBody = {
   response: string;
   newContext: ChatCompletionRequestMessage[];
+  consumedTokens: number;
 };
 
 export function isChatCompletionRequestMessage(
@@ -36,12 +37,12 @@ export function isChatCompletionRequestBody(
     typeof body === "object" &&
     body !== null &&
     "context" in body &&
-    "maxTokens" in body &&
+    "maxResponseTokens" in body &&
     "temperature" in body &&
     Array.isArray(body.context) &&
     body.context.every((message) => isChatCompletionRequestMessage(message)) &&
-    (typeof body.maxTokens === "undefined" ||
-      typeof body.maxTokens === "number") &&
+    (typeof body.maxResponseTokens === "undefined" ||
+      typeof body.maxResponseTokens === "number") &&
     (typeof body.temperature === "undefined" ||
       typeof body.temperature === "number")
   );
@@ -79,8 +80,11 @@ export default async function ChatCompletion(
     content: response,
   });
 
+  const consumedTokens = countContextTokens(context);
+
   res.status(200).json({
     response,
     newContext: context,
+    consumedTokens,
   });
 }

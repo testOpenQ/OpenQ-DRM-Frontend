@@ -6,18 +6,27 @@ const twitter = new Twitter({
   bearer_token: process.env.TWITTER_API_BEARER_TOKEN as string,
 });
 
-export async function fetchTwitterAccountWebsite(
+export async function fetchTwitterAccountWebsites(
   screen_name: string | undefined
-) {
-  if (!screen_name) {
-    return null;
-  }
+): Promise<string[]> {
+  if (!screen_name) return [];
+
+  const websites: string[] = [];
 
   try {
     const user = await twitter.get("users/show", { screen_name });
-    return user.entities.url.urls[0].expanded_url;
+
+    if (user.entities?.url?.urls.length > 0) {
+      websites.push(
+        ...user.entities.url.urls.map(
+          (url: { expanded_url: string }) => url.expanded_url
+        )
+      );
+    }
+
+    return websites;
   } catch (error) {
-    console.error("Error fetching website:", error);
-    return null;
+    console.error("Error fetching website from twitter:", error);
+    return [];
   }
 }

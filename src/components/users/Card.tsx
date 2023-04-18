@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 import type { User } from "~/db";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
+import { FindEmailResponse } from "~/pages/api/find-email";
 
 export default function Card({ user }: { user: User }) {
   const { data } = useSession();
@@ -20,6 +21,10 @@ export default function Card({ user }: { user: User }) {
     null
   );
 
+  const [userEmail, setUserEmail] = useState<string | undefined>(undefined);
+  const [userEmailCandidates, setUserEmailCandidates] = useState<
+    FindEmailResponse["candidates"] | undefined
+  >(undefined);
   const [searchingEmail, setSearchingEmail] = useState(false);
 
   useEffect(() => {
@@ -84,6 +89,7 @@ export default function Card({ user }: { user: User }) {
     }
 
     setSearchingEmail(true);
+
     const userDataUrl = `https://api.github.com/users/${user.login}`;
     const userData = await fetch(userDataUrl, {
       headers: {
@@ -92,6 +98,7 @@ export default function Card({ user }: { user: User }) {
     }).then((res) => res.json());
 
     if (userData.email) {
+      setUserEmail(userData.email);
       setSearchingEmail(false);
       return;
     }
@@ -107,12 +114,19 @@ export default function Card({ user }: { user: User }) {
       body: JSON.stringify(userData),
     })
       .then((res) => res.json())
-      .then((data: { email: string | undefined; reason: string }) => {
+      .then((data: FindEmailResponse) => {
         console.log(data);
+        setUserEmailCandidates(data.candidates);
       })
-      .catch(console.error);
+      .catch(console.error)
+      .finally(() => {
+        setSearchingEmail(false);
+      });
+  }
 
-    setSearchingEmail(false);
+  function handleSelectEmailCandidate(email: string) {
+    setUserEmail(email);
+    setUserEmailCandidates(undefined);
   }
 
   if (!user) return <>User does not exist.</>;
@@ -165,16 +179,33 @@ export default function Card({ user }: { user: User }) {
         </>
       )}
       {!userScanResult && (
-        <div className="flex grow items-center justify-center">
-          <Button className="w-full" onClick={scan}>
-            {scanning && <LoadingSpinner className="mr-2" />}
-            Scan
-          </Button>
-          <Button className="w-full" onClick={findEmail}>
-            {scanning && <LoadingSpinner className="mr-2" />}
-            Find email
-          </Button>
-        </div>
+        <>
+          <div className="flex grow items-center justify-center">
+            <Button className="w-full" onClick={scan}>
+              {scanning && <LoadingSpinner className="mr-2" />}
+              Scan
+            </Button>
+            <Button className="w-full" onClick={findEmail}>
+              {searchingEmail && <LoadingSpinner className="mr-2" />}
+              {userEmail || "Find email"}
+            </Button>
+          </div>
+          {userEmailCandidates && userEmailCandidates.length === 0 && (
+            <div>No email candidates found.</div>
+          )}
+          {userEmailCandidates && userEmailCandidates.length > 0 && (
+            <div>
+              {userEmailCandidates.map((candidate) => (
+                <Button
+                  key={candidate.email}
+                  onClick={() => handleSelectEmailCandidate(candidate.email)}
+                >
+                  {candidate.email} ({candidate.confidence}: {candidate.reason})
+                </Button>
+              ))}
+            </div>
+          )}
+        </>
       )}
     </div>
   );

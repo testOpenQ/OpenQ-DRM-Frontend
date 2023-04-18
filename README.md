@@ -36,6 +36,7 @@ Tab in repo card for devs' emails
 # Email Address Finder
 
 - first "manual"/script-based search
+
   - look for email in public github profile data via API
   - if found: Yes! The user is kind to us.
   - if not:
@@ -45,6 +46,12 @@ Tab in repo card for devs' emails
       - look for website via twitter API
       - fetch recent tweets (no retweets)
     - collect all email addresses and URLs found in these contents (regex)
+
+- add obscured email patterns (name {at} domain.com)
+
+Currently GPT is not aware of the domains of the initial contents passed to it.
+If it discovers one of these urls when browsing, it will lead to passing it the same initial content.
+The content snippets needs the url.
 
 # Create T3 App
 
