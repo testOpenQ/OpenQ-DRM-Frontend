@@ -31,7 +31,7 @@ type GithubUserWithReadme = {
 
 type FoundEmail = {
   email: string;
-  confidence: number;
+  confidence: "high" | "medium";
   reason?: string;
 };
 
@@ -62,15 +62,20 @@ function getClickedUrl(input: string): string | null {
 function getFoundEmail(input: string): FoundEmail | null {
   if (input.startsWith("email:")) {
     input = input.substring(6);
-    const [email, confidence, reason] = input.split(" ");
+    let [email, confidence, reason] = input.split("|").map((s) => s.trim());
 
-    if (!email || !confidence) {
+    if (
+      !email ||
+      !reason ||
+      !confidence ||
+      !["high", "medium"].includes(confidence.toLowerCase())
+    ) {
       return null;
     }
 
     return {
       email,
-      confidence: Number(confidence),
+      confidence: confidence.toLowerCase() as "high" | "medium",
       reason,
     };
   } else {
@@ -123,11 +128,7 @@ async function searchEmailOnline(
       }
     });
 
-    if (
-      nextGoogleSearches.length === 0 &&
-      nextClickedUrls.length === 0 &&
-      candidates.some((c) => c.confidence > 0.5)
-    ) {
+    if (candidates.some((c) => c.confidence === "high")) {
       break;
     }
 
