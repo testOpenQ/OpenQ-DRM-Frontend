@@ -79,6 +79,7 @@ export default async function ChatCompletion(
     role: ChatCompletionRequestMessageRoleEnum.Assistant,
     content: response,
   });
+  console.log("AI reponse:", response);
 
   const consumedTokens = countContextTokens(context);
 

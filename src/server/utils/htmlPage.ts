@@ -9,9 +9,29 @@ export default class HTMLPage {
     });
     this.dom = window.document;
 
-    this.removeScripts();
-    this.removeStyle();
-    this.removeSvg();
+    const irrelevantTagNames = [
+      "script",
+      "style",
+      "svg",
+      "img",
+      "link",
+      "iframe",
+      "frame",
+      "frameset",
+      "object",
+      "embed",
+      "applet",
+      "video",
+      "audio",
+      "canvas",
+      "map",
+      "input",
+      "textarea",
+      "select",
+      "button",
+    ];
+
+    irrelevantTagNames.forEach((tagName) => this.removeElements(tagName));
   }
 
   getUrl(): string {
@@ -36,35 +56,11 @@ export default class HTMLPage {
     return this.dom.body.innerHTML || "";
   }
 
-  removeScripts(): void {
-    const scripts = this.dom.getElementsByTagName("script");
+  removeElements(tagName: string) {
+    const elements = this.dom.getElementsByTagName(tagName);
+    const elementsArray = Array.from(elements);
 
-    // Convert the live HTMLCollection to an array
-    const scriptsArray = Array.from(scripts);
-
-    for (const element of scriptsArray) {
-      element.remove();
-    }
-  }
-
-  removeStyle(): void {
-    const styles = this.dom.getElementsByTagName("style");
-
-    // Convert the live HTMLCollection to an array
-    const stylesArray = Array.from(styles);
-
-    for (const element of stylesArray) {
-      element.remove();
-    }
-  }
-
-  removeSvg(): void {
-    const svgs = this.dom.getElementsByTagName("svg");
-
-    // Convert the live HTMLCollection to an array
-    const svgsArray = Array.from(svgs);
-
-    for (const element of svgsArray) {
+    for (const element of elementsArray) {
       element.remove();
     }
   }

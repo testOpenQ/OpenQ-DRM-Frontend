@@ -6,6 +6,7 @@ import {
 import { fetchTwitterAccountWebsites } from "~/server/utils/twitter";
 import { emailFinder } from "~/server/gpt/system";
 import {
+  TextSnippet,
   extractEmailTextSnippets,
   extractUrlTextSnippets,
   htmlToMarkdown,
@@ -15,6 +16,7 @@ import {
   MAX_TOKENS_GPT4,
   completeChat,
   countContextTokens,
+  countTokens,
 } from "~/server/gpt";
 import HTMLPage from "~/server/utils/htmlPage";
 
@@ -51,7 +53,7 @@ function getGoogleSearchQuery(input: string): string | null {
 
 function getClickedUrl(input: string): string | null {
   if (input.startsWith("click:")) {
-    return input.substring(6);
+    return input.substring(6).replace(/https?:\/\//, "");
   } else {
     return null;
   }
@@ -77,25 +79,28 @@ function getFoundEmail(input: string): FoundEmail | null {
 }
 
 async function searchEmailOnline(
-  initialContext: ChatCompletionRequestMessage[]
+  initialChatContext: ChatCompletionRequestMessage[]
 ): Promise<FindEmailResponse> {
   const candidates: FoundEmail[] = [];
   const googleSearches: string[] = [];
   const clickedUrls: string[] = [];
   const maxTries = 10;
   let tries = 0;
-  let context = initialContext;
+  let chatContext = initialChatContext;
   let totalConsumedTokens = 0;
 
   while (tries < maxTries) {
     tries++;
+    if (tries === maxTries) {
+      console.log("(last try)");
+    }
 
-    const { response, newContext, consumedTokens } = await completeChat(
-      context,
-      100,
-      0.5
-    );
-    context = newContext;
+    const {
+      response,
+      newContext: newChatContext,
+      consumedTokens,
+    } = await completeChat(chatContext, 100, 0);
+    chatContext = newChatContext;
     totalConsumedTokens += consumedTokens;
 
     const nextGoogleSearches: string[] = [];
@@ -128,8 +133,8 @@ async function searchEmailOnline(
       break;
     }
 
-    const emailTextSnippets: string[] = [];
-    const urlTextSnippets: string[] = [];
+    const emailTextSnippets: TextSnippet[] = [];
+    const urlTextSnippets: TextSnippet[] = [];
 
     if (nextGoogleSearches.length > 0) {
       for (const query of nextGoogleSearches) {
@@ -155,20 +160,48 @@ async function searchEmailOnline(
     }
 
     if (emailTextSnippets.length > 0) {
-      context.push({
+      chatContext.push({
         role: ChatCompletionRequestMessageRoleEnum.User,
-        content: emailTextSnippets.join(""),
+        content: emailTextSnippets.map((s) => s.context).join("\n"),
       });
     }
 
     if (urlTextSnippets.length > 0) {
-      context.push({
-        role: ChatCompletionRequestMessageRoleEnum.User,
-        content: urlTextSnippets.join(""),
-      });
+      const urlTextSnippetsContent = urlTextSnippets
+        .map((s) => s.context)
+        .join("\n");
+
+      if (
+        countContextTokens(chatContext) + countTokens(urlTextSnippetsContent) <
+        MAX_TOKENS_GPT4
+      ) {
+        chatContext.push({
+          role: ChatCompletionRequestMessageRoleEnum.User,
+          content: urlTextSnippetsContent,
+        });
+      } else {
+        const halfUrlTextSnippets = urlTextSnippets.filter(
+          (_, i) => i % 2 === 0
+        );
+        const halfUrlTextSnippetsContent = halfUrlTextSnippets
+          .map((s) => s.context)
+          .join("\n");
+        if (
+          countContextTokens(chatContext) +
+            countTokens(halfUrlTextSnippetsContent) <
+          MAX_TOKENS_GPT4
+        ) {
+          chatContext.push({
+            role: ChatCompletionRequestMessageRoleEnum.User,
+            content: halfUrlTextSnippets.map((s) => s.context).join("\n"),
+          });
+        }
+      }
     }
 
-    if (countContextTokens(context) > MAX_TOKENS_GPT4) {
+    if (countContextTokens(chatContext) > MAX_TOKENS_GPT4) {
+      // tried reducing urls, but still too long
+      // as of now: fail
       break;
     }
   }
@@ -177,7 +210,7 @@ async function searchEmailOnline(
     candidates,
     googleSearches,
     clickedUrls,
-    finalContext: context,
+    finalContext: chatContext,
     totalConsumedTokens,
   };
 }
@@ -227,12 +260,14 @@ export default async function FindEmail(
     const bioText = markdownToText(bio);
     const readmeText = markdownToText(readme);
 
-    const emailSnippets = extractEmailTextSnippets(
+    const emailTextSnippets = extractEmailTextSnippets(
       `${bioText}\n\n${readmeText}`
     );
-    const urlSnippets = extractUrlTextSnippets(`${bioText}\n\n${readmeText}`);
+    const urlTextSnippets = extractUrlTextSnippets(
+      `${bioText}\n\n${readmeText}`
+    );
 
-    if (emailSnippets.length + urlSnippets.length === 0) {
+    if (emailTextSnippets.length + urlTextSnippets.length === 0) {
       res.status(200).json({
         candidates: [],
         googleSearches: [],
@@ -250,7 +285,11 @@ export default async function FindEmail(
 
     initialContext.push({
       role: ChatCompletionRequestMessageRoleEnum.User,
-      content: `${urlSnippets.join("\n\n")}\n\n${emailSnippets.join("\n\n")}`,
+      content: `${urlTextSnippets
+        .map((s) => s.context)
+        .join("\n\n")}\n\n${emailTextSnippets
+        .map((s) => s.context)
+        .join("\n\n")}`,
     });
 
     const result = await searchEmailOnline(initialContext);
@@ -287,15 +326,14 @@ export default async function FindEmail(
       const bodyText = htmlToMarkdown(fetchedWebsite.getBody());
       const emailTextSnippets = extractEmailTextSnippets(bodyText);
       const urlTextSnippets = extractUrlTextSnippets(bodyText);
-      console.log(urlTextSnippets);
 
       if (emailTextSnippets.length + urlTextSnippets.length === 0) {
         return "";
       }
 
       return `${title}\n${description}\n\n${[
-        ...emailTextSnippets,
-        ...urlTextSnippets,
+        ...emailTextSnippets.map((snippet) => snippet.context),
+        ...urlTextSnippets.map((snippet) => snippet.context),
       ].join("\n\n")}`;
     })
     .filter((websiteText) => websiteText);

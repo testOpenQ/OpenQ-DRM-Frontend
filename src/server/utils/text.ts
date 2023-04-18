@@ -21,19 +21,24 @@ export function htmlToText(html: string) {
   return markdownToText(markdown);
 }
 
+export type TextSnippet = {
+  match: string;
+  context: string;
+};
+
 export function extractTextSnippet(
   text: string,
   pattern: RegExp,
   maxWords = 30
 ) {
-  const emailMatches = text.match(new RegExp(pattern.source, "g"));
-  const emailLines = [];
+  const matches = text.match(new RegExp(pattern.source, "g"));
+  const snippets: TextSnippet[] = [];
 
-  if (emailMatches) {
-    for (const email of emailMatches) {
-      const emailIndex = text.indexOf(email);
-      const textBeforeEmail = text.slice(0, emailIndex).trim();
-      const textAfterEmail = text.slice(emailIndex + email.length).trim();
+  if (matches) {
+    for (const match of matches) {
+      const matchIndex = text.indexOf(match);
+      const textBeforeEmail = text.slice(0, matchIndex).trim();
+      const textAfterEmail = text.slice(matchIndex + match.length).trim();
       const wordsBeforeEmail = textBeforeEmail.split(" ");
       const wordsAfterEmail = textAfterEmail.split(" ");
 
@@ -60,19 +65,23 @@ export function extractTextSnippet(
 
       const trimmedLine = wordsBeforeEmail
         .slice(-wordsBefore)
-        .concat(email, wordsAfterEmail.slice(0, wordsAfter))
+        .concat(match, wordsAfterEmail.slice(0, wordsAfter))
         .join(" ");
 
-      emailLines.push(trimmedLine);
+      snippets.push({
+        match,
+        context: match,
+        // context: trimmedLine,
+      });
     }
   }
 
-  return emailLines;
+  return snippets;
 }
 
 export function extractEmailTextSnippets(
   text: string,
-  filter: (line: string) => boolean = () => true,
+  filter: (snippet: TextSnippet) => boolean = () => true,
   maxLineLength = 30
 ) {
   const EMAIL_PATTERN = /([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)/g;
@@ -83,7 +92,7 @@ export function extractEmailTextSnippets(
 
 export function extractUrlTextSnippets(
   text: string,
-  filter: (line: string) => boolean = () => true,
+  filter: (snippet: TextSnippet) => boolean = () => true,
   maxLineLength = 30
 ) {
   const URL_PATTERN =
