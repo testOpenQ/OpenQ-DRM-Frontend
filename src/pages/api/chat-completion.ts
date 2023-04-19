@@ -128,7 +128,6 @@ export default async function ChatCompletion(
     });
 
     consumedTokens.output = countTokens(response);
-    console.log("Consumed tokens:", consumedTokens);
   } catch (e: any) {
     error = getError(e);
   }

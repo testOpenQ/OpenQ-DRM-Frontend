@@ -224,14 +224,12 @@ async function searchEmailOnline(
     output: number;
   } = { input: 0, output: 0 }
 ): Promise<FindEmailResponse> {
-  console.log("######### before completion");
   const { error, response, newChatContext, consumedTokens } =
     await completeChat(
       prepareChatContext(userData, websiteData, clickedUrls),
       256,
       0
     );
-  console.log("######### after completion");
 
   if (error || !response) {
     return {
@@ -375,15 +373,10 @@ export default async function FindEmail(
     return;
   }
 
-  console.log(userWebsiteUrls);
   const websiteDataRequests = await Promise.all(
     userWebsiteUrls.map(fetchWebsiteData)
   );
-  console.log("????");
   const websiteData = websiteDataRequests.filter((d) => d) as WebsiteData[];
-  console.log(websiteData.map((d) => d.url));
-  console.log(websiteData.map((d) => d.emailTextSnippets.length));
-  console.log(websiteData.map((d) => d.urlTextSnippets.length));
 
   const totalTextSnippets = websiteData.reduce(
     (acc, data) =>
