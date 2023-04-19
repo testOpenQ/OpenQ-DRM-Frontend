@@ -24,7 +24,10 @@ const EMAIL_SEARCH_GPT_TOKEN_LIMIT = 25000;
 export type FindEmailResponse = {
   candidates: FoundEmail[];
   clickedUrls: string[];
-  totalConsumedTokens: number;
+  totalConsumedTokens: {
+    input: number;
+    output: number;
+  };
   chatContexts: ChatCompletionRequestMessage[][];
   error?: string;
 };
@@ -85,14 +88,6 @@ function getFoundEmail(input: string): FoundEmail | null {
   }
 }
 
-function getStopReason(input: string): string | null {
-  if (input.startsWith("stop:")) {
-    return input.substring(5);
-  } else {
-    return null;
-  }
-}
-
 function extractCandidatesFromResponse(response: string): FoundEmail[] {
   const candidates: FoundEmail[] = [];
 
@@ -121,15 +116,24 @@ function extractUrlsFromResponse(response: string) {
 
 async function fetchWebsiteData(url: string): Promise<WebsiteData | null> {
   try {
+    const abortController = new AbortController();
+    const signal = abortController.signal;
+
+    setTimeout(() => {
+      abortController.abort();
+    }, 5000);
+
+    console.log(`Fetching website data for ${url}`);
     const emailTextSnippets: TextSnippet[] = [];
     const urlTextSnippets: TextSnippet[] = [];
 
-    const clickedPage = await fetch("https://" + url, {
-      headers: {
-        "User-Agent":
-          "Mozilla/5.0 (X11; Linux x86_64; rv:109.0) Gecko/20100101 Firefox/112.0",
-      },
-    })
+    const clickedPage = await fetch("https://" + url, { signal })
+      .then((res) => {
+        console.log(
+          `Fetched website data for ${url}: ${res.status} ${res.statusText}`
+        );
+        return res;
+      })
       .then((res) => res.text())
       .then((html) => new HTMLPage(html, url));
 
@@ -215,14 +219,19 @@ async function searchEmailOnline(
   clickedUrls: string[] = [],
   candidates: FoundEmail[] = [],
   chatContexts: ChatCompletionRequestMessage[][] = [],
-  totalConsumedTokens: number = 0
+  totalConsumedTokens: {
+    input: number;
+    output: number;
+  } = { input: 0, output: 0 }
 ): Promise<FindEmailResponse> {
+  console.log("######### before completion");
   const { error, response, newChatContext, consumedTokens } =
     await completeChat(
       prepareChatContext(userData, websiteData, clickedUrls),
       256,
       0
     );
+  console.log("######### after completion");
 
   if (error || !response) {
     return {
@@ -240,7 +249,8 @@ async function searchEmailOnline(
   candidates.push(...nextCandidates);
   clickedUrls.push(...nextUrls);
   chatContexts.push(newChatContext);
-  totalConsumedTokens += consumedTokens;
+  totalConsumedTokens.input += consumedTokens.input;
+  totalConsumedTokens.output += consumedTokens.output;
 
   const nextWebsiteDataRequests = await Promise.all(
     nextUrls.map(fetchWebsiteData)
@@ -252,7 +262,8 @@ async function searchEmailOnline(
   if (
     nextWebsiteData.length === 0 ||
     candidates.some((c) => c.confidence === "high") ||
-    totalConsumedTokens > EMAIL_SEARCH_GPT_TOKEN_LIMIT
+    totalConsumedTokens.input + totalConsumedTokens.output >
+      EMAIL_SEARCH_GPT_TOKEN_LIMIT
   ) {
     return {
       candidates,
@@ -364,10 +375,16 @@ export default async function FindEmail(
     return;
   }
 
+  console.log(userWebsiteUrls);
   const websiteDataRequests = await Promise.all(
     userWebsiteUrls.map(fetchWebsiteData)
   );
+  console.log("????");
   const websiteData = websiteDataRequests.filter((d) => d) as WebsiteData[];
+  console.log(websiteData.map((d) => d.url));
+  console.log(websiteData.map((d) => d.emailTextSnippets.length));
+  console.log(websiteData.map((d) => d.urlTextSnippets.length));
+
   const totalTextSnippets = websiteData.reduce(
     (acc, data) =>
       acc + data.emailTextSnippets.length + data.urlTextSnippets.length,

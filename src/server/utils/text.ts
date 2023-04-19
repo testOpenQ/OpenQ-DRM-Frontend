@@ -28,16 +28,20 @@ export type TextSnippet = {
   tokenCount: number;
 };
 
-export function extractTextSnippet(
+export function extractTextSnippets(
   text: string,
   pattern: RegExp,
-  maxWords = 30
+  maxWordsPerSnippet = 30
 ) {
   const matches = text.match(new RegExp(pattern.source, "g"));
   const snippets: TextSnippet[] = [];
 
   if (matches) {
     for (const match of matches) {
+      if (snippets.find((snippet) => snippet.context.includes(match))) {
+        continue;
+      }
+
       const matchIndex = text.indexOf(match);
       const textBeforeEmail = text.slice(0, matchIndex).trim();
       const textAfterEmail = text.slice(matchIndex + match.length).trim();
@@ -46,11 +50,11 @@ export function extractTextSnippet(
 
       let wordsBefore = Math.min(
         wordsBeforeEmail.length,
-        Math.floor((maxWords - 1) / 2)
+        Math.floor((maxWordsPerSnippet - 1) / 2)
       );
       let wordsAfter = Math.min(
         wordsAfterEmail.length,
-        Math.ceil((maxWords - 1) / 2)
+        Math.ceil((maxWordsPerSnippet - 1) / 2)
       );
 
       if (wordsBefore < 14) {
@@ -92,8 +96,9 @@ export function extractEmailTextSnippets(
 ) {
   const EMAIL_PATTERN = /([a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+)/g;
 
-  const snippets = extractTextSnippet(text, EMAIL_PATTERN, maxLineLength);
-  return snippets.filter(filter);
+  const snippets = extractTextSnippets(text, EMAIL_PATTERN, maxLineLength);
+
+  return snippets.filter(filter).sort((a, b) => b.tokenCount - a.tokenCount);
 }
 
 export function extractUrlTextSnippets(
@@ -104,6 +109,6 @@ export function extractUrlTextSnippets(
   const URL_PATTERN =
     /https?:\/\/([^:\/\s]+)(:\d+)?(((\/\w+)*\/)([\w\-\.]+[^#?\s]+)([^\s#]*)?)?/g;
 
-  const snippets = extractTextSnippet(text, URL_PATTERN, maxLineLength);
+  const snippets = extractTextSnippets(text, URL_PATTERN, maxLineLength);
   return snippets.filter(filter);
 }

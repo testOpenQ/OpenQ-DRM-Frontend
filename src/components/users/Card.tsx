@@ -125,6 +125,11 @@ export default function Card({ user }: { user: User }) {
       .then((res) => res.json())
       .then((searchResult: FindEmailResponse) => {
         console.log(searchResult);
+        const inputCost =
+          (searchResult.totalConsumedTokens.input / 1000) * 0.03;
+        const outputCost =
+          (searchResult.totalConsumedTokens.output / 1000) * 0.06;
+        console.log("$" + (inputCost + outputCost).toFixed(2));
         setUserEmailCandidates(searchResult.candidates);
         if (searchResult.error) {
           setEmailSearchError(searchResult.error);

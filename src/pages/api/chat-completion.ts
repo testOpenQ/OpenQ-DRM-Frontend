@@ -3,7 +3,7 @@ import {
   ChatCompletionRequestMessageRoleEnum,
   type ChatCompletionRequestMessage,
 } from "openai";
-import { countContextTokens, gpt } from "~/server/gpt";
+import { countContextTokens, countTokens, gpt } from "~/server/gpt";
 
 export type ChatCompletionRequestBody = {
   context: ChatCompletionRequestMessage[];
@@ -15,7 +15,10 @@ export type ChatCompletionResponseBody = {
   error?: string;
   response?: string;
   newChatContext: ChatCompletionRequestMessage[];
-  consumedTokens: number;
+  consumedTokens: {
+    input: number;
+    output: number;
+  };
 };
 
 export function isChatCompletionRequestMessage(
@@ -95,7 +98,10 @@ export default async function ChatCompletion(
 
   let response: string | undefined;
   let error: string | undefined;
-  let consumedTokens = 0;
+  const consumedTokens = {
+    input: 0,
+    output: 0,
+  };
 
   try {
     const completion = await gpt.createChatCompletion({
@@ -114,12 +120,14 @@ export default async function ChatCompletion(
       );
     }
 
+    consumedTokens.input = countContextTokens(context);
+
     context.push({
       role: ChatCompletionRequestMessageRoleEnum.Assistant,
       content: response,
     });
 
-    consumedTokens = countContextTokens(context);
+    consumedTokens.output = countTokens(response);
     console.log("Consumed tokens:", consumedTokens);
   } catch (e: any) {
     error = getError(e);
