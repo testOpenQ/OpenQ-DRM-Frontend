@@ -48,6 +48,7 @@ Tab in repo card for devs' emails
     - collect all email addresses and URLs found in these contents (regex)
 
 - add obscured email patterns (name {at} domain.com)
+- before even GPT: Look for org email
 
 Currently GPT is not aware of the domains of the initial contents passed to it.
 If it discovers one of these urls when browsing, it will lead to passing it the same initial content.
