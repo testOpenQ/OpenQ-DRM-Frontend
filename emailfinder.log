@@ -1,0 +1,591 @@
+yarn run v1.22.19
+$ next dev
+[32mready[39m - started server on 0.0.0.0:3000, url: http://localhost:3000
+[36minfo[39m  - Loaded env from /home/mkt/Projects/openq/OpenQ-DRM-Frontend/.env
+[35mevent[39m - compiled client and server successfully in 1866 ms (678 modules)
+[36mwait[39m  - compiling /campaigns/[campaignId] (client and server)...
+[35mevent[39m - compiled client and server successfully in 401 ms (705 modules)
+[36mwait[39m  - compiling /api/auth/[...nextauth] (client and server)...
+[35mevent[39m - compiled successfully in 30 ms (53 modules)
+[36mwait[39m  - compiling /api/find-email (client and server)...
+[35mevent[39m - compiled successfully in 141 ms (67 modules)
+[36mwait[39m  - compiling /api/chat-completion (client and server)...
+[35mevent[39m - compiled successfully in 24 ms (68 modules)
+Chat Context [
+  {
+    role: 'system',
+    content: "As ContactFinderGPT, you identify public email addresses associated with a GitHub user from website data. For each email, provide a confidence level (High or Medium) and a brief explanation of its suitability for job offers. If there isn't at least one address with high confidence, list up to 5 relevant URLs (extracted from the provided data) that could help locate the developer's email. Prioritize reliable sources and don't use any of the following URLS: www.devstevers.com\n" +
+      'If there are no relevant emails or promising URLs, you stop your research.\n' +
+      'You must use only the following format:\n' +
+      '\n' +
+      'Example 1:\n' +
+      'email:careers@janedoe.com | High | "Official address for job inquiries"\n' +
+      '\n' +
+      'Example 2:\n' +
+      'email:jobinvitations@devjane.uk.com | Medium | "Website looks outdated"\n' +
+      'url:devjane.io/blog/seeking-opportunities.html\n' +
+      '\n' +
+      'Example 3:\n' +
+      'url:myproject.io/about-me.html\n' +
+      'url:developerblog.net/devjenny/my-portfolio-website\n' +
+      'url:medium.com/@rickkdev/about\n' +
+      '\n' +
+      'Example 4:\n' +
+      'stop:<explanation>'
+  },
+  {
+    role: 'user',
+    content: 'Find the email address of GitHub User Christopher-Stevers.\n' +
+      'Name: Christopher Stevers\n' +
+      'Location: Stratford, Canada'
+  },
+  {
+    role: 'user',
+    content: 'Title: CJS Dev\nDescription: Christopher Stevers Development Portfolio'
+  },
+  {
+    role: 'user',
+    content: 'time job oppurtunities. If your interested in working with me, please let me know at christopher.stevers1@gmail.com. * **Frontend** * HTML * CSS * JavaScript *'
+  },
+  {
+    role: 'user',
+    content: 'Christopher Stevers =================== I develop websites. ------------------- []( https://github.com/Christopher-Stevers "github")[](https://twitter.com/Christo28120856 "twitter")[](https://www.linkedin.com/in/christopher-stevers-07b9a5204/ "linkedin") Since starting my development journey I’ve worked with a range of technologies, from Wordpress, to React, to PostgreSQL, and I’m always looking for'
+  },
+  {
+    role: 'user',
+    content: 'Christopher Stevers =================== I develop websites. ------------------- [](https://github.com/Christopher-Stevers "github")[]( https://twitter.com/Christo28120856 "twitter")[](https://www.linkedin.com/in/christopher-stevers-07b9a5204/ "linkedin") Since starting my development journey I’ve worked with a range of technologies, from Wordpress, to React, to PostgreSQL, and I’m always looking for'
+  },
+  {
+    role: 'user',
+    content: 'Christopher Stevers =================== I develop websites. ------------------- [](https://github.com/Christopher-Stevers "github")[](https://twitter.com/Christo28120856 "twitter")[]( https://www.linkedin.com/in/christopher-stevers-07b9a5204/ "linkedin") Since starting my development journey I’ve worked with a range of technologies, from Wordpress, to React, to PostgreSQL, and I’m always looking for'
+  },
+  {
+    role: 'user',
+    content: 'to points of sale, and allow them to contact us. * I created this site on Nuxt3 , with editing through Netlify CMS. * [Site]( https://friendly-brown-1d77de.netlify.app /)[Code](https://github.com/Christopher-Stevers/Soul-Runner-Site)'
+  },
+  {
+    role: 'user',
+    content: 'to points of sale, and allow them to contact us. * I created this site on Nuxt3 , with editing through Netlify CMS. * [Site](https://friendly-brown-1d77de.netlify.app/)[Code]( https://github.com/Christopher-Stevers/Soul-Runner-Site)'
+  }
+]
+AI reponse: email:christopher.stevers1@gmail.com | High | "Email address provided for job opportunities"
+Consumed tokens: 835
+Chat Context [
+  {
+    role: 'system',
+    content: "As ContactFinderGPT, you identify public email addresses associated with a GitHub user from website data. For each email, provide a confidence level (High or Medium) and a brief explanation of its suitability for job offers. If there isn't at least one address with high confidence, list up to 5 relevant URLs (extracted from the provided data) that could help locate the developer's email. Prioritize reliable sources and don't use any of the following URLS: openq.dev\n" +
+      'If there are no relevant emails or promising URLs, you stop your research.\n' +
+      'You must use only the following format:\n' +
+      '\n' +
+      'Example 1:\n' +
+      'email:careers@janedoe.com | High | "Official address for job inquiries"\n' +
+      '\n' +
+      'Example 2:\n' +
+      'email:jobinvitations@devjane.uk.com | Medium | "Website looks outdated"\n' +
+      'url:devjane.io/blog/seeking-opportunities.html\n' +
+      '\n' +
+      'Example 3:\n' +
+      'url:myproject.io/about-me.html\n' +
+      'url:developerblog.net/devjenny/my-portfolio-website\n' +
+      'url:medium.com/@rickkdev/about\n' +
+      '\n' +
+      'Example 4:\n' +
+      'stop:<explanation>'
+  },
+  {
+    role: 'user',
+    content: 'Find the email address of GitHub User rickkdev.\n' +
+      'Name: Rick\n' +
+      'Location: Berlin'
+  },
+  {
+    role: 'user',
+    content: 'Title: OpenQ | New Universe For Builders\nDescription: '
+  },
+  {
+    role: 'user',
+    content: "more about OpenQ's builder hub in our recent article and learn what's coming next. ]( https://medium.com/openqdev/introducing-openq-on-polygon-1b096f74e949) The New Universe For Builders =============================== Join the ultimate hub for builders and turn your ideas"
+  },
+  {
+    role: 'user',
+    content: "hackathons. ============================= Learn new skills, build your online reputation & get paid before the hackathon ends. ]( https://docs.openq.dev/hackathon-organizer/create-hackathon-repository) Hackathons for you[](/hackathons) --------------------------------- [ ETHDenver-2023 ETHDenver 2023 Buidl-a-thon ](/repo/SporkDAOOfficial/ETHDenver-2023)[ ETHRome-2023 The official landing page for the ETHRome '23 Hackathon! ](/repo/urbeETH/ETHRome-2023)[ ETHWarsaw-2023 ETHWarsaw is dev"
+  },
+  {
+    role: 'user',
+    content: `ticket that has an escrow assinged, is ensuring payment after the job is completed. ]( https://docs.openq.dev/types/a-contract-for-every-occasion) Marketplace[](/marketplace) --------------------------- [ swarm benchmark priority queue removal No one assigned Go Shell ](/contract/MDU6SXNzdWU0NDQ1Mjg5NTc=/undefined)[ ipfs-companion Don't use public gateway for DNS lookups "automatic mode" is`
+  },
+  {
+    role: 'user',
+    content: 'web3 hackathons. ============================== Subscribe to our newsletter & find out where to build next. [ FVM Space Warp online, ]( https://ethglobal.com/events/spacewarp)[ POLKADOT HACKATHON GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum'
+  },
+  {
+    role: 'user',
+    content: 'newsletter & find out where to build next. [ FVM Space Warp online, ](https://ethglobal.com/events/spacewarp)[ POLKADOT HACKATHON GLOBAL SERIES:EUROPE EDITION online, ]( https://www.polkadotglobalseries.com /)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City'
+  },
+  {
+    role: 'user',
+    content: '& find out where to build next. [ FVM Space Warp online, ](https://ethglobal.com/events/spacewarp)[ POLKADOT HACKATHON GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ]( https://iconhyperbuild.devpost.com /)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker'
+  },
+  {
+    role: 'user',
+    content: 'out where to build next. [ FVM Space Warp online, ](https://ethglobal.com/events/spacewarp)[ POLKADOT HACKATHON GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ]( https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker House Ho Chi'
+  },
+  {
+    role: 'user',
+    content: 'to build next. [ FVM Space Warp online, ](https://ethglobal.com/events/spacewarp)[ POLKADOT HACKATHON GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ]( https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker House Ho Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\.'
+  },
+  {
+    role: 'user',
+    content: 'build next. [ FVM Space Warp online, ](https://ethglobal.com/events/spacewarp)[ POLKADOT HACKATHON GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ]( https://hackjmi.tech /)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker House Ho Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\. Blockchain'
+  },
+  {
+    role: 'user',
+    content: 'Warp online, ](https://ethglobal.com/events/spacewarp)[ POLKADOT HACKATHON GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ]( https://cny-hack-kuala-lumpur.devpost.com /)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker House Ho Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\. Blockchain Hackathon - Let’s'
+  },
+  {
+    role: 'user',
+    content: 'Warp online, ](https://ethglobal.com/events/spacewarp)[ POLKADOT HACKATHON GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ]( https://innerve.tech /#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker House Ho Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\. Blockchain Hackathon - Let’s'
+  },
+  {
+    role: 'user',
+    content: 'Warp online, ](https://ethglobal.com/events/spacewarp)[ POLKADOT HACKATHON GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ]( https://www.ethdenver.com /)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker House Ho Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\. Blockchain Hackathon - Let’s'
+  },
+  {
+    role: 'user',
+    content: 'GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ]( https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker House Ho Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\. Blockchain Hackathon - Let’s Build the'
+  },
+  {
+    role: 'user',
+    content: 'GLOBAL SERIES:EUROPE EDITION online, ](https://www.polkadotglobalseries.com/)[ ICON HYPERBUILD online, ](https://iconhyperbuild.devpost.com/)[ Istanbul Hacker House Instanbul, ](https://solana.com/events/istanbulhh)[ Melbourne Hacker House Melbourne, ](https://solana.com/events/melbournehh)[ HACK JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ]( https://www.ethdubaiconf.org /)[ Ho Chi Minh City Hacker House Ho Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\. Blockchain Hackathon - Let’s Build the'
+  },
+  {
+    role: 'user',
+    content: 'JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker House Ho Chi Minh City, ]( https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\. Blockchain Hackathon - Let’s Build the Future of Web 3.0! Stuttgart, ](https://events.bwcon.de/en/events/4-blockchain-hackathon-hackers-lets-build-the-future-of-web-3-0/)[ ETHGlobal Tokyo Tokyo, ](https://tokyo.ethglobal.com/)[ Sol.Ladies Build Hacker House Austin, ](https://solana.com/events/sol.ladies)[ ETHPrivacy Istanbul, ](https://www.leadingprivacy.com/istanbul)[ ETH'
+  },
+  {
+    role: 'user',
+    content: 'JMI Hybrid, ](https://hackjmi.tech/)[ KL Mini Hack Kula Lumpur, ](https://cny-hack-kuala-lumpur.devpost.com/)[ Innerveseven Online, ](https://innerve.tech/#hero)[ ETHDenver Denver, ](https://www.ethdenver.com/)[ Scaling Ethereum 2023 virtual, ](https://ethglobal.com/events/scaling2023)[ ETHDubai Dubai, ](https://www.ethdubaiconf.org/)[ Ho Chi Minh City Hacker House Ho Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ]( https://ethporto.org /)[ 4\\. Blockchain Hackathon - Let’s Build the Future of Web 3.0! Stuttgart, ](https://events.bwcon.de/en/events/4-blockchain-hackathon-hackers-lets-build-the-future-of-web-3-0/)[ ETHGlobal Tokyo Tokyo, ](https://tokyo.ethglobal.com/)[ Sol.Ladies Build Hacker House Austin, ](https://solana.com/events/sol.ladies)[ ETHPrivacy Istanbul, ](https://www.leadingprivacy.com/istanbul)[ ETH'
+  },
+  {
+    role: 'user',
+    content: 'House Ho Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\. Blockchain Hackathon - Let’s Build the Future of Web 3.0! Stuttgart, ]( https://events.bwcon.de/en/events/4-blockchain-hackathon-hackers-lets-build-the-future-of-web-3-0/)[ ETHGlobal Tokyo Tokyo, ](https://tokyo.ethglobal.com/)[ Sol.Ladies Build Hacker House Austin, ](https://solana.com/events/sol.ladies)[ ETHPrivacy Istanbul, ](https://www.leadingprivacy.com/istanbul)[ ETH Malaysia Kuala Lumpur, ](https://ethmalaysia.com/)[ Taipei Hacker House Taipei, ](https://solana.com/events/taipeihh)[ ETHGlobal Istanbul Istanbul, ](https://ethglobal.com/events/istanbul)[ New York Hacker House New York, ](https://solana.com/events/newyorkhh)[ ETHGlobal Toronto Toronto, ](https://ethglobal.com/events/toronto)[ Tel'
+  },
+  {
+    role: 'user',
+    content: 'Chi Minh City, ](https://solana.com/events/hochiminhcityhh)[ ETHPorto Porto, ](https://ethporto.org/)[ 4\\. Blockchain Hackathon - Let’s Build the Future of Web 3.0! Stuttgart, ](https://events.bwcon.de/en/events/4-blockchain-hackathon-hackers-lets-build-the-future-of-web-3-0/)[ ETHGlobal Tokyo Tokyo, ]( https://tokyo.ethglobal.com /)[ Sol.Ladies Build Hacker House Austin, ](https://solana.com/events/sol.ladies)[ ETHPrivacy Istanbul, ](https://www.leadingprivacy.com/istanbul)[ ETH Malaysia Kuala Lumpur, ](https://ethmalaysia.com/)[ Taipei Hacker House Taipei, ](https://solana.com/events/taipeihh)[ ETHGlobal Istanbul Istanbul, ](https://ethglobal.com/events/istanbul)[ New York Hacker House New York, ](https://solana.com/events/newyorkhh)[ ETHGlobal Toronto Toronto, ](https://ethglobal.com/events/toronto)[ Tel Aviv'
+  },
+  {
+    role: 'user',
+    content: 'Blockchain Hackathon - Let’s Build the Future of Web 3.0! Stuttgart, ](https://events.bwcon.de/en/events/4-blockchain-hackathon-hackers-lets-build-the-future-of-web-3-0/)[ ETHGlobal Tokyo Tokyo, ](https://tokyo.ethglobal.com/)[ Sol.Ladies Build Hacker House Austin, ]( https://solana.com/events/sol.ladies)[ ETHPrivacy Istanbul, ](https://www.leadingprivacy.com/istanbul)[ ETH Malaysia Kuala Lumpur, ](https://ethmalaysia.com/)[ Taipei Hacker House Taipei, ](https://solana.com/events/taipeihh)[ ETHGlobal Istanbul Istanbul, ](https://ethglobal.com/events/istanbul)[ New York Hacker House New York, ](https://solana.com/events/newyorkhh)[ ETHGlobal Toronto Toronto, ](https://ethglobal.com/events/toronto)[ Tel Aviv Hacker House Tel Aviv, ](https://solana.com/events/telavivhh)[ Berlin'
+  },
+  {
+    role: 'user',
+    content: 'Blockchain Hackathon - Let’s Build the Future of Web 3.0! Stuttgart, ](https://events.bwcon.de/en/events/4-blockchain-hackathon-hackers-lets-build-the-future-of-web-3-0/)[ ETHGlobal Tokyo Tokyo, ](https://tokyo.ethglobal.com/)[ Sol.Ladies Build Hacker House Austin, ](https://solana.com/events/sol.ladies)[ ETHPrivacy Istanbul, ]( https://www.leadingprivacy.com/istanbul)[ ETH Malaysia Kuala Lumpur, ](https://ethmalaysia.com/)[ Taipei Hacker House Taipei, ](https://solana.com/events/taipeihh)[ ETHGlobal Istanbul Istanbul, ](https://ethglobal.com/events/istanbul)[ New York Hacker House New York, ](https://solana.com/events/newyorkhh)[ ETHGlobal Toronto Toronto, ](https://ethglobal.com/events/toronto)[ Tel Aviv Hacker House Tel Aviv, ](https://solana.com/events/telavivhh)[ Berlin'
+  },
+  {
+    role: 'user',
+    content: '- Let’s Build the Future of Web 3.0! Stuttgart, ](https://events.bwcon.de/en/events/4-blockchain-hackathon-hackers-lets-build-the-future-of-web-3-0/)[ ETHGlobal Tokyo Tokyo, ](https://tokyo.ethglobal.com/)[ Sol.Ladies Build Hacker House Austin, ](https://solana.com/events/sol.ladies)[ ETHPrivacy Istanbul, ](https://www.leadingprivacy.com/istanbul)[ ETH Malaysia Kuala Lumpur, ]( https://ethmalaysia.com /)[ Taipei Hacker House Taipei, ](https://solana.com/events/taipeihh)[ ETHGlobal Istanbul Istanbul, ](https://ethglobal.com/events/istanbul)[ New York Hacker House New York, ](https://solana.com/events/newyorkhh)[ ETHGlobal Toronto Toronto, ](https://ethglobal.com/events/toronto)[ Tel Aviv Hacker House Tel Aviv, ](https://solana.com/events/telavivhh)[ Berlin Hacker House Berlin, ](https://solana.com/events/berlinhh)[ ETHGlobal'
+  }
+]
+AI reponse: url:https://tokyo.ethglobal.com/
+url:https://solana.com/events/sol.ladies
+url:https://www.leadingprivacy.com/istanbul
+url:https://ethmalaysia.com/
+url:https://solana.com/events/taipeihh
+Consumed tokens: 5726
+Chat Context [
+  {
+    role: 'system',
+    content: "As ContactFinderGPT, you identify public email addresses associated with a GitHub user from website data. For each email, provide a confidence level (High or Medium) and a brief explanation of its suitability for job offers. If there isn't at least one address with high confidence, list up to 5 relevant URLs (extracted from the provided data) that could help locate the developer's email. Prioritize reliable sources and don't use any of the following URLS: openq.dev\n" +
+      'tokyo.ethglobal.com/\n' +
+      'solana.com/events/sol.ladies\n' +
+      'www.leadingprivacy.com/istanbul\n' +
+      'ethmalaysia.com/\n' +
+      'solana.com/events/taipeihh\n' +
+      'If there are no relevant emails or promising URLs, you stop your research.\n' +
+      'You must use only the following format:\n' +
+      '\n' +
+      'Example 1:\n' +
+      'email:careers@janedoe.com | High | "Official address for job inquiries"\n' +
+      '\n' +
+      'Example 2:\n' +
+      'email:jobinvitations@devjane.uk.com | Medium | "Website looks outdated"\n' +
+      'url:devjane.io/blog/seeking-opportunities.html\n' +
+      '\n' +
+      'Example 3:\n' +
+      'url:myproject.io/about-me.html\n' +
+      'url:developerblog.net/devjenny/my-portfolio-website\n' +
+      'url:medium.com/@rickkdev/about\n' +
+      '\n' +
+      'Example 4:\n' +
+      'stop:<explanation>'
+  },
+  {
+    role: 'user',
+    content: 'Find the email address of GitHub User rickkdev.\n' +
+      'Name: Rick\n' +
+      'Location: Berlin'
+  },
+  {
+    role: 'user',
+    content: 'Title: ETHGlobal Tokyo\n' +
+      'Description: Onboarding thousands of developers into the Ethereum ecosystem.'
+  },
+  {
+    role: 'user',
+    content: '[Events](/events) * [Showcase](/showcase) * [Talks](/talks) * [Guides](/guides) * [About](/about) [Connect Discord]( https://discord.com/api/oauth2/authorize?client_id=755416123033387179&redirect_uri=https%3A%2F%2Fapi.ethglobal.com%2Fauth%2Fdiscord&response_type=code&scope=identify%20guilds%20guilds.join&state=tokyo) * [Events](/events) * [Showcase](/showcase) * [Talks](/talks) * [Guides](/guides) *'
+  },
+  {
+    role: 'user',
+    content: 'Sismo $5,000 #### Livepeer $5,000 #### Reazon Holdings $5,000 #### Wellbeing NETH Prize - いい感じの社会をつくろう $5,000 #### Huddle01 $5,000 #### Quantstamp $5,000 #### Scroll $5,000 [See prize details]( https://ethglobal.com/events/tokyo/prizes) Schedule -------- ### April 14 – 16, 2023 Timezone: ### Week 1 Apr 12 - Apr 16 Wed, Apr 12 11:30pm ### Pragma'
+  },
+  {
+    role: 'user',
+    content: "2023 Location: Daikanyama Share Lounge (Tokyo) Website: [ethglobal.com/events/cafe-tokyo](/events/cafe-tokyo) [Apply now](/events/cafe-tokyo/apply) Judges, Speakers & Mentors -------------------------- [ ### Masa 'Senshi' Kikuchi Secured Finance ]( https://twitter.com/masa_web3) [ ### Eda Akturk Buidl Guidl ](https://twitter.com/edatweets_) [ ### Juan Benet Protocol Labs ](https://twitter.com/juanbenet) [ ### Dennison Bertram Tally ](https://twitter.com/dennisonbertram) [ ### Lasse Clausen 1kx ](https://twitter.com/lalleclausen) [ ### Austin Griffith 🏰 BuidlGuidl ](https://twitter.com/austingriffith) [ ### Makoto"
+  },
+  {
+    role: 'user',
+    content: "Lounge (Tokyo) Website: [ethglobal.com/events/cafe-tokyo](/events/cafe-tokyo) [Apply now](/events/cafe-tokyo/apply) Judges, Speakers & Mentors -------------------------- [ ### Masa 'Senshi' Kikuchi Secured Finance ](https://twitter.com/masa_web3) [ ### Eda Akturk Buidl Guidl ]( https://twitter.com/edatweets_) [ ### Juan Benet Protocol Labs ](https://twitter.com/juanbenet) [ ### Dennison Bertram Tally ](https://twitter.com/dennisonbertram) [ ### Lasse Clausen 1kx ](https://twitter.com/lalleclausen) [ ### Austin Griffith 🏰 BuidlGuidl ](https://twitter.com/austingriffith) [ ### Makoto Inoue ENS ](https://twitter.com/makoto_inoue) ### Joan Kim Samsung"
+  },
+  {
+    role: 'user',
+    content: "now](/events/cafe-tokyo/apply) Judges, Speakers & Mentors -------------------------- [ ### Masa 'Senshi' Kikuchi Secured Finance ](https://twitter.com/masa_web3) [ ### Eda Akturk Buidl Guidl ](https://twitter.com/edatweets_) [ ### Juan Benet Protocol Labs ]( https://twitter.com/juanbenet) [ ### Dennison Bertram Tally ](https://twitter.com/dennisonbertram) [ ### Lasse Clausen 1kx ](https://twitter.com/lalleclausen) [ ### Austin Griffith 🏰 BuidlGuidl ](https://twitter.com/austingriffith) [ ### Makoto Inoue ENS ](https://twitter.com/makoto_inoue) ### Joan Kim Samsung Next ### Jon Kol Hyperlane [ ###"
+  },
+  {
+    role: 'user',
+    content: "& Mentors -------------------------- [ ### Masa 'Senshi' Kikuchi Secured Finance ](https://twitter.com/masa_web3) [ ### Eda Akturk Buidl Guidl ](https://twitter.com/edatweets_) [ ### Juan Benet Protocol Labs ](https://twitter.com/juanbenet) [ ### Dennison Bertram Tally ]( https://twitter.com/dennisonbertram) [ ### Lasse Clausen 1kx ](https://twitter.com/lalleclausen) [ ### Austin Griffith 🏰 BuidlGuidl ](https://twitter.com/austingriffith) [ ### Makoto Inoue ENS ](https://twitter.com/makoto_inoue) ### Joan Kim Samsung Next ### Jon Kol Hyperlane [ ### Stani Kulechov Aave"
+  },
+  {
+    role: 'user',
+    content: "Masa 'Senshi' Kikuchi Secured Finance ](https://twitter.com/masa_web3) [ ### Eda Akturk Buidl Guidl ](https://twitter.com/edatweets_) [ ### Juan Benet Protocol Labs ](https://twitter.com/juanbenet) [ ### Dennison Bertram Tally ](https://twitter.com/dennisonbertram) [ ### Lasse Clausen 1kx ]( https://twitter.com/lalleclausen) [ ### Austin Griffith 🏰 BuidlGuidl ](https://twitter.com/austingriffith) [ ### Makoto Inoue ENS ](https://twitter.com/makoto_inoue) ### Joan Kim Samsung Next ### Jon Kol Hyperlane [ ### Stani Kulechov Aave Companies ](https://twitter.com/StaniKulechov) [ ### Christopher"
+  },
+  {
+    role: 'user',
+    content: 'Finance ](https://twitter.com/masa_web3) [ ### Eda Akturk Buidl Guidl ](https://twitter.com/edatweets_) [ ### Juan Benet Protocol Labs ](https://twitter.com/juanbenet) [ ### Dennison Bertram Tally ](https://twitter.com/dennisonbertram) [ ### Lasse Clausen 1kx ](https://twitter.com/lalleclausen) [ ### Austin Griffith 🏰 BuidlGuidl ]( https://twitter.com/austingriffith) [ ### Makoto Inoue ENS ](https://twitter.com/makoto_inoue) ### Joan Kim Samsung Next ### Jon Kol Hyperlane [ ### Stani Kulechov Aave Companies ](https://twitter.com/StaniKulechov) [ ### Christopher Lema Ethereum Foundation ](https://twitter.com/chrislemanade) [ ### Vera'
+  },
+  {
+    role: 'user',
+    content: 'Akturk Buidl Guidl ](https://twitter.com/edatweets_) [ ### Juan Benet Protocol Labs ](https://twitter.com/juanbenet) [ ### Dennison Bertram Tally ](https://twitter.com/dennisonbertram) [ ### Lasse Clausen 1kx ](https://twitter.com/lalleclausen) [ ### Austin Griffith 🏰 BuidlGuidl ](https://twitter.com/austingriffith) [ ### Makoto Inoue ENS ]( https://twitter.com/makoto_inoue) ### Joan Kim Samsung Next ### Jon Kol Hyperlane [ ### Stani Kulechov Aave Companies ](https://twitter.com/StaniKulechov) [ ### Christopher Lema Ethereum Foundation ](https://twitter.com/chrislemanade) [ ### Vera Li ApeCoin DAO ](https://twitter.com/veratheape) [ ###'
+  },
+  {
+    role: 'user',
+    content: 'Clausen 1kx ](https://twitter.com/lalleclausen) [ ### Austin Griffith 🏰 BuidlGuidl ](https://twitter.com/austingriffith) [ ### Makoto Inoue ENS ](https://twitter.com/makoto_inoue) ### Joan Kim Samsung Next ### Jon Kol Hyperlane [ ### Stani Kulechov Aave Companies ]( https://twitter.com/StaniKulechov) [ ### Christopher Lema Ethereum Foundation ](https://twitter.com/chrislemanade) [ ### Vera Li ApeCoin DAO ](https://twitter.com/veratheape) [ ### Jane Lippencott a16z ](https://twitter.com/janehk) [ ### Madeline Macartney IDEO CoLab Ventures ](https://twitter.com/madsmacartney) ### Richard Meissner Safe [ ###'
+  },
+  {
+    role: 'user',
+    content: 'BuidlGuidl ](https://twitter.com/austingriffith) [ ### Makoto Inoue ENS ](https://twitter.com/makoto_inoue) ### Joan Kim Samsung Next ### Jon Kol Hyperlane [ ### Stani Kulechov Aave Companies ](https://twitter.com/StaniKulechov) [ ### Christopher Lema Ethereum Foundation ]( https://twitter.com/chrislemanade) [ ### Vera Li ApeCoin DAO ](https://twitter.com/veratheape) [ ### Jane Lippencott a16z ](https://twitter.com/janehk) [ ### Madeline Macartney IDEO CoLab Ventures ](https://twitter.com/madsmacartney) ### Richard Meissner Safe [ ### Aya Miyaguchi Ethereum Foundation ](https://twitter.com/AyaMiyagotchi) [ ###'
+  },
+  {
+    role: 'user',
+    content: 'Joan Kim Samsung Next ### Jon Kol Hyperlane [ ### Stani Kulechov Aave Companies ](https://twitter.com/StaniKulechov) [ ### Christopher Lema Ethereum Foundation ](https://twitter.com/chrislemanade) [ ### Vera Li ApeCoin DAO ]( https://twitter.com/veratheape) [ ### Jane Lippencott a16z ](https://twitter.com/janehk) [ ### Madeline Macartney IDEO CoLab Ventures ](https://twitter.com/madsmacartney) ### Richard Meissner Safe [ ### Aya Miyaguchi Ethereum Foundation ](https://twitter.com/AyaMiyagotchi) [ ### Tomohiro Miyasaka Arriba Studio ](https://twitter.com/miyasaka2020) [ ###'
+  },
+  {
+    role: 'user',
+    content: 'Next ### Jon Kol Hyperlane [ ### Stani Kulechov Aave Companies ](https://twitter.com/StaniKulechov) [ ### Christopher Lema Ethereum Foundation ](https://twitter.com/chrislemanade) [ ### Vera Li ApeCoin DAO ](https://twitter.com/veratheape) [ ### Jane Lippencott a16z ]( https://twitter.com/janehk) [ ### Madeline Macartney IDEO CoLab Ventures ](https://twitter.com/madsmacartney) ### Richard Meissner Safe [ ### Aya Miyaguchi Ethereum Foundation ](https://twitter.com/AyaMiyagotchi) [ ### Tomohiro Miyasaka Arriba Studio ](https://twitter.com/miyasaka2020) [ ### Ken Ng Uniswap'
+  },
+  {
+    role: 'user',
+    content: "Kulechov Aave Companies ](https://twitter.com/StaniKulechov) [ ### Christopher Lema Ethereum Foundation ](https://twitter.com/chrislemanade) [ ### Vera Li ApeCoin DAO ](https://twitter.com/veratheape) [ ### Jane Lippencott a16z ](https://twitter.com/janehk) [ ### Madeline Macartney IDEO CoLab Ventures ]( https://twitter.com/madsmacartney) ### Richard Meissner Safe [ ### Aya Miyaguchi Ethereum Foundation ](https://twitter.com/AyaMiyagotchi) [ ### Tomohiro Miyasaka Arriba Studio ](https://twitter.com/miyasaka2020) [ ### Ken Ng Uniswap Foundation ](https://twitter.com/nkennethk) [ ### Jack O'Holleran SKALE Network ](https://twitter.com/jackoholleran) [ ###"
+  },
+  {
+    role: 'user',
+    content: "Vera Li ApeCoin DAO ](https://twitter.com/veratheape) [ ### Jane Lippencott a16z ](https://twitter.com/janehk) [ ### Madeline Macartney IDEO CoLab Ventures ](https://twitter.com/madsmacartney) ### Richard Meissner Safe [ ### Aya Miyaguchi Ethereum Foundation ]( https://twitter.com/AyaMiyagotchi) [ ### Tomohiro Miyasaka Arriba Studio ](https://twitter.com/miyasaka2020) [ ### Ken Ng Uniswap Foundation ](https://twitter.com/nkennethk) [ ### Jack O'Holleran SKALE Network ](https://twitter.com/jackoholleran) [ ### Paris Rouzati Lens Protocol ](https://twitter.com/parisrouz) [ ### Tomo Saito Ethereum"
+  },
+  {
+    role: 'user',
+    content: "Jane Lippencott a16z ](https://twitter.com/janehk) [ ### Madeline Macartney IDEO CoLab Ventures ](https://twitter.com/madsmacartney) ### Richard Meissner Safe [ ### Aya Miyaguchi Ethereum Foundation ](https://twitter.com/AyaMiyagotchi) [ ### Tomohiro Miyasaka Arriba Studio ]( https://twitter.com/miyasaka2020) [ ### Ken Ng Uniswap Foundation ](https://twitter.com/nkennethk) [ ### Jack O'Holleran SKALE Network ](https://twitter.com/jackoholleran) [ ### Paris Rouzati Lens Protocol ](https://twitter.com/parisrouz) [ ### Tomo Saito Ethereum Foundation ](https://twitter.com/tomosaito) ### Zach Segal Coinbase ###"
+  },
+  {
+    role: 'user',
+    content: "Macartney IDEO CoLab Ventures ](https://twitter.com/madsmacartney) ### Richard Meissner Safe [ ### Aya Miyaguchi Ethereum Foundation ](https://twitter.com/AyaMiyagotchi) [ ### Tomohiro Miyasaka Arriba Studio ](https://twitter.com/miyasaka2020) [ ### Ken Ng Uniswap Foundation ]( https://twitter.com/nkennethk) [ ### Jack O'Holleran SKALE Network ](https://twitter.com/jackoholleran) [ ### Paris Rouzati Lens Protocol ](https://twitter.com/parisrouz) [ ### Tomo Saito Ethereum Foundation ](https://twitter.com/tomosaito) ### Zach Segal Coinbase ### İlker Selim Zorluoğlu GoArt"
+  },
+  {
+    role: 'user',
+    content: "Richard Meissner Safe [ ### Aya Miyaguchi Ethereum Foundation ](https://twitter.com/AyaMiyagotchi) [ ### Tomohiro Miyasaka Arriba Studio ](https://twitter.com/miyasaka2020) [ ### Ken Ng Uniswap Foundation ](https://twitter.com/nkennethk) [ ### Jack O'Holleran SKALE Network ]( https://twitter.com/jackoholleran) [ ### Paris Rouzati Lens Protocol ](https://twitter.com/parisrouz) [ ### Tomo Saito Ethereum Foundation ](https://twitter.com/tomosaito) ### Zach Segal Coinbase ### İlker Selim Zorluoğlu GoArt Metaverse ### Dete Shirley Dapper"
+  },
+  {
+    role: 'user',
+    content: "Miyaguchi Ethereum Foundation ](https://twitter.com/AyaMiyagotchi) [ ### Tomohiro Miyasaka Arriba Studio ](https://twitter.com/miyasaka2020) [ ### Ken Ng Uniswap Foundation ](https://twitter.com/nkennethk) [ ### Jack O'Holleran SKALE Network ](https://twitter.com/jackoholleran) [ ### Paris Rouzati Lens Protocol ]( https://twitter.com/parisrouz) [ ### Tomo Saito Ethereum Foundation ](https://twitter.com/tomosaito) ### Zach Segal Coinbase ### İlker Selim Zorluoğlu GoArt Metaverse ### Dete Shirley Dapper Labs [ ### Balaji Srinivasan The"
+  },
+  {
+    role: 'user',
+    content: "Miyasaka Arriba Studio ](https://twitter.com/miyasaka2020) [ ### Ken Ng Uniswap Foundation ](https://twitter.com/nkennethk) [ ### Jack O'Holleran SKALE Network ](https://twitter.com/jackoholleran) [ ### Paris Rouzati Lens Protocol ](https://twitter.com/parisrouz) [ ### Tomo Saito Ethereum Foundation ]( https://twitter.com/tomosaito) ### Zach Segal Coinbase ### İlker Selim Zorluoğlu GoArt Metaverse ### Dete Shirley Dapper Labs [ ### Balaji Srinivasan The Network State ](https://twitter.com/balajis) [ ### Min"
+  },
+  {
+    role: 'user',
+    content: 'Foundation ](https://twitter.com/tomosaito) ### Zach Segal Coinbase ### İlker Selim Zorluoğlu GoArt Metaverse ### Dete Shirley Dapper Labs [ ### Balaji Srinivasan The Network State ]( https://twitter.com/balajis) [ ### Min Teo Ethereal Ventures ](https://twitter.com/_MinTeo) [ ### Windra Thio Independent ](https://twitter.com/windrathio) [ ### James Waugh 🔥\\_🔥 ](https://twitter.com/blockchainjames) [ ### Jeff Wentworth Curvegrid ](https://twitter.com/JeffInTokyo) [ ### Tom Yi Kanosei Ventures / Flamingo'
+  },
+  {
+    role: 'user',
+    content: 'İlker Selim Zorluoğlu GoArt Metaverse ### Dete Shirley Dapper Labs [ ### Balaji Srinivasan The Network State ](https://twitter.com/balajis) [ ### Min Teo Ethereal Ventures ]( https://twitter.com/_MinTeo) [ ### Windra Thio Independent ](https://twitter.com/windrathio) [ ### James Waugh 🔥\\_🔥 ](https://twitter.com/blockchainjames) [ ### Jeff Wentworth Curvegrid ](https://twitter.com/JeffInTokyo) [ ### Tom Yi Kanosei Ventures / Flamingo DAO ](https://twitter.com/think_flexible) [ ### Lion dapplion ChainSafe ](https://twitter.com/dapplion) [ ###'
+  },
+  {
+    role: 'user',
+    content: 'Zorluoğlu GoArt Metaverse ### Dete Shirley Dapper Labs [ ### Balaji Srinivasan The Network State ](https://twitter.com/balajis) [ ### Min Teo Ethereal Ventures ](https://twitter.com/_MinTeo) [ ### Windra Thio Independent ]( https://twitter.com/windrathio) [ ### James Waugh 🔥\\_🔥 ](https://twitter.com/blockchainjames) [ ### Jeff Wentworth Curvegrid ](https://twitter.com/JeffInTokyo) [ ### Tom Yi Kanosei Ventures / Flamingo DAO ](https://twitter.com/think_flexible) [ ### Lion dapplion ChainSafe ](https://twitter.com/dapplion) [ ### Flywill Worldcoin ](https://twitter.com/0xflywill) [ ### Tomiwa'
+  },
+  {
+    role: 'user',
+    content: 'Dete Shirley Dapper Labs [ ### Balaji Srinivasan The Network State ](https://twitter.com/balajis) [ ### Min Teo Ethereal Ventures ](https://twitter.com/_MinTeo) [ ### Windra Thio Independent ](https://twitter.com/windrathio) [ ### James Waugh 🔥\\_🔥 ]( https://twitter.com/blockchainjames) [ ### Jeff Wentworth Curvegrid ](https://twitter.com/JeffInTokyo) [ ### Tom Yi Kanosei Ventures / Flamingo DAO ](https://twitter.com/think_flexible) [ ### Lion dapplion ChainSafe ](https://twitter.com/dapplion) [ ### Flywill Worldcoin ](https://twitter.com/0xflywill) [ ### Tomiwa Ademidun Safe ](https://twitter.com/tomiwa1a) [ ### Rory'
+  },
+  {
+    role: 'user',
+    content: 'Labs [ ### Balaji Srinivasan The Network State ](https://twitter.com/balajis) [ ### Min Teo Ethereal Ventures ](https://twitter.com/_MinTeo) [ ### Windra Thio Independent ](https://twitter.com/windrathio) [ ### James Waugh 🔥\\_🔥 ](https://twitter.com/blockchainjames) [ ### Jeff Wentworth Curvegrid ]( https://twitter.com/JeffInTokyo) [ ### Tom Yi Kanosei Ventures / Flamingo DAO ](https://twitter.com/think_flexible) [ ### Lion dapplion ChainSafe ](https://twitter.com/dapplion) [ ### Flywill Worldcoin ](https://twitter.com/0xflywill) [ ### Tomiwa Ademidun Safe ](https://twitter.com/tomiwa1a) [ ### Rory Arredondo ETHGlobal ](https://twitter.com/roryarredondo) [ ### Jocelyn'
+  },
+  {
+    role: 'user',
+    content: 'Teo Ethereal Ventures ](https://twitter.com/_MinTeo) [ ### Windra Thio Independent ](https://twitter.com/windrathio) [ ### James Waugh 🔥\\_🔥 ](https://twitter.com/blockchainjames) [ ### Jeff Wentworth Curvegrid ](https://twitter.com/JeffInTokyo) [ ### Tom Yi Kanosei Ventures / Flamingo DAO ]( https://twitter.com/think_flexible) [ ### Lion dapplion ChainSafe ](https://twitter.com/dapplion) [ ### Flywill Worldcoin ](https://twitter.com/0xflywill) [ ### Tomiwa Ademidun Safe ](https://twitter.com/tomiwa1a) [ ### Rory Arredondo ETHGlobal ](https://twitter.com/roryarredondo) [ ### Jocelyn Chang MakerDAO ](https://twitter.com/joce_chang) [ ### Fabio Costa Push Protocol ](https://twitter.com/https://twitter.com/learn4life6) [ ### Nader Dabit Lens'
+  },
+  {
+    role: 'user',
+    content: 'Windra Thio Independent ](https://twitter.com/windrathio) [ ### James Waugh 🔥\\_🔥 ](https://twitter.com/blockchainjames) [ ### Jeff Wentworth Curvegrid ](https://twitter.com/JeffInTokyo) [ ### Tom Yi Kanosei Ventures / Flamingo DAO ](https://twitter.com/think_flexible) [ ### Lion dapplion ChainSafe ]( https://twitter.com/dapplion) [ ### Flywill Worldcoin ](https://twitter.com/0xflywill) [ ### Tomiwa Ademidun Safe ](https://twitter.com/tomiwa1a) [ ### Rory Arredondo ETHGlobal ](https://twitter.com/roryarredondo) [ ### Jocelyn Chang MakerDAO ](https://twitter.com/joce_chang) [ ### Fabio Costa Push Protocol ](https://twitter.com/https://twitter.com/learn4life6) [ ### Nader Dabit Lens Protocol ](https://twitter.com/dabit3) ### Brecht'
+  },
+  {
+    role: 'user',
+    content: 'Title: Solana | Austin Hacker House\nDescription: Austin Hacker House'
+  },
+  {
+    role: 'user',
+    content: 'Title: Istanbul ETH Privacy\nDescription: '
+  },
+  {
+    role: 'user',
+    content: 'Title: Please renew your subscription\nDescription: '
+  },
+  {
+    role: 'user',
+    content: 'Title: Solana | Taipei Hacker House\nDescription: Taipei Hacker House'
+  }
+]
+AI reponse: url:ethglobal.com/events/cafe-tokyo
+url:ethglobal.com/events/tokyo/prizes
+url:twitter.com/roryarredondo
+url:twitter.com/joce_chang
+url:twitter.com/dabit3
+Consumed tokens: 5836
+Chat Context [
+  {
+    role: 'system',
+    content: "As ContactFinderGPT, you identify public email addresses associated with a GitHub user from website data. For each email, provide a confidence level (High or Medium) and a brief explanation of its suitability for job offers. If there isn't at least one address with high confidence, list up to 5 relevant URLs (extracted from the provided data) that could help locate the developer's email. Prioritize reliable sources and don't use any of the following URLS: openq.dev\n" +
+      'tokyo.ethglobal.com/\n' +
+      'solana.com/events/sol.ladies\n' +
+      'www.leadingprivacy.com/istanbul\n' +
+      'ethmalaysia.com/\n' +
+      'solana.com/events/taipeihh\n' +
+      'ethglobal.com/events/cafe-tokyo\n' +
+      'ethglobal.com/events/tokyo/prizes\n' +
+      'twitter.com/roryarredondo\n' +
+      'twitter.com/joce_chang\n' +
+      'twitter.com/dabit3\n' +
+      'If there are no relevant emails or promising URLs, you stop your research.\n' +
+      'You must use only the following format:\n' +
+      '\n' +
+      'Example 1:\n' +
+      'email:careers@janedoe.com | High | "Official address for job inquiries"\n' +
+      '\n' +
+      'Example 2:\n' +
+      'email:jobinvitations@devjane.uk.com | Medium | "Website looks outdated"\n' +
+      'url:devjane.io/blog/seeking-opportunities.html\n' +
+      '\n' +
+      'Example 3:\n' +
+      'url:myproject.io/about-me.html\n' +
+      'url:developerblog.net/devjenny/my-portfolio-website\n' +
+      'url:medium.com/@rickkdev/about\n' +
+      '\n' +
+      'Example 4:\n' +
+      'stop:<explanation>'
+  },
+  {
+    role: 'user',
+    content: 'Find the email address of GitHub User rickkdev.\n' +
+      'Name: Rick\n' +
+      'Location: Berlin'
+  },
+  {
+    role: 'user',
+    content: 'Title: ETHGlobal | Cafe Tokyo\n' +
+      'Description: Onboarding thousands of developers into the Ethereum ecosystem.'
+  },
+  {
+    role: 'user',
+    content: '[Events](/events) * [Showcase](/showcase) * [Talks](/talks) * [Guides](/guides) * [About](/about) [Connect Discord]( https://discord.com/api/oauth2/authorize?client_id=755416123033387179&redirect_uri=https%3A%2F%2Fapi.ethglobal.com%2Fauth%2Fdiscord&response_type=code&scope=identify%20guilds%20guilds.join&state=cafe-tokyo) * [Events](/events) * [Showcase](/showcase) * [Talks](/talks) * [Guides](/guides) *'
+  },
+  {
+    role: 'user',
+    content: 'hackers and is making its debut in Tokyo thanks to support from Safe! 🇯🇵 Partners -------- []( https://safe.global /) Daikanyama Share Lounge ----------------------- DAIKANYAMA T-SITE / DAIKANYAMA TSUTAYA BOOKS 17-5 Sarugakucho, Shibuya-ku, Tokyo 150-0033 [Get directions](https://goo.gl/maps/9FBRga6HHkdeU3DWA) Sign up'
+  },
+  {
+    role: 'user',
+    content: '🇯🇵 Partners -------- [](https://safe.global/) Daikanyama Share Lounge ----------------------- DAIKANYAMA T-SITE / DAIKANYAMA TSUTAYA BOOKS 17-5 Sarugakucho, Shibuya-ku, Tokyo 150-0033 [Get directions]( https://goo.gl/maps/9FBRga6HHkdeU3DWA) Sign up to get the latest news and updates on ETHGlobal ------------------------------------------------------- Products -------- * [Hackathons](/events/hackathons) *'
+  },
+  {
+    role: 'user',
+    content: "[Privacy Policy](/privacy) Company ------- * [About](/about) * [Careers We're hiring](/careers) © 2023 ETHGlobal. All Rights Reserved. * []( https://twitter.com/ethglobal) * [](https://github.com/ethglobal) * [](https://ethglobal.medium.com/) * [](https://www.lensfrens.xyz/ethglobal.lens)"
+  },
+  {
+    role: 'user',
+    content: "[Privacy Policy](/privacy) Company ------- * [About](/about) * [Careers We're hiring](/careers) © 2023 ETHGlobal. All Rights Reserved. * [](https://twitter.com/ethglobal) * []( https://github.com/ethglobal) * [](https://ethglobal.medium.com/) * [](https://www.lensfrens.xyz/ethglobal.lens)"
+  },
+  {
+    role: 'user',
+    content: "[Privacy Policy](/privacy) Company ------- * [About](/about) * [Careers We're hiring](/careers) © 2023 ETHGlobal. All Rights Reserved. * [](https://twitter.com/ethglobal) * [](https://github.com/ethglobal) * []( https://ethglobal.medium.com /) * [](https://www.lensfrens.xyz/ethglobal.lens)"
+  },
+  {
+    role: 'user',
+    content: "[Privacy Policy](/privacy) Company ------- * [About](/about) * [Careers We're hiring](/careers) © 2023 ETHGlobal. All Rights Reserved. * [](https://twitter.com/ethglobal) * [](https://github.com/ethglobal) * [](https://ethglobal.medium.com/) * []( https://www.lensfrens.xyz/ethglobal.lens)"
+  },
+  {
+    role: 'user',
+    content: 'Title: ETHGlobal | Prizes\n' +
+      'Description: Onboarding thousands of developers into the Ethereum ecosystem.'
+  },
+  {
+    role: 'user',
+    content: '[Events](/events) * [Showcase](/showcase) * [Talks](/talks) * [Guides](/guides) * [About](/about) [Connect Discord]( https://discord.com/api/oauth2/authorize?client_id=755416123033387179&redirect_uri=https%3A%2F%2Fapi.ethglobal.com%2Fauth%2Fdiscord&response_type=code&scope=identify%20guilds%20guilds.join&state=undefined) * [Events](/events) * [Showcase](/showcase) * [Talks](/talks) * [Guides](/guides) *'
+  },
+  {
+    role: 'user',
+    content: '$5,000 1inch Network ------------- $20,000 [Open page](/events/tokyo/prizes/1inch-network-w250c) ### About The [**1inch Network**]( https://1inch.io /) unites decentralized protocols whose synergy enables the most lucrative, fastest and protected operations in'
+  },
+  {
+    role: 'user',
+    content: 'place: 3000 USD 🥉 Third place: 2000 USD **Bounty Description** 1inch recently launched a new [Fusion mode]( https://1inch.io/fusion/). It allows users to trade with multiple features not available before. Integrate a 1inch Fusion'
+  },
+  {
+    role: 'user',
+    content: 'haves:** Documentation (how to use, how to run, main features) **Resources** * Doc Link(s): [ https://docs.1inch.io/docs/fusion-swap/introduction](https://docs.1inch.io/docs/fusion-swap/introduction), [https://github.com/1inch/fusion-sdk](https://github.com/1inch/fusion-sdk) ### Task 2 **Title** Raise transparency of 1inch Network Fusion through implementing dashboard with stats about 1inch'
+  },
+  {
+    role: 'user',
+    content: '(how to use, how to run, main features) **Resources** * Doc Link(s): [https://docs.1inch.io/docs/fusion-swap/introduction](https://docs.1inch.io/docs/fusion-swap/introduction), [ https://github.com/1inch/fusion-sdk](https://github.com/1inch/fusion-sdk) ### Task 2 **Title** Raise transparency of 1inch Network Fusion through implementing dashboard with stats about 1inch'
+  },
+  {
+    role: 'user',
+    content: 'place: 3000 USD 🥉 Third place: 2000 USD **Bounty Description** 1inch recently launched a new [Fusion mode]( https://1inch.io/fusion/). It allows users to trade with multiple features not available before. Integrate a 1inch Fusion'
+  },
+  {
+    role: 'user',
+    content: 'haves:** Documentation (how to use, how to run, main features) **Resources** * Doc Link(s): [ https://docs.1inch.io/docs/fusion-swap/introduction](https://docs.1inch.io/docs/fusion-swap/introduction), [https://github.com/1inch/fusion-sdk](https://github.com/1inch/fusion-sdk) ### Task 2 **Title** Raise transparency of 1inch Network Fusion through implementing dashboard with stats about 1inch'
+  },
+  {
+    role: 'user',
+    content: '(how to use, how to run, main features) **Resources** * Doc Link(s): [https://docs.1inch.io/docs/fusion-swap/introduction](https://docs.1inch.io/docs/fusion-swap/introduction), [ https://github.com/1inch/fusion-sdk](https://github.com/1inch/fusion-sdk) ### Task 2 **Title** Raise transparency of 1inch Network Fusion through implementing dashboard with stats about 1inch'
+  },
+  {
+    role: 'user',
+    content: 'Doc Link(s): [https://docs.1inch.io/docs/fusion-swap/introduction](https://docs.1inch.io/docs/fusion-swap/introduction), [https://github.com/1inch/fusion-sdk](https://github.com/1inch/fusion-sdk) * Examples of dashboards with the same concept: [ https://dune.com/1inch/fusion](https://dune.com/1inch/fusion) ### Task 3 **Title** Open track focused on open source. Any project with meaningful impact to the'
+  },
+  {
+    role: 'user',
+    content: 'about 1inch protocols, all documentation, examples and GitHub links can be found at [ https://docs.1inch.io](https ://docs.1inch.io) Gnosis Chain ------------ $20,000 [Open page](/events/tokyo/prizes/gnosis-chain-tftsv) ### About **Gnosis Chain** is an EVM-compatible Layer-1 blockchain that aspires to be the'
+  },
+  {
+    role: 'user',
+    content: 'mechanisms, rather than just one, is much more secure. Learn more about Hashi here: [ https://github.com/gnosis/hashi](https://github.com/gnosis/hashi) * * * With the advent of Account Abstraction (AA), a new world of possibilities has'
+  },
+  {
+    role: 'user',
+    content: "to also check out Safe's designated ETHGlobal Tokyo bounty for further resources and instructions https://safe.global/core https://ethglobal.com/events/tokyo/prizes#safe ### Getting Started * **Gnosis Builders Resources** includes project ideas, workshops, guides, tools, directories,"
+  },
+  {
+    role: 'user',
+    content: "to also check out Safe's designated ETHGlobal Tokyo bounty for further resources and instructions https://safe.global/core https://ethglobal.com/events/tokyo/prizes #safe ### Getting Started * **Gnosis Builders Resources** includes project ideas, workshops, guides, tools, directories,"
+  },
+  {
+    role: 'user',
+    content: 'Resources** includes project ideas, workshops, guides, tools, directories, and recommended things for builders [ https://github.com/Gnosis-Builders/Resources](https://github.com/Gnosis-Builders/Resources) * **Gnosis Chain Official Documentation** [https://docs.gnosischain.com/developers](https://docs.gnosischain.com/developers) **Recommended Things for Builders** *'
+  },
+  {
+    role: 'user',
+    content: 'for builders [https://github.com/Gnosis-Builders/Resources](https://github.com/Gnosis-Builders/Resources) * **Gnosis Chain Official Documentation** [ https://docs.gnosischain.com/developers](https://docs.gnosischain.com/developers) **Recommended Things for Builders** * [Gnosis Faucet](https://gnosisfaucet.com/) - This faucet is the official xDai'
+  },
+  {
+    role: 'user',
+    content: 'Official Documentation** [https://docs.gnosischain.com/developers](https://docs.gnosischain.com/developers) **Recommended Things for Builders** * [Gnosis Faucet]( https://gnosisfaucet.com /) - This faucet is the official xDai faucet for Gnosis Chain. Access the faucet'
+  },
+  {
+    role: 'user',
+    content: 'faucet. * RPC Server Address for Gnosis mainnet [ https://rpc.gnosis.gateway.fm](https ://rpc.gnosis.gateway.fm) and [https://rpc.gnosischain.com](https://rpc.gnosischain.com) * RPC Server Address for Chiado testnet'
+  },
+  {
+    role: 'user',
+    content: '* RPC Server Address for Gnosis mainnet [https://rpc.gnosis.gateway.fm](https://rpc.gnosis.gateway.fm) and [ https://rpc.gnosischain.com](https ://rpc.gnosischain.com) * RPC Server Address for Chiado testnet [https://rpc.chiado.gnosis.gateway.fm](https://rpc.chiado.gnosis.gateway.fm) and'
+  },
+  {
+    role: 'user',
+    content: '[https://rpc.gnosischain.com](https://rpc.gnosischain.com) * RPC Server Address for Chiado testnet [ https://rpc.chiado.gnosis.gateway.fm](https ://rpc.chiado.gnosis.gateway.fm) and [https://rpc.chiado.gnosis.gateway.fm](https://rpc.chiado.gnosis.gateway.fm) * Gnosis Chain Recommended Bootnodes [https://docs.gnosischain.com/about/networks/mainnet/#config-repo](https://docs.gnosischain.com/about/networks/mainnet/#config-repo)'
+  },
+  {
+    role: 'user',
+    content: '[https://rpc.gnosischain.com](https://rpc.gnosischain.com) * RPC Server Address for Chiado testnet [ https://rpc.chiado.gnosis.gateway.fm](https ://rpc.chiado.gnosis.gateway.fm) and [https://rpc.chiado.gnosis.gateway.fm](https://rpc.chiado.gnosis.gateway.fm) * Gnosis Chain Recommended Bootnodes [https://docs.gnosischain.com/about/networks/mainnet/#config-repo](https://docs.gnosischain.com/about/networks/mainnet/#config-repo)'
+  },
+  {
+    role: 'user',
+    content: '[https://rpc.chiado.gnosis.gateway.fm](https://rpc.chiado.gnosis.gateway.fm) and [https://rpc.chiado.gnosis.gateway.fm](https://rpc.chiado.gnosis.gateway.fm) * Gnosis Chain Recommended Bootnodes [ https://docs.gnosischain.com/about/networks/mainnet/ #config-repo](https://docs.gnosischain.com/about/networks/mainnet/#config-repo) * Gnosis Chain Gas Tracker [https://gnosisscan.io/gastracker](https://gnosisscan.io/gastracker)'
+  },
+  {
+    role: 'user',
+    content: '[https://rpc.chiado.gnosis.gateway.fm](https://rpc.chiado.gnosis.gateway.fm) and [https://rpc.chiado.gnosis.gateway.fm](https://rpc.chiado.gnosis.gateway.fm) * Gnosis Chain Recommended Bootnodes [ https://docs.gnosischain.com/about/networks/mainnet/ #config-repo](https://docs.gnosischain.com/about/networks/mainnet/#config-repo) * Gnosis Chain Gas Tracker [https://gnosisscan.io/gastracker](https://gnosisscan.io/gastracker)'
+  },
+  {
+    role: 'user',
+    content: 'Recommended Bootnodes [https://docs.gnosischain.com/about/networks/mainnet/#config-repo](https://docs.gnosischain.com/about/networks/mainnet/#config-repo) * Gnosis Chain Gas Tracker [ https://gnosisscan.io/gastracker](https://gnosisscan.io/gastracker) * You can auto-config your wallet on Gnosis mainnet via [https://chainlist.org/chain/100](https://chainlist.org/chain/100)'
+  },
+  {
+    role: 'user',
+    content: '* You can auto-config your wallet on Gnosis mainnet via [ https://chainlist.org/chain/100](https://chainlist.org/chain/100) * You can auto-config your wallet on Chiado testnet via [https://chainlist.org/chain/10200](https://chainlist.org/chain/10200)'
+  },
+  {
+    role: 'user',
+    content: '* You can auto-config your wallet on Chiado testnet via [ https://chainlist.org/chain/10200](https://chainlist.org/chain/10200) Taiko ----- $20,000 [Open page](/events/tokyo/prizes/taiko-wwgyh) ### About [**Taiko**](https://taiko.xyz/) is building a decentralized Ethereum-equivalent ZK-Rollup (Type-1 ZK-EVM). Taiko enables developers and'
+  },
+  {
+    role: 'user',
+    content: 'auto-config your wallet on Chiado testnet via [https://chainlist.org/chain/10200](https://chainlist.org/chain/10200) Taiko ----- $20,000 [Open page](/events/tokyo/prizes/taiko-wwgyh) ### About [**Taiko**]( https://taiko.xyz /) is building a decentralized Ethereum-equivalent ZK-Rollup (Type-1 ZK-EVM). Taiko enables developers and users to'
+  },
+  {
+    role: 'user',
+    content: 'auto-config your wallet on Chiado testnet via [https://chainlist.org/chain/10200](https://chainlist.org/chain/10200) Taiko ----- $20,000 [Open page](/events/tokyo/prizes/taiko-wwgyh) ### About [**Taiko**]( https://taiko.xyz /) is building a decentralized Ethereum-equivalent ZK-Rollup (Type-1 ZK-EVM). Taiko enables developers and users to'
+  },
+  {
+    role: 'user',
+    content: 'of block proposers, provers, and node runners due to its decentralized design. [Website](https://taiko.xyz/) | [Twitter]( https://twitter.com/taikoxyz) ### Prizes ### **Best Dapps 👷** Build a DeFi, NFT, identity, social, or gaming dapp – or anything'
+  },
+  {
+    role: 'user',
+    content: '$1,000 Ideas to consider: * NFT bridge (learn more about our signal service: [ https://taiko.xyz/docs/concepts/bridging/the-signal-service](https://taiko.xyz/docs/concepts/bridging/the-signal-service)) * [https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge](https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge) * ZK additions to blockscout explorer, such as visualising the'
+  },
+  {
+    role: 'user',
+    content: 'NFT bridge (learn more about our signal service: [https://taiko.xyz/docs/concepts/bridging/the-signal-service](https://taiko.xyz/docs/concepts/bridging/the-signal-service)) * [ https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge](https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge) * ZK additions to blockscout explorer, such as visualising the blocks proving/verifying process *'
+  },
+  {
+    role: 'user',
+    content: 'for proposer & prover). Helpful links for this prize and Taiko infrastructure: * [ https://github.com/taikoxyz/simple-taiko-node](https://github.com/taikoxyz/simple-taiko-node) * [https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge](https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge) * [https://explorer.a2.taiko.xyz/](https://explorer.a2.taiko.xyz/) * [https://github.com/blockscout/blockscout](https://github.com/blockscout/blockscout) ### **Catch MEEEEEEEEEV! 🤖** MEV is everywhere.'
+  },
+  {
+    role: 'user',
+    content: 'NFT bridge (learn more about our signal service: [https://taiko.xyz/docs/concepts/bridging/the-signal-service](https://taiko.xyz/docs/concepts/bridging/the-signal-service)) * [ https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge](https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge) * ZK additions to blockscout explorer, such as visualising the blocks proving/verifying process *'
+  },
+  {
+    role: 'user',
+    content: 'this prize and Taiko infrastructure: * [https://github.com/taikoxyz/simple-taiko-node](https://github.com/taikoxyz/simple-taiko-node) * [https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge](https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge) * [ https://explorer.a2.taiko.xyz /](https://explorer.a2.taiko.xyz/) * [https://github.com/blockscout/blockscout](https://github.com/blockscout/blockscout) ### **Catch MEEEEEEEEEV! 🤖** MEV is everywhere. Even where you think there is'
+  },
+  {
+    role: 'user',
+    content: 'this prize and Taiko infrastructure: * [https://github.com/taikoxyz/simple-taiko-node](https://github.com/taikoxyz/simple-taiko-node) * [https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge](https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge) * [ https://explorer.a2.taiko.xyz /](https://explorer.a2.taiko.xyz/) * [https://github.com/blockscout/blockscout](https://github.com/blockscout/blockscout) ### **Catch MEEEEEEEEEV! 🤖** MEV is everywhere. Even where you think there is'
+  },
+  {
+    role: 'user',
+    content: 'Taiko infrastructure: * [https://github.com/taikoxyz/simple-taiko-node](https://github.com/taikoxyz/simple-taiko-node) * [https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge](https://github.com/taikoxyz/taiko-mono/tree/main/packages/protocol/contracts/bridge) * [https://explorer.a2.taiko.xyz/](https://explorer.a2.taiko.xyz/) * [ https://github.com/blockscout/blockscout](https://github.com/blockscout/blockscout) ### **Catch MEEEEEEEEEV! 🤖** MEV is everywhere. Even where you think there is no MEV – there'
+  },
+  {
+    role: 'user',
+    content: 'the box) Helpful links for this prize and MEV on Taiko ZK-EVM: * [ https://github.com/taikoxyz/taiko-client/tree/tokyo-hackathon](https://github.com/taikoxyz/taiko-client/tree/tokyo-hackathon) * [https://github.com/taikoxyz/taiko-mono/blob/main/packages/protocol/contracts/L1/libs/LibProposing.sol](https://github.com/taikoxyz/taiko-mono/blob/main/packages/protocol/contracts/L1/libs/LibProposing.sol) * [https://www.flashbots.net/](https://www.flashbots.net/) * [https://github.com/taikoxyz/taiko-mono/issues/13209](https://github.com/taikoxyz/taiko-mono/issues/13209) ### **ZK-Zone 🥷** The core of the'
+  },
+  { role: 'user', content: 'Title: \nDescription: ' },
+  { role: 'user', content: 'Title: \nDescription: ' },
+  { role: 'user', content: 'Title: \nDescription: ' }
+]
+AI reponse: I cannot provide any information without a given title or description. Please provide more context or details so I can assist you.
+Consumed tokens: 5632
+[?25h

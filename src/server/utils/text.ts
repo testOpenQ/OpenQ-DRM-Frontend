@@ -1,5 +1,6 @@
 import turndown from "turndown";
 import markdownToTxt from "markdown-to-txt";
+import { countTokens } from "../gpt";
 
 export function htmlToMarkdown(html: string) {
   const turndownService = new turndown();
@@ -24,6 +25,7 @@ export function htmlToText(html: string) {
 export type TextSnippet = {
   match: string;
   context: string;
+  tokenCount: number;
 };
 
 export function extractTextSnippet(
@@ -66,12 +68,16 @@ export function extractTextSnippet(
       const trimmedLine = wordsBeforeEmail
         .slice(-wordsBefore)
         .concat(match, wordsAfterEmail.slice(0, wordsAfter))
-        .join(" ");
+        .join(" ")
+        .replace(/[\s\n\r]+/g, " ")
+        .trim();
+
+      const tokenCount = countTokens(trimmedLine);
 
       snippets.push({
         match,
-        context: match,
-        // context: trimmedLine,
+        context: trimmedLine,
+        tokenCount,
       });
     }
   }

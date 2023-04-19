@@ -26,6 +26,9 @@ export default function Card({ user }: { user: User }) {
     FindEmailResponse["candidates"] | undefined
   >(undefined);
   const [searchingEmail, setSearchingEmail] = useState(false);
+  const [emailSearchError, setEmailSearchError] = useState<string | undefined>(
+    undefined
+  );
 
   useEffect(() => {
     if (!user) return;
@@ -103,8 +106,14 @@ export default function Card({ user }: { user: User }) {
       return;
     }
 
-    const userReadmeUrl = `https://raw.githubusercontent.com/${user.login}/${user.login}/master/README.md`;
-    userData.readme = await fetch(userReadmeUrl).then((res) => res.text());
+    try {
+      const userReadmeUrl = `https://raw.githubusercontent.com/${user.login}/${user.login}/master/README.md`;
+      userData.readme = await fetch(userReadmeUrl).then((res) => res.text());
+    } catch (err) {
+      console.log(
+        `User ${user.login} doesn't seem to have a profile repository with a README.md.`
+      );
+    }
 
     fetch("/api/find-email", {
       method: "POST",
@@ -114,9 +123,12 @@ export default function Card({ user }: { user: User }) {
       body: JSON.stringify(userData),
     })
       .then((res) => res.json())
-      .then((data: FindEmailResponse) => {
-        console.log(data);
-        setUserEmailCandidates(data.candidates);
+      .then((searchResult: FindEmailResponse) => {
+        console.log(searchResult);
+        setUserEmailCandidates(searchResult.candidates);
+        if (searchResult.error) {
+          setEmailSearchError(searchResult.error);
+        }
       })
       .catch(console.error)
       .finally(() => {

@@ -12,7 +12,8 @@ export type ChatCompletionRequestBody = {
 };
 
 export type ChatCompletionResponseBody = {
-  response: string;
+  error?: string;
+  response?: string;
   newChatContext: ChatCompletionRequestMessage[];
   consumedTokens: number;
 };
@@ -48,6 +49,34 @@ export function isChatCompletionRequestBody(
   );
 }
 
+function getError(e: any) {
+  let error: string | undefined;
+  if (e.response?.data?.error) {
+    const unknownError = e.response?.data?.error;
+    if (typeof unknownError === "string") {
+      error = unknownError;
+    } else if (typeof unknownError === "object") {
+      if (unknownError.message) {
+        error = unknownError.message;
+      } else {
+        error = JSON.stringify(unknownError);
+      }
+    }
+  } else if (e.message) {
+    error = e.message;
+  } else {
+    if (typeof e === "string") {
+      error = e;
+    } else if (typeof e === "object") {
+      error = JSON.stringify(e);
+    } else {
+      error = "An unknown error occured.";
+    }
+  }
+
+  return error;
+}
+
 export default async function ChatCompletion(
   req: NextApiRequest,
   res: NextApiResponse<ChatCompletionResponseBody>
@@ -62,28 +91,42 @@ export default async function ChatCompletion(
 
   const { context, maxResponseTokens, temperature } = req.body;
 
-  const completion = await gpt.createChatCompletion({
-    model: "gpt-4",
-    messages: context,
-    max_tokens: maxResponseTokens || 256,
-    temperature: temperature || 0.7,
-  });
+  console.log("Chat Context", context);
 
-  const response = completion.data.choices[0]?.message?.content;
+  let response: string | undefined;
+  let error: string | undefined;
+  let consumedTokens = 0;
 
-  if (!response) {
-    throw new Error("An unexpected error occured. AI is unresponsive.");
+  try {
+    const completion = await gpt.createChatCompletion({
+      model: "gpt-4",
+      messages: context,
+      max_tokens: maxResponseTokens || 256,
+      temperature: temperature || 0.7,
+    });
+
+    response = completion.data.choices[0]?.message?.content;
+    console.log("AI reponse:", response);
+
+    if (!response) {
+      throw new Error(
+        "An unexpected error occured. AI response didn't contain a message."
+      );
+    }
+
+    context.push({
+      role: ChatCompletionRequestMessageRoleEnum.Assistant,
+      content: response,
+    });
+
+    consumedTokens = countContextTokens(context);
+    console.log("Consumed tokens:", consumedTokens);
+  } catch (e: any) {
+    error = getError(e);
   }
 
-  context.push({
-    role: ChatCompletionRequestMessageRoleEnum.Assistant,
-    content: response,
-  });
-  console.log("AI reponse:", response);
-
-  const consumedTokens = countContextTokens(context);
-
   res.status(200).json({
+    error,
     response,
     newChatContext: context,
     consumedTokens,
