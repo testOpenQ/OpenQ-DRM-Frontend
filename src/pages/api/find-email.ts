@@ -114,6 +114,12 @@ function extractUrlsFromResponse(response: string) {
   return urls;
 }
 
+function urlTextSnippetFilter(snippet: TextSnippet) {
+  return (
+    !snippet.match.includes("discord") && !snippet.match.includes("linkedin")
+  );
+}
+
 async function fetchWebsiteData(url: string): Promise<WebsiteData | null> {
   try {
     const abortController = new AbortController();
@@ -139,7 +145,9 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData | null> {
 
     const bodyText = htmlToMarkdown(clickedPage.getBody());
     emailTextSnippets.push(...extractEmailTextSnippets(bodyText));
-    urlTextSnippets.push(...extractUrlTextSnippets(bodyText));
+    urlTextSnippets.push(
+      ...extractUrlTextSnippets(bodyText, urlTextSnippetFilter)
+    );
 
     return {
       url,
@@ -342,7 +350,10 @@ export default async function FindEmail(
 
     const githubProfileText = markdownToText(`${user.bio}\n\n${user.readme}`);
     const emailTextSnippets = extractEmailTextSnippets(githubProfileText);
-    const urlTextSnippets = extractUrlTextSnippets(githubProfileText);
+    const urlTextSnippets = extractUrlTextSnippets(
+      githubProfileText,
+      urlTextSnippetFilter
+    );
 
     if (emailTextSnippets.length + urlTextSnippets.length === 0) {
       return emptyResponse(
