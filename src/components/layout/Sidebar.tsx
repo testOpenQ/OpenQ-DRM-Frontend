@@ -1,5 +1,5 @@
 import SidebarLink from "./SidebarLink";
-import RequestInfo from "../RequestInfo";
+import ScanInfo from "../ScanInfo";
 import {
   ArrowTopRightOnSquareIcon,
   BookOpenIcon,
@@ -19,7 +19,7 @@ export default function Sidebar() {
     <div className="w-[320px] bg-gray-800">
       <div className="flex h-full flex-col whitespace-nowrap bg-gray-900/50">
         <ConnectGithub />
-        <RequestInfo />
+        <ScanInfo />
         <SidebarDivider />
         <SidebarLink href="/">
           <div className="mr-3 p-1.5">
