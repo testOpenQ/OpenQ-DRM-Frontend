@@ -4,6 +4,7 @@ import { SessionProvider } from "next-auth/react";
 
 import "~/styles/globals.css";
 import Layout from "~/components/layout/Layout";
+import { PendingScansProvider } from "~/store/PendingScansProvider";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -11,9 +12,11 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
-      <Layout>
-        <Component {...pageProps} />
-      </Layout>
+      <PendingScansProvider>
+        <Layout>
+          <Component {...pageProps} />
+        </Layout>
+      </PendingScansProvider>
     </SessionProvider>
   );
 };

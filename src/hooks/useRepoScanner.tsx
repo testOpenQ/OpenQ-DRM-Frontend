@@ -1,26 +1,14 @@
-import {
-  RepoData,
-  RepoEvaluation,
-  Scanner,
-  evaluateRepoData,
-  getLatestRepoScan,
-} from "@mktcodelib/github-insights";
+import { Scanner } from "@mktcodelib/github-insights";
+import { useLiveQuery } from "dexie-react-hooks";
 import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
-import { RepoModel, addCommitSummary } from "~/db";
+import { useMemo } from "react";
+import { RepoModel, getLatestRepoScan } from "~/db";
+import { getRepoScan } from "~/lib/githubScanner";
+import { evaluateRepoData } from "~/lib/githubScanner/evaluators/repo";
 
 export default function useRepoScanner(repo: RepoModel) {
   const { data } = useSession();
   const viewerToken = data?.accessToken;
-
-  const [isScanning, setIsScanning] = useState(false);
-  const [repoScanResult, setRepoScanResult] = useState<RepoEvaluation | null>(
-    null
-  );
-  const [rawCommits, setRawCommits] = useState<
-    RepoData["defaultBranchRef"]["target"]["history"]["nodes"]
-  >([]);
-  const [isSummarizingCommits, setIsSummarizingCommits] = useState(false);
 
   const since = useMemo(() => {
     const since = new Date();
@@ -32,9 +20,17 @@ export default function useRepoScanner(repo: RepoModel) {
   const until = useMemo(() => {
     const until = new Date();
     until.setHours(0, 0, 0, 0);
-    until.setMonth(until.getMonth() + 1);
     return until.toISOString();
   }, []);
+
+  const latestRepoScan = useLiveQuery(
+    () => getLatestRepoScan(repo.owner, repo.name, since, until),
+    [repo, since, until]
+  );
+  const latestRepoEvaluation =
+    latestRepoScan?.data?.repository &&
+    evaluateRepoData(latestRepoScan.data.repository);
+  const isScanning = latestRepoScan && !latestRepoScan.done;
 
   function scan() {
     if (!viewerToken) {
@@ -42,76 +38,23 @@ export default function useRepoScanner(repo: RepoModel) {
       return;
     }
 
-    if (isScanning) {
+    if (latestRepoScan && !latestRepoScan.done) {
       console.log("Already scanning");
       return;
     }
 
     const scanner = new Scanner({ viewerToken });
-    const scan = scanner.scanRepo(repo.owner, repo.name, since, until);
+    const repoScan = getRepoScan(scanner, repo.owner, repo.name, since, until);
 
-    setIsScanning(true);
-    scan((data) => {
-      setRepoScanResult(evaluateRepoData(data.repository));
-      setRawCommits(data.repository.defaultBranchRef.target.history.nodes);
-    })
-      .catch((err) => console.log(err))
-      .finally(() => {
-        setIsScanning(false);
-      });
+    repoScan(() => {}).catch((err) => console.log(err));
   }
 
-  function summarizeCommits() {
-    if (isSummarizingCommits) {
-      console.log("Already summarizing commits");
-      return;
-    }
-
-    if (!rawCommits.length) {
-      console.log("No commits to summarize");
-      return;
-    }
-
-    setIsSummarizingCommits(true);
-
-    fetch("/api/commit-summary", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ commits: rawCommits }),
-    })
-      .then((res) => res.json())
-      .then((data: { summary: string }) => {
-        if (!data.summary || typeof data.summary !== "string") {
-          throw new Error("Invalid summary response");
-        }
-        addCommitSummary({ repoId: repo.id, summary: data.summary }).catch(
-          console.error
-        );
-      })
-      .catch(console.error)
-      .finally(() => {
-        setIsSummarizingCommits(false);
-      });
-  }
-
-  useEffect(() => {
-    getLatestRepoScan(repo.owner, repo.name, since, until)
-      .then((latestRepoScan) => {
-        if (latestRepoScan) {
-          if (latestRepoScan.data && latestRepoScan.data.repository) {
-            const evaluation = evaluateRepoData(latestRepoScan.data.repository);
-            setRepoScanResult(evaluation);
-            setRawCommits(
-              latestRepoScan.data.repository.defaultBranchRef.target.history
-                .nodes
-            );
-          }
-        }
-      })
-      .catch((err) => console.error(err));
-  }, [repo, since, until]);
-
-  return { isScanning, repoScanResult, scan, summarizeCommits };
+  return {
+    isScanning,
+    latestRepoScan,
+    latestRepoEvaluation,
+    since,
+    until,
+    scan,
+  };
 }

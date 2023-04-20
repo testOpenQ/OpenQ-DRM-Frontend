@@ -1,4 +1,9 @@
+import { Scan, hashQuery, db as scansDb } from "@mktcodelib/github-insights";
 import Dexie, { type Table } from "dexie";
+import { DocumentNode } from "graphql";
+import { UserData } from "./lib/githubScanner/evaluators/user";
+import { REPO_QUERY, USER_QUERY } from "./lib/githubScanner/queries";
+import { RepoData } from "./lib/githubScanner/evaluators/repo";
 
 export interface CampaignModel {
   id?: number;
@@ -136,4 +141,48 @@ export function getUserCommitSummaries(userId: number) {
 
 export function addCommitSummary(commitSummary: CommitSummaryModel) {
   return db.commitSummaries.add(commitSummary);
+}
+
+export async function getPendingScans() {
+  return scansDb.scans.where("done").equals(0).toArray();
+}
+
+export async function getLatestScan<DataType extends Record<string, any>>(
+  query: DocumentNode,
+  variables: Record<string, any>
+): Promise<Scan<DataType> | undefined> {
+  const hash = await hashQuery(query, variables);
+
+  const scan = (await scansDb.scans
+    .where("hash")
+    .equals(hash)
+    .reverse()
+    .first()) as Scan<DataType> | undefined;
+
+  return scan;
+}
+
+export function getLatestUserScan(
+  login: string
+): Promise<Scan<{ user: UserData }> | undefined> {
+  return getLatestScan<{ user: UserData }>(USER_QUERY, {
+    login,
+    firstFollowers: 50,
+    firstPrs: 50,
+  });
+}
+
+export function getLatestRepoScan(
+  owner: string,
+  name: string,
+  since: string,
+  until: string
+): Promise<Scan<{ repository: RepoData }> | undefined> {
+  return getLatestScan<{ repository: RepoData }>(REPO_QUERY, {
+    owner,
+    name,
+    since,
+    until,
+    first: 50,
+  });
 }

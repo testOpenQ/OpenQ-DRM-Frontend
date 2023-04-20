@@ -1,15 +1,8 @@
-import {
-  type RepoData,
-  type RepoEvaluation,
-  Scanner,
-  evaluateRepoData,
-  getLatestRepoScan,
-} from "@mktcodelib/github-insights";
 import CardActivityChart from "./CardActivityChart";
 import CardMembers from "./CardMembers";
 import CardScores from "./CardScores";
 import { signIn, useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import { type Repo } from "~/db";
 import Button from "../base/Button";
 import numberFormatter from "~/lib/numberFormatter";
@@ -23,28 +16,14 @@ export default function Card({ repo }: { repo: Repo }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
 
-  const since = useMemo(() => {
-    const since = new Date();
-    since.setHours(0, 0, 0, 0);
-    since.setMonth(since.getMonth() - 1);
-    return since.toISOString();
-  }, []);
-
-  const until = useMemo(() => {
-    const until = new Date();
-    until.setHours(0, 0, 0, 0);
-    until.setMonth(until.getMonth() + 1);
-    return until.toISOString();
-  }, []);
-
   const [showCommitSummary, setShowCommitSummary] = useState(false);
   const [showIssues, setShowIssues] = useState(false);
   const [showDiscussions, setShowDiscussions] = useState(false);
   const [showDevelopers, setShowDevelopers] = useState(false);
 
+  const { latestRepoEvaluation, since, until } = useRepoScanner(repo);
+  console.log("rerender card");
   const scores = generateFakeScores(repo);
-
-  const { repoScanResult } = useRepoScanner(repo);
 
   function handleSignIn() {
     signIn("github").catch(console.error);
@@ -57,10 +36,12 @@ export default function Card({ repo }: { repo: Repo }) {
       <CardHeader repo={repo} />
       <div className="flex flex-col sm:flex-row">
         <div className="flex grow flex-col items-center justify-center">
-          {repoScanResult && (
-            <CardMembers members={repoScanResult.authors.map((a) => a.user)} />
+          {latestRepoEvaluation && (
+            <CardMembers
+              members={latestRepoEvaluation.authors.map((a) => a.user)}
+            />
           )}
-          {!repoScanResult && (
+          {!latestRepoEvaluation && (
             <div className="flex grow flex-col items-center justify-center px-12">
               {accessToken && (
                 <div className="text-sm text-gray-600">
@@ -87,21 +68,22 @@ export default function Card({ repo }: { repo: Repo }) {
           />
         </div>
       </div>
-      {repoScanResult && (
+      {latestRepoEvaluation && (
         <div className="bg-gray-900/50 pt-3">
           <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs text-gray-400">
             <div>
-              {numberFormatter.format(repoScanResult.commitCount)} commits
+              {numberFormatter.format(latestRepoEvaluation.commitCount)} commits
               <div className="mr-2 mt-1 h-1 w-full rounded-full bg-white"></div>
             </div>
             <div>
-              {numberFormatter.format(repoScanResult.linesChanged)} changes
+              {numberFormatter.format(latestRepoEvaluation.linesChanged)}{" "}
+              changes
               <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-gray-400"></div>
             </div>
           </div>
           <CardActivityChart
-            commitsByDay={repoScanResult.commitsByDay}
-            commitsByDayNormalized={repoScanResult.commitsByDayNormalized}
+            commitsByDay={latestRepoEvaluation.commitsByDay}
+            commitsByDayNormalized={latestRepoEvaluation.commitsByDayNormalized}
           />
         </div>
       )}

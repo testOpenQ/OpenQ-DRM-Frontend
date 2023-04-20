@@ -24,14 +24,22 @@ export default function CardHeader({ repo }: { repo: Repo }) {
       </div>
       <div className="flex">
         {accessToken && (
-          <DiscreetButton disabled={isScanning} onClick={scan}>
+          <DiscreetButton
+            disabled={isScanning}
+            onClick={scan}
+            className={
+              isScanning ? "!cursor-default hover:!bg-transparent" : ""
+            }
+          >
             {isScanning && <LoadingSpinner className="!h-4 !w-4" />}
             {!isScanning && <ArrowPathIcon className="h-4 w-4" />}
           </DiscreetButton>
         )}
-        <DiscreetButton>
-          <XMarkIcon className="h-4 w-4" onClick={handleDeleteRepo} />
-        </DiscreetButton>
+        {!isScanning && (
+          <DiscreetButton>
+            <XMarkIcon className="h-4 w-4" onClick={handleDeleteRepo} />
+          </DiscreetButton>
+        )}
       </div>
     </div>
   );

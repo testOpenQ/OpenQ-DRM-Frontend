@@ -1,12 +1,9 @@
-import { getPendingScans, type Scan } from "@mktcodelib/github-insights";
-import { useLiveQuery } from "dexie-react-hooks";
+import { usePendingScans } from "~/store/PendingScansProvider";
 
 export default function RequestInfo() {
-  const pendingScans = useLiveQuery(() => getPendingScans() as Promise<Scan[]>);
+  const pendingScans = usePendingScans();
 
-  if (!pendingScans || pendingScans.length === 0) {
-    return null;
-  }
+  if (!pendingScans.length) return null;
 
   const totalRequestCount = pendingScans.reduce(
     (acc, scan) =>

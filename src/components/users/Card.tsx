@@ -1,6 +1,5 @@
 import {
   Scanner,
-  type UserData,
   type UserEvaluation,
   evaluateUserData,
   getLatestUserScan,
@@ -38,18 +37,6 @@ export default function Card({ user }: { user: User }) {
         if (latestUserScan) {
           if (latestUserScan.data && latestUserScan.data.user) {
             setUserScanResult(evaluateUserData(latestUserScan.data.user));
-          }
-          if (!latestUserScan.done && accessToken) {
-            const scanner = new Scanner({ viewerToken: accessToken });
-
-            setScanning(true);
-            scanner
-              .scanContinue<{ user: UserData }>(latestUserScan.id)((data) => {
-                setUserScanResult(evaluateUserData(data.user));
-              })
-              .finally(() => {
-                setScanning(false);
-              });
           }
         }
       })

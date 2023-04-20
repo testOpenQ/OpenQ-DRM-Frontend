@@ -5858,7 +5858,7 @@ DexiePromise.rejectionMapper = mapError;
 setDebug(debug, dexieStackFrameFilter);
 
 var name = "@mktcodelib/github-insights";
-var version = "0.12.1";
+var version = "0.16.0";
 var description = "Utilities to fetch and evaluate GitHub data.";
 var main = "dist/index.js";
 var module$1 = "dist/index.mjs";
@@ -5935,4 +5935,4 @@ onmessage = (event) =>
       });
     }
   });
-//# sourceMappingURL=worker.js.map
+//# sourceMappingURL=github-insights-worker.js.map
