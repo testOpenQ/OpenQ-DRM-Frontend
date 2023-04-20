@@ -104,14 +104,15 @@ export default async function ChatCompletion(
   };
 
   try {
-    const completion = await gpt.createChatCompletion({
-      model: "gpt-4",
-      messages: context,
-      max_tokens: maxResponseTokens || 256,
-      temperature: temperature || 0.7,
-    });
-
-    response = completion.data.choices[0]?.message?.content;
+    // const completion = await gpt.createChatCompletion({
+    //   model: "gpt-4",
+    //   messages: context,
+    //   max_tokens: maxResponseTokens || 256,
+    //   temperature: temperature || 0.7,
+    // });
+    //
+    // response = completion.data.choices[0]?.message?.content;
+    response = "AI is disabled.";
     console.log("AI reponse:", response);
 
     if (!response) {
