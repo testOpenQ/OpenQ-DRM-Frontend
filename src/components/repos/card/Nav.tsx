@@ -14,25 +14,25 @@ export default function CardNav({
   return (
     <div className="flex">
       <DiscreetButton
-        className="w-full rounded-none text-sm font-normal"
+        className="w-full !rounded-b-none !rounded-tl-none text-sm font-normal"
         onClick={onClickChanges}
       >
         Changes
       </DiscreetButton>
       <DiscreetButton
-        className="w-full rounded-none text-sm font-normal"
+        className="w-full !rounded-b-none text-sm font-normal"
         onClick={onClickIssues}
       >
         Issues
       </DiscreetButton>
       <DiscreetButton
-        className="w-full rounded-none text-sm font-normal"
+        className="w-full !rounded-b-none text-sm font-normal"
         onClick={onClickDiscussions}
       >
         Discussions
       </DiscreetButton>
       <DiscreetButton
-        className="w-full rounded-none text-sm font-normal"
+        className="w-full !rounded-b-none !rounded-tr-none text-sm font-normal"
         onClick={onClickDevelopers}
       >
         Developers

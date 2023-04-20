@@ -8,18 +8,17 @@ import Button from "../base/Button";
 import numberFormatter from "~/lib/numberFormatter";
 import { generateFakeScores } from "~/lib/scores";
 import CardHeader from "./card/Header";
-import CardNav from "./card/Nav";
 import ChangesTab from "./card/tabs/Changes";
 import useRepoScanner from "~/hooks/useRepoScanner";
+import DiscreetButton from "../base/DiscreetButton";
 
 export default function Card({ repo }: { repo: Repo }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
 
-  const [showCommitSummary, setShowCommitSummary] = useState(false);
-  const [showIssues, setShowIssues] = useState(false);
-  const [showDiscussions, setShowDiscussions] = useState(false);
-  const [showDevelopers, setShowDevelopers] = useState(false);
+  const [showTab, setShowTab] = useState<
+    "changes" | "issues" | "discussions" | "developers" | null
+  >(null);
 
   const { latestRepoEvaluation, since, until } = useRepoScanner(repo);
   console.log("rerender card");
@@ -27,6 +26,13 @@ export default function Card({ repo }: { repo: Repo }) {
 
   function handleSignIn() {
     signIn("github").catch(console.error);
+  }
+
+  function handleClickTab(
+    tab: "changes" | "issues" | "discussions" | "developers"
+  ) {
+    if (showTab === tab) setShowTab(null);
+    else setShowTab(tab);
   }
 
   if (!repo) return <>Repository does not exist.</>;
@@ -88,16 +94,47 @@ export default function Card({ repo }: { repo: Repo }) {
         </div>
       )}
       <div className="text-xs">
-        <CardNav
-          onClickChanges={() => setShowCommitSummary(!showCommitSummary)}
-          onClickIssues={() => setShowIssues(!showIssues)}
-          onClickDiscussions={() => setShowDiscussions(!showDiscussions)}
-          onClickDevelopers={() => setShowDevelopers(!showDevelopers)}
-        />
+        <div className="flex">
+          <DiscreetButton
+            className={`w-full !rounded-b-none !rounded-tl-none text-sm font-normal ${
+              showTab === "changes" ? "!bg-gray-900/50 !text-gray-300" : ""
+            }`}
+            onClick={() => handleClickTab("changes")}
+          >
+            Changes
+          </DiscreetButton>
+          <DiscreetButton
+            className={`w-full !rounded-b-none text-sm font-normal ${
+              showTab === "issues" ? "!bg-gray-900/50 !text-gray-300" : ""
+            }`}
+            onClick={() => handleClickTab("issues")}
+            disabled
+          >
+            Issues
+          </DiscreetButton>
+          <DiscreetButton
+            className={`w-full !rounded-b-none text-sm font-normal ${
+              showTab === "discussions" ? "!bg-gray-900/50 !text-gray-300" : ""
+            }`}
+            onClick={() => handleClickTab("discussions")}
+            disabled
+          >
+            Discussions
+          </DiscreetButton>
+          <DiscreetButton
+            className={`w-full !rounded-b-none !rounded-tr-none text-sm font-normal ${
+              showTab === "developers" ? "!bg-gray-900/50 !text-gray-300" : ""
+            }`}
+            onClick={() => handleClickTab("developers")}
+            disabled
+          >
+            Developers
+          </DiscreetButton>
+        </div>
         <div
           className={`${
-            showCommitSummary ? "max-h-40" : "max-h-0"
-          } overflow-auto transition-all`}
+            showTab === "changes" ? "max-h-40" : "max-h-0"
+          } overflow-auto bg-gray-900/50 transition-all`}
         >
           <ChangesTab repo={repo} since={since} until={until} />
         </div>

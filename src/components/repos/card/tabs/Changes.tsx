@@ -85,7 +85,7 @@ export default function ChangesTab({
         </Button>
       )}
       {!latestRepoScanData && (
-        <div className="mb-3 font-bold  ">
+        <div className="font-bold">
           No data available to summarize for the selected time period. Showing
           old report. Scan the repository again to generate a new one.
         </div>
