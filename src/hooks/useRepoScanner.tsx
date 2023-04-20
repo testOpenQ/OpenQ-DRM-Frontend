@@ -46,7 +46,7 @@ export default function useRepoScanner(repo: RepoModel) {
     const scanner = new Scanner({ viewerToken });
     const repoScan = getRepoScan(scanner, repo.owner, repo.name, since, until);
 
-    repoScan(() => {}).catch((err) => console.log(err));
+    repoScan().catch((err) => console.log(err));
   }
 
   return {

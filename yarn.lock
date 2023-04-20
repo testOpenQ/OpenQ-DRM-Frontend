@@ -77,10 +77,10 @@
   resolved "https://registry.yarnpkg.com/@kurkle/color/-/color-0.3.2.tgz#5acd38242e8bde4f9986e7913c8fdf49d3aa199f"
   integrity sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==
 
-"@mktcodelib/github-insights@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.yarnpkg.com/@mktcodelib/github-insights/-/github-insights-0.16.0.tgz#cba9a04de2958daf36fd2e54f4063f0b85501e75"
-  integrity sha512-KzcUXy9Z3IpoAXHjcsl/N1y19cVG1dV4RIV4bkHw6C4smt8OGw9tH9Gz1ec4U54uHgqtuYqeYMFSqCM/eF8KuA==
+"@mktcodelib/github-insights@^0.16.1":
+  version "0.16.1"
+  resolved "https://registry.yarnpkg.com/@mktcodelib/github-insights/-/github-insights-0.16.1.tgz#5c574e1d115056fc3cc839c7706620582eb0efa8"
+  integrity sha512-c+IIolyiNOqNBOjU+tQ6eBdCMMil/ktZSE4csX3s+JGU2B8e/3pT2vzgtNUVDgHUtl/eYRoUQ/3e2uQMmYIgGQ==
   dependencies:
     "@mktcodelib/graphql-fetch-all" "^0.5.0"
     "@octokit/core" "^4.2.0"

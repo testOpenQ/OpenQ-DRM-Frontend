@@ -1,9 +1,14 @@
-import { RepoData, getLatestRepoScan } from "@mktcodelib/github-insights";
 import { useEffect, useState } from "react";
 import LoadingSpinner from "~/components/LoadingSpinner";
 import Button from "~/components/base/Button";
-import { Repo, addCommitSummary, getRepoCommitSummaries } from "~/db";
+import {
+  Repo,
+  addCommitSummary,
+  getLatestRepoScan,
+  getRepoCommitSummaries,
+} from "~/db";
 import useLocalStorage from "~/hooks/useLocalstorage";
+import { RepoData } from "~/lib/githubScanner/evaluators/repo";
 
 export default function ChangesTab({
   repo,
