@@ -36,7 +36,7 @@ export default function Card({ user }: { user: User }) {
     getLatestUserScan(user.login)
       .then((latestUserScan) => {
         if (latestUserScan) {
-          if (latestUserScan.data.user) {
+          if (latestUserScan.data && latestUserScan.data.user) {
             setUserScanResult(evaluateUserData(latestUserScan.data.user));
           }
           if (!latestUserScan.done && accessToken) {
