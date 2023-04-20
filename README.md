@@ -10,7 +10,7 @@
 - GPT prompt improvement 3d
   - Email research
   - Commit analysis
-- GitHub fetching solidity 2d
+- GitHub fetching solidity / move to service worker 2d
 - Overall UI 3d
 
 **next:**
