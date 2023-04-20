@@ -12,28 +12,16 @@ import { signIn, useSession } from "next-auth/react";
 import { useEffect, useMemo, useState } from "react";
 import { type Repo } from "~/db";
 import Button from "../base/Button";
-import LoadingSpinner from "../LoadingSpinner";
 import numberFormatter from "~/lib/numberFormatter";
 import { generateFakeScores } from "~/lib/scores";
 import CardHeader from "./card/Header";
 import CardNav from "./card/Nav";
 import ChangesTab from "./card/tabs/Changes";
+import useRepoScanner from "~/hooks/useRepoScanner";
 
 export default function Card({ repo }: { repo: Repo }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
-
-  const [scanning, setScanning] = useState(false);
-  const [repoScanResult, setRepoScanResult] = useState<RepoEvaluation | null>(
-    null
-  );
-
-  const [showCommitSummary, setShowCommitSummary] = useState(false);
-  const [showIssues, setShowIssues] = useState(false);
-  const [showDiscussions, setShowDiscussions] = useState(false);
-  const [showDevelopers, setShowDevelopers] = useState(false);
-
-  const scores = generateFakeScores(repo);
 
   const since = useMemo(() => {
     const since = new Date();
@@ -49,49 +37,14 @@ export default function Card({ repo }: { repo: Repo }) {
     return until.toISOString();
   }, []);
 
-  useEffect(() => {
-    getLatestRepoScan(repo.owner, repo.name, since, until)
-      .then((latestRepoScan) => {
-        if (latestRepoScan) {
-          if (latestRepoScan.data.repository) {
-            const evaluation = evaluateRepoData(latestRepoScan.data.repository);
-            setRepoScanResult(evaluation);
-          }
-          if (!latestRepoScan.done && accessToken) {
-            const scanner = new Scanner({ viewerToken: accessToken });
+  const [showCommitSummary, setShowCommitSummary] = useState(false);
+  const [showIssues, setShowIssues] = useState(false);
+  const [showDiscussions, setShowDiscussions] = useState(false);
+  const [showDevelopers, setShowDevelopers] = useState(false);
 
-            setScanning(true);
-            scanner
-              .scanContinue<{ repo: RepoData }>(latestRepoScan.id)((data) => {
-                setRepoScanResult(evaluateRepoData(data.repo));
-              })
-              .finally(() => {
-                setScanning(false);
-              });
-          }
-        }
-      })
-      .catch((err) => console.error(err));
-  }, [repo, since, until, accessToken]);
+  const scores = generateFakeScores(repo);
 
-  function scan() {
-    if (!accessToken) {
-      console.log("No access token set");
-      return;
-    }
-
-    const scanner = new Scanner({ viewerToken: accessToken });
-    const scan = scanner.scanRepo(repo.owner, repo.name, since, until);
-
-    setScanning(true);
-    scan((data) => {
-      setRepoScanResult(evaluateRepoData(data.repository));
-    })
-      .catch((err) => console.log(err))
-      .finally(() => {
-        setScanning(false);
-      });
-  }
+  const { repoScanResult } = useRepoScanner(repo);
 
   function handleSignIn() {
     signIn("github").catch(console.error);
@@ -108,15 +61,17 @@ export default function Card({ repo }: { repo: Repo }) {
             <CardMembers members={repoScanResult.authors.map((a) => a.user)} />
           )}
           {!repoScanResult && (
-            <div className="flex grow items-center justify-center px-12">
+            <div className="flex grow flex-col items-center justify-center px-12">
               {accessToken && (
-                <Button className="w-full" onClick={scan}>
-                  {scanning && <LoadingSpinner className="mr-2" />}
-                  scan repository
-                </Button>
+                <div className="text-sm text-gray-600">
+                  Waiting for first scan to begin...
+                </div>
               )}
               {!accessToken && (
-                <Button className="w-full" onClick={handleSignIn}>
+                <Button className="w-full flex-col" onClick={handleSignIn}>
+                  <span className="text-center text-xs font-normal text-indigo-400">
+                    Start fetching data:
+                  </span>
                   Connect to GitHub
                 </Button>
               )}

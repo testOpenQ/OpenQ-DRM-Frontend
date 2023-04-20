@@ -1,79 +1,15 @@
-import {
-  type RepoData,
-  type RepoEvaluation,
-  Scanner,
-  evaluateRepoData,
-} from "@mktcodelib/github-insights";
 import { useSession } from "next-auth/react";
-import { useMemo, useState } from "react";
-import { type Repo, addCommitSummary, deleteRepo } from "~/db";
+import { type Repo, deleteRepo } from "~/db";
 import LoadingSpinner from "../../LoadingSpinner";
 import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../../base/DiscreetButton";
+import useRepoScanner from "~/hooks/useRepoScanner";
 
 export default function CardHeader({ repo }: { repo: Repo }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
 
-  const [scanning, setScanning] = useState(false);
-  const [repoScanResult, setRepoScanResult] = useState<RepoEvaluation | null>(
-    null
-  );
-
-  const since = useMemo(() => {
-    const since = new Date();
-    since.setHours(0, 0, 0, 0);
-    since.setMonth(since.getMonth() - 1);
-    return since.toISOString();
-  }, []);
-
-  const until = useMemo(() => {
-    const until = new Date();
-    until.setHours(0, 0, 0, 0);
-    until.setMonth(until.getMonth() + 1);
-    return until.toISOString();
-  }, []);
-
-  function scan() {
-    if (!accessToken) {
-      console.log("No access token set");
-      return;
-    }
-
-    const scanner = new Scanner({ viewerToken: accessToken });
-    const scan = scanner.scanRepo(repo.owner, repo.name, since, until);
-
-    setScanning(true);
-    let rawCommits: RepoData["defaultBranchRef"]["target"]["history"]["nodes"] =
-      [];
-    scan((data) => {
-      setRepoScanResult(evaluateRepoData(data.repository));
-
-      rawCommits = data.repository.defaultBranchRef.target.history.nodes;
-    })
-      .catch((err) => console.log(err))
-      .finally(() => {
-        setScanning(false);
-
-        fetch("/api/commit-summary", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ commits: rawCommits }),
-        })
-          .then((res) => res.json())
-          .then((data: { summary: string }) => {
-            if (!data.summary || typeof data.summary !== "string") {
-              throw new Error("Invalid summary response");
-            }
-            addCommitSummary({ repoId: repo.id, summary: data.summary }).catch(
-              console.error
-            );
-          })
-          .catch(console.error);
-      });
-  }
+  const { isScanning, scan } = useRepoScanner(repo);
 
   function handleDeleteRepo() {
     deleteRepo(repo.id).catch(console.error);
@@ -87,10 +23,10 @@ export default function CardHeader({ repo }: { repo: Repo }) {
         {repo.owner}/{repo.name}
       </div>
       <div className="flex">
-        {accessToken && repoScanResult && (
-          <DiscreetButton disabled={scanning} onClick={scan}>
-            {scanning && <LoadingSpinner className="!h-4 !w-4" />}
-            {!scanning && <ArrowPathIcon className="h-4 w-4" />}
+        {accessToken && (
+          <DiscreetButton disabled={isScanning} onClick={scan}>
+            {isScanning && <LoadingSpinner className="!h-4 !w-4" />}
+            {!isScanning && <ArrowPathIcon className="h-4 w-4" />}
           </DiscreetButton>
         )}
         <DiscreetButton>
