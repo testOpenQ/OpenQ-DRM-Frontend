@@ -1,15 +1,14 @@
-import {
-  Scanner,
-  type UserEvaluation,
-  evaluateUserData,
-  getLatestUserScan,
-} from "@mktcodelib/github-insights";
+import { Scanner } from "@mktcodelib/github-insights";
 import { useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import type { User } from "~/db";
+import { User, getLatestUserScan } from "~/db";
 import Button from "../base/Button";
 import LoadingSpinner from "../LoadingSpinner";
 import { FindEmailResponse } from "~/pages/api/find-email";
+import {
+  UserEvaluation,
+  evaluateUserData,
+} from "~/lib/githubScanner/evaluators/user";
 
 export default function Card({ user }: { user: User }) {
   const { data } = useSession();
