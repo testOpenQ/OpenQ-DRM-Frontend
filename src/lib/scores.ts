@@ -1,6 +1,6 @@
 /**
- * Score calculation will likely move into the github-insights package but for
- * now we generate some random static values, based on the repo owner/name.
+ * Score calculation will follow soon. For now we generate some random static
+ * values, based on the repo owner/name.
  */
 
 function stringToSeed(seed: string) {
