@@ -3,7 +3,7 @@ import {
   hashQuery,
   db as scansDb,
   type QueryVariables,
-} from "@mktcodelib/github-insights";
+} from "@mktcodelib/github-scanner";
 import Dexie, { type Table } from "dexie";
 import { type DocumentNode } from "graphql";
 import { type UserData } from "./lib/githubScanner/evaluators/user";

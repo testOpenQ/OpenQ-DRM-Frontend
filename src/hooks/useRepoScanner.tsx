@@ -1,14 +1,17 @@
-import { Scanner } from "@mktcodelib/github-insights";
+import { Scanner } from "@mktcodelib/github-scanner";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 import { type RepoModel, getLatestRepoScan } from "~/db";
-import { getRepoScan } from "~/lib/githubScanner";
-import { evaluateRepoData } from "~/lib/githubScanner/evaluators/repo";
+import {
+  RepoData,
+  evaluateRepoData,
+} from "~/lib/githubScanner/evaluators/repo";
+import { REPO_QUERY } from "~/lib/githubScanner/queries";
 
 export default function useRepoScanner(repo: RepoModel) {
   const { data } = useSession();
-  const viewerToken = data?.accessToken;
+  const accessToken = data?.accessToken;
 
   const since = useMemo(() => {
     const since = new Date();
@@ -32,8 +35,8 @@ export default function useRepoScanner(repo: RepoModel) {
     evaluateRepoData(latestRepoScan.data.repository);
   const isScanning = latestRepoScan && !latestRepoScan.done;
 
-  function scan() {
-    if (!viewerToken) {
+  async function scan() {
+    if (!accessToken) {
       console.log("No access token set");
       return;
     }
@@ -43,16 +46,14 @@ export default function useRepoScanner(repo: RepoModel) {
       return;
     }
 
-    const scanner = new Scanner({ viewerToken });
-    const repoScan = getRepoScan(
-      scanner,
-      repo.ownerLogin,
-      repo.name,
+    const scanner = new Scanner({ accessToken });
+    await scanner.scan<{ repository: RepoData }>(REPO_QUERY, {
+      owner: repo.ownerLogin,
+      name: repo.name,
       since,
-      until
-    );
-
-    repoScan().catch((err) => console.log(err));
+      until,
+      first: 50,
+    });
   }
 
   return {

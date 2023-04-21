@@ -1,4 +1,4 @@
-import type { Scanner } from "@mktcodelib/github-insights";
+import type { Scanner } from "@mktcodelib/github-scanner";
 import { type RepoData } from "./evaluators/repo";
 import { type UserData } from "./evaluators/user";
 import { USER_QUERY, REPO_QUERY } from "./queries";

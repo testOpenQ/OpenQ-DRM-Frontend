@@ -1,4 +1,4 @@
-import { type Scan, Scanner } from "@mktcodelib/github-insights";
+import { type Scan, Scanner } from "@mktcodelib/github-scanner";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useEffect } from "react";
@@ -16,20 +16,20 @@ export function PendingScansProvider({
   children: React.ReactNode;
 }) {
   const { data } = useSession();
-  const viewerToken = data?.accessToken;
+  const accessToken = data?.accessToken;
   const livePendingScans = useLiveQuery(
     () => getPendingScans() as Promise<Scan[]>
   );
 
   useEffect(() => {
-    if (!viewerToken) return;
+    if (!accessToken) return;
 
-    const scanner = new Scanner({ viewerToken });
+    const scanner = new Scanner({ accessToken });
 
     getPendingScans()
       .then((pendingScans) => {
         pendingScans.forEach((scan) => {
-          scanner.scanContinue((scan as Scan).id);
+          scanner.continueScan((scan as Scan).id);
         });
       })
       .catch(console.error);
