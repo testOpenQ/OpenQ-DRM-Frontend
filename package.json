@@ -9,7 +9,8 @@
     "lint": "next lint && prettier --check .",
     "format": "prettier --write .",
     "start": "next start",
-    "prepare": "husky install"
+    "prepare": "husky install",
+    "copy-worker": "cp node_modules/@mktcodelib/github-insights/dist/worker.js public/github-insights-worker.js && cp node_modules/@mktcodelib/github-insights/dist/worker.js.map public/github-insights-worker.js.map"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
