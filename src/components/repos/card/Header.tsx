@@ -19,8 +19,9 @@ export default function CardHeader({ repo }: { repo: Repo }) {
 
   return (
     <div className="flex items-center justify-between bg-gray-900/50 px-3 py-2 font-bold">
-      <div>
-        {repo.owner}/{repo.name}
+      <div className="flex items-center">
+        <img src={repo.ownerAvatarUrl} className="mr-2 h-6 w-6 rounded-full" />
+        {repo.fullName}
       </div>
       <div className="flex">
         {accessToken && (

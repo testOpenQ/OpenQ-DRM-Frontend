@@ -99,11 +99,6 @@ export default function CampaignsDetails({
         </>
       )}
 
-      <h2 className="text-3xl font-bold text-indigo-700">Users</h2>
-      <div className="my-6 grid grid-cols-1 gap-6 text-gray-700 xl:grid-cols-2">
-        Under construction...
-      </div>
-
       {/* {users.length > 0 && (
         <>
           <h2 className="text-3xl font-bold text-indigo-700">Users</h2>

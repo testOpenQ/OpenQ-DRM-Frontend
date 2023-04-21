@@ -24,10 +24,8 @@ function xorshift(seed: number) {
   };
 }
 
-export function generateFakeScores(repo: { owner: string; name: string }) {
-  const random = xorshift(
-    stringToSeed(repo.owner + repo.name + "supersecretse")
-  );
+export function generateFakeScores(repoFullName: string) {
+  const random = xorshift(stringToSeed(repoFullName + "supersecretse"));
   const numbers = [];
 
   for (let i = 0; i < 4; i++) {

@@ -24,7 +24,7 @@ export default function useRepoScanner(repo: RepoModel) {
   }, []);
 
   const latestRepoScan = useLiveQuery(
-    () => getLatestRepoScan(repo.owner, repo.name, since, until),
+    () => getLatestRepoScan(repo.ownerLogin, repo.name, since, until),
     [repo, since, until]
   );
   const latestRepoEvaluation =
@@ -44,7 +44,13 @@ export default function useRepoScanner(repo: RepoModel) {
     }
 
     const scanner = new Scanner({ viewerToken });
-    const repoScan = getRepoScan(scanner, repo.owner, repo.name, since, until);
+    const repoScan = getRepoScan(
+      scanner,
+      repo.ownerLogin,
+      repo.name,
+      since,
+      until
+    );
 
     repoScan().catch((err) => console.log(err));
   }

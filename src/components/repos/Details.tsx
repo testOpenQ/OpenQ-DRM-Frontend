@@ -11,7 +11,7 @@ export default function RepoDetails({ repoId }: { repoId: string }) {
   return (
     <>
       <Headline>
-        {repo.owner}/{repo.name}
+        {repo.ownerLogin}/{repo.name}
       </Headline>
       <Card repo={repo} />
     </>

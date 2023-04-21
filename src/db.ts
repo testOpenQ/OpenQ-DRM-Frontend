@@ -27,24 +27,67 @@ export interface CommitSummary extends CommitSummaryModel {
   id: number;
 }
 
-export interface RepoModel {
-  id?: number;
-  name: string;
-  owner: string;
-  campaignId?: number;
-}
-
-export interface Repo extends RepoModel {
-  id: number;
-}
-
 export interface UserModel {
   id?: number;
   login: string;
-  campaignId?: number;
+  restId: number;
+  graphqlId: string;
+  avatarUrl: string;
+  gravatarId: string;
+  name: string;
+  company: null;
+  blog: string;
+  location: string;
+  email: null;
+  hireable: boolean;
+  bio: string;
+  twitterUsername: string;
+  followers: number;
+  following: number;
+  created_at: string;
+  updated_at: string;
+  campaignId: number;
 }
 
 export interface User extends UserModel {
+  id: number;
+}
+
+export interface RepoModel {
+  id?: number;
+  githubRestId: number;
+  githubGraphqlid: string;
+  name: string;
+  fullName: string;
+  private: boolean;
+  ownerLogin: string;
+  ownerAvatarUrl: string;
+  description: string;
+  fork: boolean;
+  createdAt: string;
+  updatedAt: string;
+  pushedAt: string;
+  homepage: string;
+  size: number;
+  stargazersCount: number;
+  watchersCount: number;
+  language: string;
+  hasIssues: boolean;
+  hasProjects: boolean;
+  hasDiscussions: boolean;
+  forksCount: number;
+  archived: boolean;
+  disabled: boolean;
+  openIssuesCount: number;
+  license: null;
+  topics: string[];
+  visibility: "public";
+  defaultBranch: "master";
+  subscribersCount: number;
+  campaignId: number;
+}
+
+export interface Repo extends RepoModel {
   id: number;
 }
 

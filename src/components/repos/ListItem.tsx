@@ -13,7 +13,7 @@ export default function ListItem({ repo }: { repo: Repo }) {
       <div className="flex w-full space-x-3">
         <Link className="w-full" href={`/repos/${repo.id}`}>
           <Button>
-            {repo.owner}/{repo.name}
+            {repo.ownerLogin}/{repo.name}
           </Button>
         </Link>
         <Button className="flex-1" onClick={() => handleRemoveRepo}>

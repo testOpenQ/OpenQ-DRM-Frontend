@@ -22,7 +22,7 @@ export default function Card({ repo }: { repo: Repo }) {
 
   const { latestRepoEvaluation, since, until } = useRepoScanner(repo);
   console.log("rerender card");
-  const scores = generateFakeScores(repo);
+  const scores = generateFakeScores(repo.fullName);
 
   function handleSignIn() {
     signIn("github").catch(console.error);

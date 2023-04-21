@@ -31,7 +31,7 @@ export default function ChangesTab({
   const [generatingSummary, setGeneratingSummary] = useState(false);
 
   useEffect(() => {
-    getLatestRepoScan(repo.owner, repo.name, since, until).then((scan) => {
+    getLatestRepoScan(repo.ownerLogin, repo.name, since, until).then((scan) => {
       if (scan?.data?.repository) {
         setLatestRepoScanData(scan.data.repository);
       }
