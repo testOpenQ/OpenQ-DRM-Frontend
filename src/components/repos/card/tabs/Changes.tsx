@@ -2,13 +2,13 @@ import { useEffect, useState } from "react";
 import LoadingSpinner from "~/components/LoadingSpinner";
 import Button from "~/components/base/Button";
 import {
-  Repo,
+  type Repo,
   addCommitSummary,
   getLatestRepoScan,
   getRepoCommitSummaries,
 } from "~/db";
 import useLocalStorage from "~/hooks/useLocalstorage";
-import { RepoData } from "~/lib/githubScanner/evaluators/repo";
+import type { RepoData } from "~/lib/githubScanner/evaluators/repo";
 
 export default function ChangesTab({
   repo,
@@ -31,11 +31,13 @@ export default function ChangesTab({
   const [generatingSummary, setGeneratingSummary] = useState(false);
 
   useEffect(() => {
-    getLatestRepoScan(repo.ownerLogin, repo.name, since, until).then((scan) => {
-      if (scan?.data?.repository) {
-        setLatestRepoScanData(scan.data.repository);
-      }
-    });
+    getLatestRepoScan(repo.ownerLogin, repo.name, since, until)
+      .then((scan) => {
+        if (scan?.data?.repository) {
+          setLatestRepoScanData(scan.data.repository);
+        }
+      })
+      .catch(console.error);
 
     getRepoCommitSummaries(repo.id)
       .then((summaries) => {
@@ -45,7 +47,7 @@ export default function ChangesTab({
         }
       })
       .catch(console.error);
-  }, [repo.id]);
+  });
 
   function generateSummary() {
     if (!latestRepoScanData) {

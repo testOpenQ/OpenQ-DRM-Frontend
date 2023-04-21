@@ -1,6 +1,6 @@
-import { Scanner } from "@mktcodelib/github-insights";
-import { RepoData } from "./evaluators/repo";
-import { UserData } from "./evaluators/user";
+import type { Scanner } from "@mktcodelib/github-insights";
+import { type RepoData } from "./evaluators/repo";
+import { type UserData } from "./evaluators/user";
 import { USER_QUERY, REPO_QUERY } from "./queries";
 
 export function getUserScan(scanner: Scanner, login: string) {

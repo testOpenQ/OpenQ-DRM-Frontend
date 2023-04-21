@@ -1,4 +1,4 @@
-import { Scan, Scanner } from "@mktcodelib/github-insights";
+import { type Scan, Scanner } from "@mktcodelib/github-insights";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useSession } from "next-auth/react";
 import React, { createContext, useContext, useEffect } from "react";
@@ -26,12 +26,14 @@ export function PendingScansProvider({
 
     const scanner = new Scanner({ viewerToken });
 
-    getPendingScans().then((pendingScans) => {
-      pendingScans.forEach((scan) => {
-        scanner.scanContinue((scan as Scan).id);
-      });
-    });
-  }, []);
+    getPendingScans()
+      .then((pendingScans) => {
+        pendingScans.forEach((scan) => {
+          scanner.scanContinue((scan as Scan).id);
+        });
+      })
+      .catch(console.error);
+  });
 
   if (!livePendingScans) return null;
 

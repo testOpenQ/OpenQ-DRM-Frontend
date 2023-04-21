@@ -1,9 +1,14 @@
-import { Scan, hashQuery, db as scansDb } from "@mktcodelib/github-insights";
+import {
+  type Scan,
+  hashQuery,
+  db as scansDb,
+  type QueryVariables,
+} from "@mktcodelib/github-insights";
 import Dexie, { type Table } from "dexie";
-import { DocumentNode } from "graphql";
-import { UserData } from "./lib/githubScanner/evaluators/user";
+import { type DocumentNode } from "graphql";
+import { type UserData } from "./lib/githubScanner/evaluators/user";
 import { REPO_QUERY, USER_QUERY } from "./lib/githubScanner/queries";
-import { RepoData } from "./lib/githubScanner/evaluators/repo";
+import { type RepoData } from "./lib/githubScanner/evaluators/repo";
 
 export interface CampaignModel {
   id?: number;
@@ -35,10 +40,10 @@ export interface UserModel {
   avatarUrl: string;
   gravatarId: string;
   name: string;
-  company: null;
+  company: string;
   blog: string;
   location: string;
-  email: null;
+  email: string;
   hireable: boolean;
   bio: string;
   twitterUsername: string;
@@ -79,10 +84,10 @@ export interface RepoModel {
   archived: boolean;
   disabled: boolean;
   openIssuesCount: number;
-  license: null;
+  license: string;
   topics: string[];
-  visibility: "public";
-  defaultBranch: "master";
+  visibility: string;
+  defaultBranch: string;
   subscribersCount: number;
   campaignId: number;
 }
@@ -190,9 +195,9 @@ export async function getPendingScans() {
   return scansDb.scans.where("done").equals(0).toArray();
 }
 
-export async function getLatestScan<DataType extends Record<string, any>>(
+export async function getLatestScan<DataType extends Record<string, unknown>>(
   query: DocumentNode,
-  variables: Record<string, any>
+  variables: QueryVariables
 ): Promise<Scan<DataType> | undefined> {
   const hash = await hashQuery(query, variables);
 

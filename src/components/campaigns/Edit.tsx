@@ -1,6 +1,6 @@
 import {
-  RepoModel,
-  UserModel,
+  type RepoModel,
+  type UserModel,
   addRepo,
   addUser,
   deleteCampaign,
@@ -16,6 +16,61 @@ import { useRouter } from "next/router";
 import DiscreetButton from "../base/DiscreetButton";
 import { useSession } from "next-auth/react";
 import useDebounce from "~/hooks/useDebounce";
+import Image from "next/image";
+
+type GithubRestRepo = {
+  id: number;
+  node_id: string;
+  name: string;
+  full_name: string;
+  private: boolean;
+  owner: {
+    login: string;
+    avatar_url: string;
+  };
+  description: string;
+  fork: boolean;
+  created_at: string;
+  updated_at: string;
+  pushed_at: string;
+  homepage: string;
+  size: number;
+  stargazers_count: number;
+  watchers_count: number;
+  language: string;
+  has_issues: boolean;
+  has_projects: boolean;
+  has_discussions: boolean;
+  forks_count: number;
+  archived: boolean;
+  disabled: boolean;
+  open_issues_count: number;
+  license: string;
+  topics: string[];
+  visibility: string;
+  default_branch: string;
+  subscribers_count: number;
+};
+
+type GithubRestUser = {
+  login: string;
+  id: number;
+  node_id: string;
+  avatar_url: string;
+  gravatar_id: string;
+  name: string;
+  company: string;
+  blog: string;
+  location: string;
+  email: string;
+  hireable: boolean;
+  bio: string;
+  twitter_username: string;
+  followers: number;
+  following: number;
+  created_at: string;
+  updated_at: string;
+};
 
 export default function EditCampaign({ campaignId }: { campaignId: string }) {
   const { data } = useSession();
@@ -64,12 +119,17 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
           },
         })
           .then((res) => res.json())
-          .then((res) => {
-            if (res.message === "Not Found") {
+          .then((res: unknown) => {
+            if (
+              typeof res === "object" &&
+              res !== null &&
+              "message" in (res as { message?: string }) &&
+              (res as { message?: string }).message === "Not Found"
+            ) {
               throw new Error("Not Found");
             }
 
-            return res;
+            return res as GithubRestRepo;
           })
           .then((repo) => {
             setRepos((repos) => [
@@ -120,11 +180,16 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
         })
           .then((res) => res.json())
           .then((res) => {
-            if (res.message === "Not Found") {
+            if (
+              typeof res === "object" &&
+              res !== null &&
+              "message" in (res as { message?: string }) &&
+              (res as { message?: string }).message === "Not Found"
+            ) {
               throw new Error("Not Found");
             }
 
-            return res;
+            return res as GithubRestUser;
           })
           .then((user) => {
             setUsers((users) => [
@@ -157,7 +222,7 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
           });
       }
     });
-  }, [debouncedTextareaInput]);
+  }, [debouncedTextareaInput]); // see yarn lint warning. how to fix?
 
   function handleDeleteCampaign(id: number) {
     router
@@ -239,8 +304,11 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
                 <ul className="list-inside list-none space-y-1">
                   {repos.map((repo) => (
                     <li key={repo.githubRestId}>
-                      <img
+                      <Image
                         src={repo.ownerAvatarUrl}
+                        width={20}
+                        height={20}
+                        alt="avatar"
                         className="mr-1 inline-block h-5 w-5 rounded-full"
                       />
                       {repo.fullName}
@@ -255,8 +323,11 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
                 <ul className="list-inside list-none space-y-1">
                   {users.map((user) => (
                     <li key={user.restId}>
-                      <img
+                      <Image
                         src={user.avatarUrl}
+                        width={20}
+                        height={20}
+                        alt="avatar"
                         className="mr-1 inline-block h-5 w-5 rounded-full"
                       />
                       {user.login}

@@ -15,7 +15,6 @@ import {
 import Headline from "../layout/Headline";
 import { useRouter } from "next/router";
 import RepoCard from "../repos/Card";
-import UserCard from "../users/Card";
 import DiscreetButton from "../base/DiscreetButton";
 import Link from "next/link";
 import { useState } from "react";
@@ -24,7 +23,6 @@ import Input from "../base/Input";
 export default function CampaignsDetails({
   campaign,
   repos,
-  users,
 }: {
   campaign: Campaign;
   repos: Repo[];
@@ -98,17 +96,6 @@ export default function CampaignsDetails({
           </div>
         </>
       )}
-
-      {/* {users.length > 0 && (
-        <>
-          <h2 className="text-3xl font-bold text-indigo-700">Users</h2>
-          <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
-            {users.map((user) => (
-              <UserCard key={user.id} user={user} />
-            ))}
-          </div>
-        </>
-      )} */}
     </>
   );
 }

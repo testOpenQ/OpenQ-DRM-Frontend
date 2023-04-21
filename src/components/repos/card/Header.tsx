@@ -4,6 +4,7 @@ import LoadingSpinner from "../../LoadingSpinner";
 import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../../base/DiscreetButton";
 import useRepoScanner from "~/hooks/useRepoScanner";
+import Image from "next/image";
 
 export default function CardHeader({ repo }: { repo: Repo }) {
   const { data } = useSession();
@@ -20,7 +21,13 @@ export default function CardHeader({ repo }: { repo: Repo }) {
   return (
     <div className="flex items-center justify-between bg-gray-900/50 px-3 py-2 font-bold">
       <div className="flex items-center">
-        <img src={repo.ownerAvatarUrl} className="mr-2 h-6 w-6 rounded-full" />
+        <Image
+          src={repo.ownerAvatarUrl}
+          width={24}
+          height={24}
+          className="mr-2 rounded-full"
+          alt="avatar"
+        />
         {repo.fullName}
       </div>
       <div className="flex">

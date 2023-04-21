@@ -6,7 +6,7 @@ import {
 import { fetchTwitterAccountWebsites } from "~/server/utils/twitter";
 import { emailFinder } from "~/server/gpt/system";
 import {
-  TextSnippet,
+  type TextSnippet,
   extractEmailTextSnippets,
   extractUrlTextSnippets,
   htmlToMarkdown,
@@ -67,7 +67,7 @@ function getClickedUrl(input: string): string | null {
 function getFoundEmail(input: string): FoundEmail | null {
   if (input.startsWith("email:")) {
     input = input.substring(6);
-    let [email, confidence, reason] = input.split("|").map((s) => s.trim());
+    const [email, confidence, reason] = input.split("|").map((s) => s.trim());
 
     if (
       !email ||
@@ -157,7 +157,7 @@ async function fetchWebsiteData(url: string): Promise<WebsiteData | null> {
       urlTextSnippets,
     };
   } catch (e) {
-    console.log(`Error fetching website data for ${url}: ${e}`);
+    console.log(`Error fetching website data for ${url}:`, e);
     return null;
   }
 }
@@ -348,7 +348,9 @@ export default async function FindEmail(
       );
     }
 
-    const githubProfileText = markdownToText(`${user.bio}\n\n${user.readme}`);
+    const bioText = markdownToText(user.bio);
+    const readmeText = markdownToText(user.readme);
+    const githubProfileText = [bioText, readmeText].join("\n\n");
     const emailTextSnippets = extractEmailTextSnippets(githubProfileText);
     const urlTextSnippets = extractUrlTextSnippets(
       githubProfileText,

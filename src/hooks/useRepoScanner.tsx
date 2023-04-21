@@ -2,7 +2,7 @@ import { Scanner } from "@mktcodelib/github-insights";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useSession } from "next-auth/react";
 import { useMemo } from "react";
-import { RepoModel, getLatestRepoScan } from "~/db";
+import { type RepoModel, getLatestRepoScan } from "~/db";
 import { getRepoScan } from "~/lib/githubScanner";
 import { evaluateRepoData } from "~/lib/githubScanner/evaluators/repo";
 

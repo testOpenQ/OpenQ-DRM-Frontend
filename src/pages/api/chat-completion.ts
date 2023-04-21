@@ -52,29 +52,23 @@ export function isChatCompletionRequestBody(
   );
 }
 
-function getError(e: any) {
+function getError(e: unknown) {
   let error: string | undefined;
-  if (e.response?.data?.error) {
-    const unknownError = e.response?.data?.error;
-    if (typeof unknownError === "string") {
-      error = unknownError;
-    } else if (typeof unknownError === "object") {
-      if (unknownError.message) {
-        error = unknownError.message;
-      } else {
-        error = JSON.stringify(unknownError);
-      }
-    }
-  } else if (e.message) {
+
+  if (e instanceof Error) {
     error = e.message;
-  } else {
-    if (typeof e === "string") {
-      error = e;
-    } else if (typeof e === "object") {
-      error = JSON.stringify(e);
+  } else if (e instanceof Response) {
+    error = e.statusText;
+  } else if (e instanceof Object) {
+    if ("message" in e && typeof e.message === "string") {
+      error = e.message;
     } else {
-      error = "An unknown error occured.";
+      error = JSON.stringify(e);
     }
+  } else if (typeof e === "string") {
+    error = e;
+  } else {
+    error = "An unknown error occured.";
   }
 
   return error;
@@ -104,15 +98,14 @@ export default async function ChatCompletion(
   };
 
   try {
-    // const completion = await gpt.createChatCompletion({
-    //   model: "gpt-4",
-    //   messages: context,
-    //   max_tokens: maxResponseTokens || 256,
-    //   temperature: temperature || 0.7,
-    // });
-    //
-    // response = completion.data.choices[0]?.message?.content;
-    response = "AI is disabled.";
+    const completion = await gpt.createChatCompletion({
+      model: "gpt-4",
+      messages: context,
+      max_tokens: maxResponseTokens || 256,
+      temperature: temperature || 0.7,
+    });
+
+    response = completion.data.choices[0]?.message?.content;
     console.log("AI reponse:", response);
 
     if (!response) {
@@ -129,7 +122,7 @@ export default async function ChatCompletion(
     });
 
     consumedTokens.output = countTokens(response);
-  } catch (e: any) {
+  } catch (e: unknown) {
     error = getError(e);
   }
 

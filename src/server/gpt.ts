@@ -1,6 +1,10 @@
 import { encode } from "gpt-3-encoder";
-import { ChatCompletionRequestMessage, Configuration, OpenAIApi } from "openai";
-import { ChatCompletionResponseBody } from "~/pages/api/chat-completion";
+import {
+  type ChatCompletionRequestMessage,
+  Configuration,
+  OpenAIApi,
+} from "openai";
+import type { ChatCompletionResponseBody } from "~/pages/api/chat-completion";
 
 export const gpt = new OpenAIApi(
   new Configuration({
@@ -27,17 +31,20 @@ export async function completeChat(
   maxResponseTokens: number,
   temperature: number
 ): Promise<ChatCompletionResponseBody> {
-  const res = await fetch(process.env.BASE_URL + "/api/chat-completion", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      context,
-      maxResponseTokens,
-      temperature,
-    }),
-  });
+  const res = await fetch(
+    `${process.env.BASE_URL as string}/api/chat-completion`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        context,
+        maxResponseTokens,
+        temperature,
+      }),
+    }
+  );
 
-  return await res.json();
+  return (await res.json()) as ChatCompletionResponseBody;
 }

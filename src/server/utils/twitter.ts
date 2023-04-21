@@ -14,7 +14,9 @@ export async function fetchTwitterAccountWebsites(
   const websites: string[] = [];
 
   try {
-    const user = await twitter.get("users/show", { screen_name });
+    const user = await twitter.get<{
+      entities: { url: { urls: { expanded_url: string }[] } };
+    }>("users/show", { screen_name });
 
     if (user.entities?.url?.urls.length > 0) {
       websites.push(
