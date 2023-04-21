@@ -33,8 +33,10 @@ export function PendingScansProvider({
     });
   }, []);
 
+  if (!livePendingScans) return null;
+
   return (
-    <PendingScansContext.Provider value={livePendingScans || []}>
+    <PendingScansContext.Provider value={livePendingScans}>
       {children}
     </PendingScansContext.Provider>
   );
