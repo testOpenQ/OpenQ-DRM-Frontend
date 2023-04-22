@@ -7,13 +7,12 @@ import {
   ChartPieIcon,
   RectangleGroupIcon,
 } from "@heroicons/react/24/outline";
-import { useLiveQuery } from "dexie-react-hooks";
-import { getCampaigns } from "~/db";
 import SidebarDivider from "./SidebarDivider";
 import ConnectGithub from "../ConnectGithub";
+import { useCampaigns } from "~/store/CampaignsProvider";
 
 export default function Sidebar() {
-  const campaigns = useLiveQuery(getCampaigns);
+  const campaigns = useCampaigns();
 
   return (
     <div className="w-[320px] bg-gray-800">
@@ -38,19 +37,6 @@ export default function Sidebar() {
           </div>
         ))}
         <SidebarDivider />
-        {/* <SidebarLink href="/users">
-          <div className="mr-3 p-1.5">
-            <UsersIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
-          </div>
-          Developers
-        </SidebarLink>
-        <SidebarDivider />
-        <SidebarLink href="/repos">
-          <div className="mr-3 p-1.5">
-            <CodeBracketIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
-          </div>
-          Repositories
-        </SidebarLink> */}
 
         <SidebarDivider className="mt-auto" />
         <SidebarLink href="https://openq.dev/marketplace">

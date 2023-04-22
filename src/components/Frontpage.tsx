@@ -1,12 +1,11 @@
-import { getCampaigns } from "~/db";
-import { useLiveQuery } from "dexie-react-hooks";
 import Welcome from "./Welcome";
 import Overview from "./Overview";
+import { useCampaigns } from "~/store/CampaignsProvider";
 
 export default function WelcomeModal() {
-  const campaigns = useLiveQuery(getCampaigns);
+  const campaigns = useCampaigns();
 
-  return campaigns && campaigns.length > 0 ? (
+  return campaigns.length > 0 ? (
     <Overview campaigns={campaigns} />
   ) : (
     <Welcome />

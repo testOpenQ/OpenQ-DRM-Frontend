@@ -1,15 +1,12 @@
-import { addCampaign, getCampaigns } from "~/db";
+import { addCampaign } from "~/db";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Button from "./base/Button";
 import Input from "./base/Input";
-import { useLiveQuery } from "dexie-react-hooks";
 import Headline from "./layout/Headline";
 
 export default function Welcome() {
   const router = useRouter();
-
-  const campaigns = useLiveQuery(getCampaigns);
 
   const [campaignName, setCampaignName] = useState("");
 
@@ -22,10 +19,6 @@ export default function Welcome() {
           .catch((err) => console.log(err));
       })
       .catch((err) => console.log(err));
-  }
-
-  if (campaigns && campaigns.length > 0) {
-    return null;
   }
 
   return (
