@@ -45,6 +45,24 @@ The stored "raw" data is then run through functions that extract the essence of 
 
 ### Repo
 
+## Database
+
+### Campaigns
+
+...
+
+### Users
+
+...
+
+### Repos
+
+...
+
+### Scans (GitHub Scanner)
+
+...
+
 ## ChatGPT
 
 ⚠️ **EXPERIMENTAL** ⚠️
