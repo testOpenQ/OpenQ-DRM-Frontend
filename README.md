@@ -1,5 +1,13 @@
 # OpenQ DRM
 
+Install and run:
+
+```bash
+git clone https://github.com/OpenQDev/OpenQ-DRM-Frontend && cd OpenQ-DRM-Frontend && cp .env.sample .env && yarn && yarn dev
+```
+
+The app is running now but you need still need to fill in the blanks in the `.env` file.
+
 ## T3 App
 
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`. To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
