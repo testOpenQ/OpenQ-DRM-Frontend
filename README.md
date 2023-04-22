@@ -101,6 +101,8 @@ await completeChat(context, 256, 0.5);
 
 ### Issues / Discussions
 
+⚠️ random notes from here on...
+
 ## TODO
 
 - Import (text/csv) 2d
