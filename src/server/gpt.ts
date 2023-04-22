@@ -28,8 +28,8 @@ export function countContextTokens(context: ChatCompletionRequestMessage[]) {
 
 export async function completeChat(
   context: ChatCompletionRequestMessage[],
-  maxResponseTokens: number,
-  temperature: number
+  maxResponseTokens: number = 64,
+  temperature: number = 0
 ): Promise<ChatCompletionResponseBody> {
   const res = await fetch(
     `${process.env.BASE_URL as string}/api/chat-completion`,
