@@ -101,9 +101,9 @@ await completeChat(context, 256, 0.5);
 
 ### Issues / Discussions
 
-⚠️ random notes from here on...
-
 ## TODO
+
+(random notes from here on)
 
 - Import (text/csv) 2d
 - Score calculation 2d
@@ -136,7 +136,7 @@ Tab in repo card for devs' emails
 - choose/edit template
 - send button
 
-# Email Address Finder
+### Email Address Finder
 
 - first "manual"/script-based search
 
