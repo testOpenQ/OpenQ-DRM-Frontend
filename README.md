@@ -93,6 +93,7 @@ You can use the [ChatGPT Tokenizer](https://platform.openai.com/tokenizer) to ge
 The temperature is set to 0 by default, meaning that the responses are deterministic. Same input in, same output out. A temperature of 1 means unpredictable but more "creative" responses.
 
 ```ts
+// increase response length and let it be "semi-creative"
 await completeChat(context, 256, 0.5);
 ```
 
