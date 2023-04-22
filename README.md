@@ -6,7 +6,20 @@ Install and run:
 git clone https://github.com/OpenQDev/OpenQ-DRM-Frontend && cd OpenQ-DRM-Frontend && cp .env.sample .env && yarn && yarn dev
 ```
 
-The app is running now but you still need to fill in the blanks in the `.env` file.
+The app should be running now but you still need to fill in the blanks in the `.env` file.
+
+```bash
+GITHUB_CLIENT_ID="..."
+GITHUB_CLIENT_SECRET="..."
+
+OPENAI_API_KEY="sk-..."
+
+TWITTER_API_KEY="..."
+TWITTER_API_SECRET="..."
+TWITTER_API_BEARER_TOKEN="..."
+```
+
+A GitHub OAuth app is required. OpenAI and Twitter credentials are used for the experimental GPT-based features.
 
 ## T3 App
 
@@ -32,9 +45,58 @@ The stored "raw" data is then run through functions that extract the essence of 
 
 ### Repo
 
-## GPT Evaluations
+## ChatGPT
 
-### Repo/User Commits
+⚠️ **EXPERIMENTAL** ⚠️
+
+You'll need an [OpenAI API key](https://platform.openai.com/account/api-keys) to use the GPT features.
+
+```bash
+OPENAI_API_KEY="sk-..."
+```
+
+### Chat Completions
+
+`/api/chat-completion` is a [ChatGPT](https://platform.openai.com/docs/guides/chat) endpoint that can be used to complete a given chat context.
+
+```ts
+import { completeChat } from "~/server/gpt";
+
+const context: ChatCompletionRequestMessage[] = [
+  {
+    role: "system",
+    content:
+      "You are OpenQ-GPT: You know everything about OpenQ and currently ongoing hackathons.\n\nOpenQ is...\n\nHackathons: ...",
+  },
+  {
+    role: "user",
+    content: "I have problems claiming my hackathon prize.",
+  },
+  {
+    role: "assistant",
+    content:
+      "Don't worry, we'll figure it out. What hackathon did you participate in?",
+  },
+  {
+    role: "user",
+    content: "ETH Denver, 2023",
+  },
+];
+
+await completeChat(context);
+```
+
+The maximum response length is 64 tokens (aprrox. 80 words) by default.
+
+You can use the [ChatGPT Tokenizer](https://platform.openai.com/tokenizer) to get a sense of how many tokens are in a given text.
+
+The temperature is set to 0 by default, meaning that the responses are deterministic. Same input in, same output out. A temperature of 1 means unpredictable but more "creative" responses.
+
+```ts
+await completeChat(context, 256, 0.5);
+```
+
+### Repo/User Commit Summary
 
 ### Issues / Discussions
 
