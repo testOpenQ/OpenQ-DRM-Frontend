@@ -37,7 +37,7 @@ The term "Scan" in the [@mktcodelib/github-scanner package](https://npmjs.com/pa
 It uses [@mktcodelib/graphql-fetch-all](https://npmjs.com/package/@mktcodelib/graphql-fetch-all) to handle paginated queries and adds [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) for storage and [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), ensuring a good UX, on top of it.
 From IndexedDB results can be evaluated and presented in the UI.
 
-After instantiating the scanner for the first time, you'll find [a database named `@mktcodelib/github-scanner-<version>` with a single table called `scans`](https://github.com/mktcode/lib/blob/master/packages/github-scanner/src/db.ts).
+After running the app for the first time, you'll find [a database named `@mktcodelib/github-scanner-<version>` with a single table called `scans`](https://github.com/mktcode/lib/blob/master/packages/github-scanner/src/db.ts).
 
 ## Data Evaluations
 
