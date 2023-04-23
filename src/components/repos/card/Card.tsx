@@ -1,6 +1,6 @@
-import CardActivityChart from "./CardActivityChart";
-import CardMembers from "./CardMembers";
-import CardScores from "./CardScores";
+import CardActivityChart from "./ActivityChart";
+import CardMembers from "./Members";
+import CardScores from "./Scores";
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
 import { type Repo } from "~/db";

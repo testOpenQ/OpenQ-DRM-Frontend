@@ -1,4 +1,4 @@
-import CardScore from "./CardScore";
+import CardScore from "./Score";
 
 export default function CardScores({
   activity,

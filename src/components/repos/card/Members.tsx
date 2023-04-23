@@ -1,4 +1,4 @@
-import CardMember from "./CardMember";
+import CardMember from "./Member";
 
 type Member = {
   avatarUrl: string;
