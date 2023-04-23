@@ -126,58 +126,31 @@ Another handy feature could be to know, with the press of a button, what's going
 
 All in all lots of potential for generating high quality texts based on carefully tailored data, to get valuable insights into a project in a matter of momments.
 
+### Email Finder
+
+The `/api/find-email` endpoint is an AutoGPT-like experiment, letting it browse the web on its own to find email addresses for a given GitHub user.
+You provide it with scraped website data and it replies with commands like:
+
+```
+url:https://google.com?q=Christopher Stevers Email
+email:christopher.stevers1@gmail.com | High | Email for job opportunities
+```
+
+⚠️ This can get very expensive when using GPT-4. Preparing and reducing information before feeding it to a GPT is key to keeping costs low.
+Although there might be some hidden use cases that justify any cost.
+
 ## TODO
 
-(random notes from here on)
-
-- Import (text/csv) 2d
-- Score calculation 2d
-- Email client 5d
-- Stripe 3d
-  - For what purpose? On-demand, like ETH? Or fixed amount for a fixed quota?
-- GPT prompt improvement 3d
-  - Email research
-  - Commit analysis
-- GitHub fetching solidity / move to service worker 2d
-- Overall UI 3d
-
-**next:**
-
-Pay Button -> Get email button -> send E-Mail button
--> UI for that
--> codemocks for that
-
-Stripe Payment
-
-- Demo payment integration
-- On settings page, just continuing this demo flow
-- No purpose yet
-
-Tab in repo card for devs' emails
-
-- fetch unknown via ai (fetch all button)
-- Checkboxes
-- note from AI
-- choose/edit template
-- send button
-
-### Email Address Finder
-
-- first "manual"/script-based search
-
-  - look for email in public github profile data via API
-  - if found: Yes! The user is kind to us.
-  - if not:
-    - look for website (blog) and twitter in github profile via API
-    - fetch user's profile repo REDME and bio
-    - if twitter:
-      - look for website via twitter API
-      - fetch recent tweets (no retweets)
-    - collect all email addresses and URLs found in these contents (regex)
-
-- add obscured email patterns (name {at} domain.com)
-- before even GPT: Look for org email
-
-Currently GPT is not aware of the domains of the initial contents passed to it.
-If it discovers one of these urls when browsing, it will lead to passing it the same initial content.
-The content snippets needs the url.
+- Email functionality
+- Import (text/csv)
+- OpenQ account integration
+- Payments (What product? Price? Modalities?)
+  - Stripe
+  - Crypto?
+- Overall UI/UX
+  - Scores in repo cards
+  - User cards
+  - Confirm modals when deleting stuff
+  - Better error handling
+  - Page transitions / reduce UI flickering
+  - etc.
