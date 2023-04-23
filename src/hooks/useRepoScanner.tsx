@@ -3,11 +3,11 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 import { type RepoModel, getLatestRepoScan } from "~/db";
+import { evaluateRepoData } from "~/lib/githubData/repo/evaluate";
 import {
   REPO_QUERY,
-  type RepoData,
-  evaluateRepoData,
-} from "~/lib/githubScanner/evaluators/repo";
+  type RepoQueryResponseData,
+} from "~/lib/githubData/repo/query";
 
 export default function useRepoScanner(repo: RepoModel) {
   const { data } = useSession();
@@ -47,7 +47,7 @@ export default function useRepoScanner(repo: RepoModel) {
     }
 
     const scanner = new Scanner({ accessToken });
-    await scanner.scan<{ repository: RepoData }>(REPO_QUERY, {
+    await scanner.scan<{ repository: RepoQueryResponseData }>(REPO_QUERY, {
       owner: repo.ownerLogin,
       name: repo.name,
       since,

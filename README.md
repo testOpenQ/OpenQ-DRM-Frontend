@@ -39,27 +39,30 @@ After instantiating the scanner for the first time, you'll find [a database name
 
 ## Data Evaluations
 
-The stored "raw" data is then run through functions that extract the essence of interest from it.
+The stored "raw" data is then digested by functions that extract the desired essence from it.
 
-### User
+Find the related utilities in `src/lib/githubData`.
 
-### Repo
+Charts in the UI are handled by [Chart.js](https://www.chartjs.org/).
 
 ## Database (IndexedDB)
 
-### Campaigns
+In addition to the database that contains the scans and is provided by the GitHub Scanner package, the DRM uses another, local database for managing other app data, like campaigns, repositories and users.
 
-### Users
+```ts
+import { db, scansDb } from "~/db";
 
-### Repos
+// get all campaigns
+const campaigns = await db.campaigns.toArray();
 
-### Scans (GitHub Scanner)
+// get all scans
+const scans = await scansDb.scans.toArray();
+```
 
-## Authentication
+## Other OpenQ Services
 
-### GitHub
-
-### OpenQ
+Currently the DRM is completely independent from the other OpenQ services.
+Authentication via OpenQ account or providing additional data (like email addresses) is yet to be implemented.
 
 ## ChatGPT
 
@@ -115,7 +118,13 @@ await completeChat(context, 256, 0.5);
 
 ### Repo/User Commit Summary
 
+This is an excellent use case for this technology. If you have an OpenAI API key configured in your `.env` file, you can use the `/api/commit-summary` endpoint to get a summary of a given GitHub repository or user. You can try this in the repository card UI.
+
 ### Issues / Discussions
+
+Another handy feature could be to know, with the press of a button, what's going on in a repository's issues and discussions. GPT could be instructed to "write a report to get a sense of the community and the project's health", if provided with the relevant contents. You could of course include the commit summary in the report, too.
+
+All in all lots of potential for generating high quality texts based on carefully tailored data, to get valuable insights into a project in a matter of momments.
 
 ## TODO
 

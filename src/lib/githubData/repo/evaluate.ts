@@ -1,96 +1,33 @@
-import type { DocumentNode } from "graphql";
-import gql from "graphql-tag";
 import { normalize } from "~/lib/numbers";
-import { rateLimit, pageInfo } from "~/lib/githubScanner/queryFragments";
-
-export const REPO_QUERY: DocumentNode = gql`query (
-  $owner: String!,
-  $name: String!,
-  $since: GitTimestamp!,
-  $until: GitTimestamp!,
-  $first: Int!,
-  $after: String
-) {
-  ${rateLimit}
-  repository(owner: $owner, name: $name) {
-    defaultBranchRef {
-      name
-      target {
-        ... on Commit {
-          history(since: $since, until: $until, first: $first, after: $after) {
-            ${pageInfo}
-            nodes {
-              message
-              additions
-              deletions
-              changedFilesIfAvailable
-              committedDate
-              author {
-                user {
-                  id
-                  login
-                  email
-                  avatarUrl
-                  bio
-                  websiteUrl
-                }
-              }
-            }
-          }
-        }
-      }
-    }
-  }
-}`;
-
-export type CommitAuthor = {
-  email: string;
-  user: {
-    id: string;
-    login: string;
-    email: string;
-    avatarUrl: string;
-    bio: string;
-    websiteUrl: string;
-  };
-};
-
-export type RepoData = {
-  defaultBranchRef: {
-    name: string;
-    target: {
-      history: {
-        totalCount: number;
-        nodes: {
-          additions: number;
-          deletions: number;
-          changedFilesIfAvailable: number;
-          committedDate: string;
-          author: CommitAuthor;
-        }[];
-      };
-    };
-  };
-};
-
-export type RepoEvaluation = {
-  commitCount: number;
-  linesChanged: number;
-  commitsByDay: Record<string, { commitCount: number; linesChanged: number }>;
-  commitsByDayNormalized: { commitCount: number[]; linesChanged: number[] };
-  commitsByAuthor: Record<
-    string,
-    { commitCount: number; linesChanged: number }
-  >;
-  authors: CommitAuthor[];
-};
+import type { CommitAuthor, RepoQueryResponseData } from "./query";
 
 export type CommitsByDay = Record<
   string,
   { commitCount: number; linesChanged: number }
 >;
 
-export function evaluateRepoData(repoData: RepoData): RepoEvaluation {
+export type CommitsByDayNormalized = {
+  commitCount: number[];
+  linesChanged: number[];
+};
+
+export type CommitsByAuthor = Record<
+  string,
+  { commitCount: number; linesChanged: number }
+>;
+
+export type RepoEvaluation = {
+  commitCount: number;
+  linesChanged: number;
+  commitsByDay: CommitsByDay;
+  commitsByDayNormalized: CommitsByDayNormalized;
+  commitsByAuthor: CommitsByAuthor;
+  authors: CommitAuthor[];
+};
+
+export function evaluateRepoData(
+  repoData: RepoQueryResponseData
+): RepoEvaluation {
   const {
     defaultBranchRef: {
       target: {

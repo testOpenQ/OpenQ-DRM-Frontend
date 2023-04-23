@@ -6,19 +6,25 @@ import {
 } from "@mktcodelib/github-scanner";
 import Dexie, { type Table } from "dexie";
 import { type DocumentNode } from "graphql";
-import { USER_QUERY, type UserData } from "./lib/githubScanner/evaluators/user";
-import { REPO_QUERY, type RepoData } from "./lib/githubScanner/evaluators/repo";
+import {
+  USER_QUERY,
+  type UserQueryResponseData,
+} from "./lib/githubData/user/query";
+import {
+  REPO_QUERY,
+  type RepoQueryResponseData,
+} from "./lib/githubData/repo/query";
 
-export interface CampaignModel {
+interface CampaignModel {
   id?: number;
   name: string;
 }
 
-export interface Campaign extends CampaignModel {
+interface Campaign extends CampaignModel {
   id: number;
 }
 
-export interface CommitSummaryModel {
+interface CommitSummaryModel {
   id?: number;
   repoId?: number;
   userId?: number;
@@ -27,11 +33,11 @@ export interface CommitSummaryModel {
   summary: string;
 }
 
-export interface CommitSummary extends CommitSummaryModel {
+interface CommitSummary extends CommitSummaryModel {
   id: number;
 }
 
-export interface UserModel {
+interface UserModel {
   id?: number;
   login: string;
   restId: number;
@@ -53,11 +59,11 @@ export interface UserModel {
   campaignId: number;
 }
 
-export interface User extends UserModel {
+interface User extends UserModel {
   id: number;
 }
 
-export interface RepoModel {
+interface RepoModel {
   id?: number;
   githubRestId: number;
   githubGraphqlid: string;
@@ -91,11 +97,11 @@ export interface RepoModel {
   campaignId: number;
 }
 
-export interface Repo extends RepoModel {
+interface Repo extends RepoModel {
   id: number;
 }
 
-export class Db extends Dexie {
+class Db extends Dexie {
   campaigns!: Table<CampaignModel, number>;
   repos!: Table<RepoModel, number>;
   users!: Table<UserModel, number>;
@@ -112,49 +118,45 @@ export class Db extends Dexie {
   }
 }
 
-export const db = new Db();
+const db = new Db();
 
-export function getCampaigns() {
+function getCampaigns() {
   return db.campaigns.toArray() as Promise<Campaign[]>;
 }
 
-export function getCampaign(id: number | string) {
+function getCampaign(id: number | string) {
   return () => db.campaigns.get(Number(id)) as Promise<Campaign | undefined>;
 }
 
-export async function addCampaign(campaign: CampaignModel) {
+async function addCampaign(campaign: CampaignModel) {
   return await db.campaigns.add(campaign);
 }
 
-export async function saveCampaign(campaign: Campaign) {
+async function saveCampaign(campaign: Campaign) {
   return await db.campaigns.update(campaign.id, campaign);
 }
 
-export function deleteCampaign(id: number | string) {
+function deleteCampaign(id: number | string) {
   return db.campaigns.delete(Number(id));
 }
 
-export function getRepos(id?: number | string) {
+function getRepos(campaignId?: number | string) {
   return (
-    id
-      ? db.repos.where({ campaignId: Number(id) }).toArray()
+    campaignId
+      ? db.repos.where({ campaignId: Number(campaignId) }).toArray()
       : db.repos.toArray()
   ) as Promise<Repo[]>;
 }
 
-export function getRepo(id: number | string) {
-  return () => db.repos.get(Number(id)) as Promise<Repo | undefined>;
-}
-
-export async function addRepo(repo: RepoModel) {
+async function addRepo(repo: RepoModel) {
   return await db.repos.add(repo);
 }
 
-export function deleteRepo(id: number | string) {
+function deleteRepo(id: number | string) {
   return db.repos.delete(Number(id));
 }
 
-export function getUsers(id?: number | string) {
+function getUsers(id?: number | string) {
   return (
     id
       ? db.users.where({ campaignId: Number(id) }).toArray()
@@ -162,39 +164,35 @@ export function getUsers(id?: number | string) {
   ) as Promise<User[]>;
 }
 
-export function getUser(id: number | string) {
-  return () => db.users.get(Number(id)) as Promise<User | undefined>;
-}
-
-export async function addUser(user: UserModel) {
+async function addUser(user: UserModel) {
   return await db.users.add(user);
 }
 
-export function deleteUser(id: number | string) {
+function deleteUser(id: number | string) {
   return db.users.delete(Number(id));
 }
 
-export function getRepoCommitSummaries(repoId: number) {
+function getRepoCommitSummaries(repoId: number) {
   return db.commitSummaries.where({ repoId }).toArray() as Promise<
     CommitSummary[]
   >;
 }
 
-export function getUserCommitSummaries(userId: number) {
+function getUserCommitSummaries(userId: number) {
   return db.commitSummaries.where({ userId }).toArray() as Promise<
     CommitSummary[]
   >;
 }
 
-export function addCommitSummary(commitSummary: CommitSummaryModel) {
+function addCommitSummary(commitSummary: CommitSummaryModel) {
   return db.commitSummaries.add(commitSummary);
 }
 
-export async function getPendingScans() {
+async function getPendingScans() {
   return scansDb.scans.where("done").equals(0).toArray();
 }
 
-export async function getLatestScan<DataType extends Record<string, unknown>>(
+async function getLatestScan<DataType extends Record<string, unknown>>(
   query: DocumentNode,
   variables: QueryVariables
 ): Promise<Scan<DataType> | undefined> {
@@ -209,23 +207,23 @@ export async function getLatestScan<DataType extends Record<string, unknown>>(
   return scan;
 }
 
-export function getLatestUserScan(
+function getLatestUserScan(
   login: string
-): Promise<Scan<{ user: UserData }> | undefined> {
-  return getLatestScan<{ user: UserData }>(USER_QUERY, {
+): Promise<Scan<{ user: UserQueryResponseData }> | undefined> {
+  return getLatestScan<{ user: UserQueryResponseData }>(USER_QUERY, {
     login,
     firstFollowers: 50,
     firstPrs: 50,
   });
 }
 
-export function getLatestRepoScan(
+function getLatestRepoScan(
   owner: string,
   name: string,
   since: string,
   until: string
-): Promise<Scan<{ repository: RepoData }> | undefined> {
-  return getLatestScan<{ repository: RepoData }>(REPO_QUERY, {
+): Promise<Scan<{ repository: RepoQueryResponseData }> | undefined> {
+  return getLatestScan<{ repository: RepoQueryResponseData }>(REPO_QUERY, {
     owner,
     name,
     since,
@@ -233,3 +231,33 @@ export function getLatestRepoScan(
     first: 50,
   });
 }
+
+export {
+  type CampaignModel,
+  type Campaign,
+  type CommitSummaryModel,
+  type CommitSummary,
+  type UserModel,
+  type User,
+  type RepoModel,
+  type Repo,
+  getCampaigns,
+  getCampaign,
+  addCampaign,
+  saveCampaign,
+  deleteCampaign,
+  getRepos,
+  addRepo,
+  deleteRepo,
+  getUsers,
+  addUser,
+  deleteUser,
+  getRepoCommitSummaries,
+  getUserCommitSummaries,
+  addCommitSummary,
+  getPendingScans,
+  getLatestUserScan,
+  getLatestRepoScan,
+  db,
+  scansDb,
+};

@@ -8,7 +8,7 @@ import {
   getRepoCommitSummaries,
 } from "~/db";
 import useLocalStorage from "~/hooks/useLocalstorage";
-import type { RepoData } from "~/lib/githubScanner/evaluators/repo";
+import type { RepoQueryResponseData } from "~/lib/githubData/repo/query";
 
 export default function ChangesTab({
   repo,
@@ -24,9 +24,8 @@ export default function ChangesTab({
     true
   );
 
-  const [latestRepoScanData, setLatestRepoScanData] = useState<RepoData | null>(
-    null
-  );
+  const [latestRepoScanData, setLatestRepoScanData] =
+    useState<RepoQueryResponseData | null>(null);
   const [commitSummary, setCommitSummary] = useState<string | null>(null);
   const [generatingSummary, setGeneratingSummary] = useState(false);
 
