@@ -30,10 +30,12 @@ This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3
 
 ## GitHub Data Scanner
 
-Fetching larger amounts of data from the GitHub API is handled by the [@mktcodelib/github-scanner package](https://npmjs.com/package/@mktcodelib/github-scanner). The term "Scan" just means: A GraphQL query with one ore more paginated properties, where all data / all pages are automatically fetched and progress can be observed.
+One motivation so far was to leverage the client (and the user's GitHub access token) as much as possible, before introducing any heavy backend components. As a result, two packages were created to handle the more demanding GitHub API queries smoothly.
 
-It uses [@mktcodelib/graphql-fetch-all](https://npmjs.com/package/@mktcodelib/graphql-fetch-all) and adds [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) storage and [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers) on top of it.
-From IndexedDB results can then be evaluated and presented in the UI.
+The term "Scan" in the [@mktcodelib/github-scanner package](https://npmjs.com/package/@mktcodelib/github-scanner) refers to a GraphQL query with one ore more paginated properties, where all data / all pages are automatically fetched and the progress can be observed.
+
+It uses [@mktcodelib/graphql-fetch-all](https://npmjs.com/package/@mktcodelib/graphql-fetch-all) to handle paginated queries and adds [IndexedDB](https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API) for storage and [Web Workers](https://developer.mozilla.org/en-US/docs/Web/API/Web_Workers_API/Using_web_workers), ensuring a good UX, on top of it.
+From IndexedDB results can be evaluated and presented in the UI.
 
 After instantiating the scanner for the first time, you'll find [a database named `@mktcodelib/github-scanner-<version>` with a single table called `scans`](https://github.com/mktcode/lib/blob/master/packages/github-scanner/src/db.ts).
 
