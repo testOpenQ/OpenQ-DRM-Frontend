@@ -1,4 +1,4 @@
-import { DocumentNode } from "graphql";
+import type { DocumentNode } from "graphql";
 import gql from "graphql-tag";
 import { rateLimit, pageInfo } from "~/lib/githubScanner/queryFragments";
 

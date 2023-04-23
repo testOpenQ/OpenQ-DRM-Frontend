@@ -6,9 +6,8 @@ import {
 } from "@mktcodelib/github-scanner";
 import Dexie, { type Table } from "dexie";
 import { type DocumentNode } from "graphql";
-import { type UserData } from "./lib/githubScanner/evaluators/user";
-import { REPO_QUERY, USER_QUERY } from "./lib/githubScanner/queries";
-import { type RepoData } from "./lib/githubScanner/evaluators/repo";
+import { USER_QUERY, type UserData } from "./lib/githubScanner/evaluators/user";
+import { REPO_QUERY, type RepoData } from "./lib/githubScanner/evaluators/repo";
 
 export interface CampaignModel {
   id?: number;

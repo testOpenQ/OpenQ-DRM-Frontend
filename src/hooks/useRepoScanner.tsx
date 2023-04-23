@@ -4,10 +4,10 @@ import { useSession } from "next-auth/react";
 import { useMemo } from "react";
 import { type RepoModel, getLatestRepoScan } from "~/db";
 import {
-  RepoData,
+  REPO_QUERY,
+  type RepoData,
   evaluateRepoData,
 } from "~/lib/githubScanner/evaluators/repo";
-import { REPO_QUERY } from "~/lib/githubScanner/queries";
 
 export default function useRepoScanner(repo: RepoModel) {
   const { data } = useSession();
