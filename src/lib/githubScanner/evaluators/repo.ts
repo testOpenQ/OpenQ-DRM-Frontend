@@ -1,3 +1,48 @@
+import { DocumentNode } from "graphql";
+import gql from "graphql-tag";
+import { normalize } from "~/lib/numbers";
+import { rateLimit, pageInfo } from "~/lib/githubScanner/queryFragments";
+
+export const REPO_QUERY: DocumentNode = gql`query (
+  $owner: String!,
+  $name: String!,
+  $since: GitTimestamp!,
+  $until: GitTimestamp!,
+  $first: Int!,
+  $after: String
+) {
+  ${rateLimit}
+  repository(owner: $owner, name: $name) {
+    defaultBranchRef {
+      name
+      target {
+        ... on Commit {
+          history(since: $since, until: $until, first: $first, after: $after) {
+            ${pageInfo}
+            nodes {
+              message
+              additions
+              deletions
+              changedFilesIfAvailable
+              committedDate
+              author {
+                user {
+                  id
+                  login
+                  email
+                  avatarUrl
+                  bio
+                  websiteUrl
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}`;
+
 export type CommitAuthor = {
   email: string;
   user: {
@@ -44,11 +89,6 @@ export type CommitsByDay = Record<
   string,
   { commitCount: number; linesChanged: number }
 >;
-
-function normalizeNumbers(numbers: number[]): number[] {
-  const max = Math.max(...numbers);
-  return numbers.map((num) => num / max);
-}
 
 export function evaluateRepoData(repoData: RepoData): RepoEvaluation {
   const {
@@ -108,10 +148,10 @@ export function evaluateRepoData(repoData: RepoData): RepoEvaluation {
     linesChanged,
     commitsByDay,
     commitsByDayNormalized: {
-      commitCount: normalizeNumbers(
+      commitCount: normalize(
         Object.values(commitsByDay).map(({ commitCount }) => commitCount)
       ),
-      linesChanged: normalizeNumbers(
+      linesChanged: normalize(
         Object.values(commitsByDay).map(({ linesChanged }) => linesChanged)
       ),
     },
