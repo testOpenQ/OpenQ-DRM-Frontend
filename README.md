@@ -61,6 +61,16 @@ const campaigns = await db.campaigns.toArray();
 const scans = await scansDb.scans.toArray();
 ```
 
+In both cases [Dexie.js](https://dexie.org/) is used as an abstraction layer around IndexedDB. Get yourself familiar with it, if you want to work with the DRM's local databases directly. Common helpers are/should be provided by the `db` exports.
+
+```ts
+import { getCampaigns } from "~/db";
+
+const liveCampaigns = useLiveQuery(getCampaigns);
+```
+
+See: [Live Queries](<https://dexie.org/docs/dexie-react-hooks/useLiveQuery()>)
+
 ## Other OpenQ Services
 
 Currently the DRM is completely independent from the other OpenQ services.
