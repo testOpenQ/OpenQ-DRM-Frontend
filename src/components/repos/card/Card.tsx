@@ -4,13 +4,13 @@ import CardScores from "./CardScores";
 import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
 import { type Repo } from "~/db";
-import Button from "../base/Button";
+import Button from "../../base/Button";
 import { formatter } from "~/lib/numbers";
 import { generateFakeScores } from "~/lib/scores";
-import CardHeader from "./card/Header";
-import ChangesTab from "./card/tabs/Changes";
+import CardHeader from "./Header";
+import ChangesTab from "./tabs/Changes";
 import useRepoScanner from "~/hooks/useRepoScanner";
-import DiscreetButton from "../base/DiscreetButton";
+import DiscreetButton from "../../base/DiscreetButton";
 
 export default function Card({ repo }: { repo: Repo }) {
   const { data } = useSession();

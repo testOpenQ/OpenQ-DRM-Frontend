@@ -14,7 +14,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Headline from "../layout/Headline";
 import { useRouter } from "next/router";
-import RepoCard from "../repos/Card";
+import RepoCard from "../repos/card/Card";
 import DiscreetButton from "../base/DiscreetButton";
 import Link from "next/link";
 import { useState } from "react";
