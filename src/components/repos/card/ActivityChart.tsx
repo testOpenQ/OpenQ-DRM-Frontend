@@ -10,26 +10,17 @@ import {
 } from "chart.js";
 import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
+import { RepoEvaluation } from "~/lib/githubData/repo/evaluate";
+import { formatter } from "~/lib/numbers";
 
-interface CommitsByDay {
-  [key: string]: { commitCount: number; linesChanged: number };
-}
-interface CommitsByDayNormalized {
-  commitCount: number[];
-  linesChanged: number[];
-}
-
-function prepareChartData(
-  commitsByDay: CommitsByDay,
-  commitsByDayNormalized: CommitsByDayNormalized
-) {
-  const commits = commitsByDayNormalized.commitCount;
+function prepareChartData(repoEvaluation: RepoEvaluation) {
+  const commits = repoEvaluation.commitsByDayNormalized.commitCount;
   commits.reverse();
-  const linesChanged = commitsByDayNormalized.linesChanged;
+  const linesChanged = repoEvaluation.commitsByDayNormalized.linesChanged;
   linesChanged.reverse();
 
   return {
-    labels: Object.keys(commitsByDay),
+    labels: Object.keys(repoEvaluation.commitsByDay),
     datasets: [
       {
         data: commits,
@@ -56,11 +47,9 @@ function prepareChartData(
 }
 
 export default function CardActivityChart({
-  commitsByDay,
-  commitsByDayNormalized,
+  repoEvaluation,
 }: {
-  commitsByDay: CommitsByDay;
-  commitsByDayNormalized: CommitsByDayNormalized;
+  repoEvaluation: RepoEvaluation;
 }) {
   ChartJS.register(
     CategoryScale,
@@ -71,8 +60,8 @@ export default function CardActivityChart({
   );
 
   const data: ChartData<"line"> = useMemo(
-    () => prepareChartData(commitsByDay, commitsByDayNormalized),
-    [commitsByDay, commitsByDayNormalized]
+    () => prepareChartData(repoEvaluation),
+    [repoEvaluation]
   );
 
   const options: ChartOptions<"line"> = useMemo(() => {
@@ -106,5 +95,19 @@ export default function CardActivityChart({
     };
   }, []);
 
-  return <Line data={data} options={options} />;
+  return (
+    <div className="bg-gray-900/50 pt-3">
+      <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs text-gray-400">
+        <div>
+          {formatter.format(repoEvaluation.commitCount)} commits
+          <div className="mr-2 mt-1 h-1 w-full rounded-full bg-white"></div>
+        </div>
+        <div>
+          {formatter.format(repoEvaluation.linesChanged)} changes
+          <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-gray-400"></div>
+        </div>
+      </div>
+      <Line data={data} options={options} />
+    </div>
+  );
 }

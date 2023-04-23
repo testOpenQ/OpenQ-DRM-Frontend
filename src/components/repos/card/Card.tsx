@@ -5,7 +5,6 @@ import { signIn, useSession } from "next-auth/react";
 import { useState } from "react";
 import { type Repo } from "~/db";
 import Button from "../../base/Button";
-import { formatter } from "~/lib/numbers";
 import { generateFakeScores } from "~/lib/scores";
 import CardHeader from "./Header";
 import ChangesTab from "./tabs/Changes";
@@ -75,22 +74,7 @@ export default function Card({ repo }: { repo: Repo }) {
         </div>
       </div>
       {latestRepoEvaluation && (
-        <div className="bg-gray-900/50 pt-3">
-          <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs text-gray-400">
-            <div>
-              {formatter.format(latestRepoEvaluation.commitCount)} commits
-              <div className="mr-2 mt-1 h-1 w-full rounded-full bg-white"></div>
-            </div>
-            <div>
-              {formatter.format(latestRepoEvaluation.linesChanged)} changes
-              <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-gray-400"></div>
-            </div>
-          </div>
-          <CardActivityChart
-            commitsByDay={latestRepoEvaluation.commitsByDay}
-            commitsByDayNormalized={latestRepoEvaluation.commitsByDayNormalized}
-          />
-        </div>
+        <CardActivityChart repoEvaluation={latestRepoEvaluation} />
       )}
       <div className="text-xs">
         <div className="flex">
