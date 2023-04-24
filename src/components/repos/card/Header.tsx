@@ -7,6 +7,7 @@ import Image from "next/image";
 import { Scanner } from "@mktcodelib/github-scanner";
 import { REPO_QUERY, RepoQueryResponseData } from "~/lib/githubData/repo/query";
 import { useEffect, useState } from "react";
+import DeleteButton from "./DeleteButton";
 
 export default function CardHeader({
   repo,
@@ -61,10 +62,6 @@ export default function CardHeader({
     }
   });
 
-  function handleDeleteRepo() {
-    deleteRepo(repo.id).catch(console.error);
-  }
-
   return (
     <div className="flex items-center justify-between bg-gray-900/50 px-3 py-2 font-bold">
       <div className="flex items-center">
@@ -90,11 +87,7 @@ export default function CardHeader({
             {!isScanning && <ArrowPathIcon className="h-4 w-4" />}
           </DiscreetButton>
         )}
-        {!isScanning && (
-          <DiscreetButton>
-            <XMarkIcon className="h-4 w-4" onClick={handleDeleteRepo} />
-          </DiscreetButton>
-        )}
+        {!isScanning && <DeleteButton repo={repo} />}
       </div>
     </div>
   );
