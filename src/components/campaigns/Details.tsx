@@ -1,24 +1,17 @@
+import { type Campaign, type Repo, type User, saveCampaign } from "~/db";
 import {
-  type Campaign,
-  type Repo,
-  type User,
-  deleteCampaign,
-  saveCampaign,
-} from "~/db";
-import {
-  TrashIcon,
   PencilIcon,
   PlusIcon,
   CheckIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Headline from "../layout/Headline";
-import { useRouter } from "next/router";
 import RepoCard from "../repos/card/Card";
 import DiscreetButton from "../base/DiscreetButton";
 import Link from "next/link";
 import { useMemo, useState } from "react";
 import Input from "../base/Input";
+import DeleteButton from "./DeleteButton";
 
 export default function CampaignsDetails({
   campaign,
@@ -28,8 +21,6 @@ export default function CampaignsDetails({
   repos: Repo[];
   users: User[];
 }) {
-  const router = useRouter();
-
   const since = useMemo(() => {
     const since = new Date();
     since.setHours(0, 0, 0, 0);
@@ -101,13 +92,6 @@ export default function CampaignsDetails({
     saveCampaign(campaign).catch(console.error);
   }
 
-  function handleDeleteCampaign(id: number) {
-    router
-      .push("/")
-      .then(() => deleteCampaign(id))
-      .catch(console.error);
-  }
-
   return (
     <>
       <Headline>
@@ -138,12 +122,7 @@ export default function CampaignsDetails({
               <PlusIcon className="h-5 w-5" />
             </DiscreetButton>
           </Link>
-          <DiscreetButton
-            onClick={() => handleDeleteCampaign(campaign.id)}
-            className="hover:!bg-red-700"
-          >
-            <TrashIcon className="h-5 w-5" />
-          </DiscreetButton>
+          <DeleteButton campaign={campaign} />
         </div>
       </Headline>
 
