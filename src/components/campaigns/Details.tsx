@@ -151,9 +151,6 @@ export default function CampaignsDetails({
         <>
           <h2 className="text-3xl font-bold text-indigo-700">Repositories</h2>
           <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
-            {JSON.stringify(scores, null, 2)}
-            ---
-            {JSON.stringify(scoreRanks, null, 2)}
             {repos.map((repo) => (
               <RepoCard
                 key={repo.id}
