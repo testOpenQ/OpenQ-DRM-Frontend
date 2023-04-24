@@ -160,6 +160,7 @@ Although there might be some hidden use cases that justify any cost.
   - Stripe
   - Crypto?
 - Overall UI/UX
+  - Timeperiod for data (currently hardcoded to 30 days)
   - Scores in repo cards
   - User cards
   - Confirm modals when deleting stuff
