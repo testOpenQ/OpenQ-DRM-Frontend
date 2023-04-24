@@ -21,9 +21,23 @@ export type RepoEvaluation = {
   linesChanged: number;
   commitsByDay: CommitsByDay;
   commitsByDayNormalized: CommitsByDayNormalized;
+  commitsTrend: number;
   commitsByAuthor: CommitsByAuthor;
   authors: CommitAuthor[];
 };
+
+function calculateTrend(normalizedNumbers: number[]) {
+  const diffs = normalizedNumbers
+    .slice(1)
+    .map((value, index) => value - normalizedNumbers[index]!);
+  const sum = diffs.reduce((acc, curr) => acc + curr, 0);
+  const trend = sum / diffs.length;
+
+  const maxDiff = Math.max(...diffs) - Math.min(...diffs);
+  const normalizedTrend = maxDiff === 0 ? 0 : trend / maxDiff;
+
+  return normalizedTrend;
+}
 
 export function evaluateRepoData(
   repoData: RepoQueryResponseData
@@ -56,6 +70,17 @@ export function evaluateRepoData(
 
     return acc;
   }, {} as Record<string, { commitCount: number; linesChanged: number }>);
+
+  const commitsByDayNormalized = {
+    commitCount: normalize(
+      Object.values(commitsByDay).map(({ commitCount }) => commitCount)
+    ),
+    linesChanged: normalize(
+      Object.values(commitsByDay).map(({ linesChanged }) => linesChanged)
+    ),
+  };
+
+  const commitsTrend = calculateTrend(commitsByDayNormalized.commitCount);
 
   const authors = commits.reduce((acc, commit) => {
     if (acc.some((a) => a.user.id === commit.author.user.id)) return acc;
@@ -92,6 +117,7 @@ export function evaluateRepoData(
         Object.values(commitsByDay).map(({ linesChanged }) => linesChanged)
       ),
     },
+    commitsTrend,
     commitsByAuthor,
     authors,
   };
