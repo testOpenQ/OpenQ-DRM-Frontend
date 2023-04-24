@@ -57,6 +57,7 @@ interface UserModel {
   created_at: string;
   updated_at: string;
   campaignId: number;
+  lastScanId?: number;
 }
 
 interface User extends UserModel {
@@ -95,6 +96,7 @@ interface RepoModel {
   defaultBranch: string;
   subscribersCount: number;
   campaignId: number;
+  lastScanId?: number;
 }
 
 interface Repo extends RepoModel {
@@ -148,8 +150,12 @@ function getRepos(campaignId?: number | string) {
   ) as Promise<Repo[]>;
 }
 
-async function addRepo(repo: RepoModel) {
-  return await db.repos.add(repo);
+function addRepo(repo: RepoModel) {
+  return db.repos.add(repo);
+}
+
+function editRepo(repoId: number, changes: Partial<RepoModel>) {
+  return db.repos.update(repoId, changes);
 }
 
 function deleteRepo(id: number | string) {
@@ -164,8 +170,12 @@ function getUsers(id?: number | string) {
   ) as Promise<User[]>;
 }
 
-async function addUser(user: UserModel) {
-  return await db.users.add(user);
+function addUser(user: UserModel) {
+  return db.users.add(user);
+}
+
+function editUser(userId: number, changes: Partial<UserModel>) {
+  return db.users.update(userId, changes);
 }
 
 function deleteUser(id: number | string) {
@@ -248,9 +258,11 @@ export {
   deleteCampaign,
   getRepos,
   addRepo,
+  editRepo,
   deleteRepo,
   getUsers,
   addUser,
+  editUser,
   deleteUser,
   getRepoCommitSummaries,
   getUserCommitSummaries,

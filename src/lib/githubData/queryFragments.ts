@@ -4,7 +4,8 @@ export const rateLimit = `rateLimit {
   resetAt
 }`;
 
-export const pageInfo = `pageInfo {
+export const pageInfo = `totalCount
+pageInfo {
   hasNextPage
   endCursor
 }`;

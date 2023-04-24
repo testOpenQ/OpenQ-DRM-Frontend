@@ -17,7 +17,7 @@ import { useRouter } from "next/router";
 import RepoCard from "../repos/card/Card";
 import DiscreetButton from "../base/DiscreetButton";
 import Link from "next/link";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Input from "../base/Input";
 
 export default function CampaignsDetails({
@@ -29,6 +29,19 @@ export default function CampaignsDetails({
   users: User[];
 }) {
   const router = useRouter();
+
+  const since = useMemo(() => {
+    const since = new Date();
+    since.setHours(0, 0, 0, 0);
+    since.setMonth(since.getMonth() - 1);
+    return since.toISOString();
+  }, []);
+
+  const until = useMemo(() => {
+    const until = new Date();
+    until.setHours(0, 0, 0, 0);
+    return until.toISOString();
+  }, []);
 
   const [editName, setEditName] = useState(false);
   const [name, setName] = useState(campaign.name);
@@ -91,7 +104,7 @@ export default function CampaignsDetails({
           <h2 className="text-3xl font-bold text-indigo-700">Repositories</h2>
           <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
             {repos.map((repo) => (
-              <RepoCard key={repo.id} repo={repo} />
+              <RepoCard key={repo.id} repo={repo} since={since} until={until} />
             ))}
           </div>
         </>
