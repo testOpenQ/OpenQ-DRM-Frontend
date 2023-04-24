@@ -166,4 +166,5 @@ Although there might be some hidden use cases that justify any cost.
   - Confirm modals when deleting stuff
   - Better error handling
   - Page transitions / reduce UI flickering
+  - Drag & drop cards
   - etc.
