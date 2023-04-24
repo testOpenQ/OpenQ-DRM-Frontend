@@ -167,4 +167,5 @@ Although there might be some hidden use cases that justify any cost.
   - Better error handling
   - Page transitions / reduce UI flickering
   - Drag & drop cards
+  - Smooth GitHub API rate limit handling
   - etc.
