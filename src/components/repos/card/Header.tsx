@@ -6,7 +6,7 @@ import DiscreetButton from "../../base/DiscreetButton";
 import Image from "next/image";
 import { Scanner } from "@mktcodelib/github-scanner";
 import { REPO_QUERY, RepoQueryResponseData } from "~/lib/githubData/repo/query";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function CardHeader({
   repo,
@@ -54,6 +54,12 @@ export default function CardHeader({
 
     setIsScanning(false);
   }
+
+  useEffect(() => {
+    if (!repo.lastScanId) {
+      scan();
+    }
+  });
 
   function handleDeleteRepo() {
     deleteRepo(repo.id).catch(console.error);
