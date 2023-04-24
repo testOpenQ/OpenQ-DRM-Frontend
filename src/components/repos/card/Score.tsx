@@ -29,22 +29,22 @@ export default function CardScore({
       />
       <div
         className={`h-4 w-4 rounded transition-colors ${
-          score > 1 && animationKey > 1 ? activeClass : "bg-gray-700"
+          score > 2 && animationKey > 1 ? activeClass : "bg-gray-700"
         }`}
       />
       <div
         className={`h-4 w-4 rounded transition-colors ${
-          score > 2 && animationKey > 2 ? activeClass : "bg-gray-700"
+          score > 4 && animationKey > 2 ? activeClass : "bg-gray-700"
         }`}
       />
       <div
         className={`h-4 w-4 rounded transition-colors ${
-          score > 3 && animationKey > 3 ? activeClass : "bg-gray-700"
+          score > 6 && animationKey > 3 ? activeClass : "bg-gray-700"
         }`}
       />
       <div
         className={`h-4 w-4 rounded transition-colors ${
-          score > 4 && animationKey > 4 ? activeClass : "bg-gray-700"
+          score > 8 && animationKey > 4 ? activeClass : "bg-gray-700"
         }`}
       />
     </div>

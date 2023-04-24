@@ -19,10 +19,14 @@ export default function Card({
   repo,
   since,
   until,
+  ranks,
+  submitScore,
 }: {
   repo: Repo;
   since: string;
   until: string;
+  ranks: { [key: string]: number };
+  submitScore: (score: number, category: string) => void;
 }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
@@ -39,12 +43,12 @@ export default function Card({
   useEffect(() => {
     (async () => {
       if (lastScan) {
-        setRepoEvaluation(evaluateRepoData(lastScan.data.repository));
+        const repoEvaluation = evaluateRepoData(lastScan.data.repository);
+        setRepoEvaluation(repoEvaluation);
+        submitScore(repoEvaluation.commitsTrend, "activity");
       }
     })();
   }, [lastScan]);
-
-  const scores = generateFakeScores(repo.fullName);
 
   function handleSignIn() {
     signIn("github").catch(console.error);
@@ -78,10 +82,10 @@ export default function Card({
         </div>
         <div className="flex-1 px-5 py-3">
           <CardScores
-            activity={scores[0] || 0}
-            growth={scores[1] || 0}
-            popularity={scores[2] || 0}
-            reputation={scores[3] || 0}
+            activity={ranks["activity"] || 0}
+            growth={ranks[1] || 0}
+            popularity={ranks[2] || 0}
+            reputation={ranks[3] || 0}
           />
         </div>
       </div>
