@@ -2,6 +2,7 @@ import { useState } from "react";
 import { type Repo } from "~/db";
 import ChangesTab from "./Changes";
 import DiscreetButton from "../../../base/DiscreetButton";
+import { RepoQueryResponseData } from "~/lib/githubData/repo/query";
 
 enum CardTabs {
   Changes = "changes",
@@ -12,10 +13,12 @@ enum CardTabs {
 
 export default function Tabs({
   repo,
+  lastScanData,
   since,
   until,
 }: {
   repo: Repo;
+  lastScanData: RepoQueryResponseData;
   since: string;
   until: string;
 }) {
@@ -71,10 +74,15 @@ export default function Tabs({
       </div>
       <div
         className={`${
-          showTab === "changes" ? "max-h-40" : "max-h-0"
+          showTab === "changes" ? "" : "max-h-0"
         } overflow-auto bg-gray-900/50 transition-all`}
       >
-        <ChangesTab repo={repo} since={since} until={until} />
+        <ChangesTab
+          repo={repo}
+          lastScanData={lastScanData}
+          since={since}
+          until={until}
+        />
       </div>
     </div>
   );

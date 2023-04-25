@@ -92,7 +92,12 @@ export default function Card({
         </div>
       </div>
       {repoEvaluation && <CardActivityChart repoEvaluation={repoEvaluation} />}
-      <Tabs repo={repo} since={since} until={until} />
+      <Tabs
+        repo={repo}
+        lastScanData={lastScan?.data.repository}
+        since={since}
+        until={until}
+      />
     </div>
   );
 }
