@@ -40,6 +40,8 @@ export default function Card({
     [repo.lastScanId]
   );
 
+  const fakeScores = generateFakeScores(repo.fullName);
+
   useEffect(() => {
     (async () => {
       if (lastScan) {
@@ -82,10 +84,10 @@ export default function Card({
         </div>
         <div className="flex-1 px-5 py-3">
           <CardScores
-            activity={ranks["activity"] || 0}
-            growth={ranks[1] || 0}
-            popularity={ranks[2] || 0}
-            reputation={ranks[3] || 0}
+            activity={fakeScores[1] || 0}
+            growth={fakeScores[1] || 0}
+            popularity={fakeScores[2] || 0}
+            reputation={fakeScores[3] || 0}
           />
         </div>
       </div>

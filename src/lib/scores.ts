@@ -29,7 +29,7 @@ export function generateFakeScores(repoFullName: string) {
   const numbers = [];
 
   for (let i = 0; i < 4; i++) {
-    numbers.push(Math.min(Math.floor(random() * 6) + 2, 5));
+    numbers.push(Math.min(Math.floor(random() * 11) + 4, 10));
   }
 
   return numbers;
