@@ -6,12 +6,12 @@ import {
 } from "openai";
 import { gpt, MAX_TOKENS_GPT3_5, countTokens } from "~/server/gpt";
 
-type Data = {
+type ResponseData = {
   summary?: ChatCompletionResponseMessage | string;
   error?: unknown;
 };
 
-type ValidCommit = {
+type Commit = {
   message: string;
   author: {
     user: {
@@ -20,11 +20,11 @@ type ValidCommit = {
   };
 };
 
-type ValidBody = {
-  commits: ValidCommit[];
+type RequestBody = {
+  commits: Commit[];
 };
 
-function isValidCommit(commit: unknown): commit is ValidCommit {
+function isCommit(commit: unknown): commit is Commit {
   return (
     typeof commit === "object" &&
     commit !== null &&
@@ -41,18 +41,18 @@ function isValidCommit(commit: unknown): commit is ValidCommit {
   );
 }
 
-function isValidBody(body: unknown): body is ValidBody {
+function isRequestBody(body: unknown): body is RequestBody {
   return (
     typeof body === "object" &&
     body !== null &&
     "commits" in body &&
     typeof body.commits === "object" &&
     Array.isArray(body.commits) &&
-    body.commits.every(isValidCommit)
+    body.commits.every(isCommit)
   );
 }
 
-function sanitizeCommits(commits: ValidCommit[]) {
+function sanitizeCommits(commits: Commit[]) {
   return commits
     .map((commit) => {
       return {
@@ -69,7 +69,7 @@ function sanitizeCommits(commits: ValidCommit[]) {
     .filter((commit) => commit.message !== "");
 }
 
-function filterCommits(commits: ValidCommit[]) {
+function filterCommits(commits: Commit[]) {
   return commits.filter((commit) => {
     return (
       !commit.message.startsWith("Merge branch") &&
@@ -78,7 +78,7 @@ function filterCommits(commits: ValidCommit[]) {
   });
 }
 
-function prepareCommits(commits: ValidCommit[], renderAuthor: boolean) {
+function prepareCommits(commits: Commit[], renderAuthor: boolean) {
   return commits.map((commit) => {
     return renderAuthor
       ? `${commit.author.user.login} ${commit.message}`
@@ -87,10 +87,6 @@ function prepareCommits(commits: ValidCommit[], renderAuthor: boolean) {
 }
 
 const degender = `You infer a developer's gender from the username and use only he or she. If the username doesn't indicate the gender, you use "he" or the username.`;
-function degenderSolo(name: string) {
-  return `You infer ${name}'s gender from the username. If "${name}" doesn't indicate the gender, you use "he" or "${name}".`;
-}
-
 const shorten = `Your report is short and to the point. You don't include irrelevant or redundant details or inactive developers. You keep in mind that your report must be less than 128 tokens.`;
 
 const commitSummaryInstruction = `You are ChangeLogGPT: You summarize commit messages into a changelog for each developer. ${degender}`;
@@ -102,9 +98,7 @@ function teamReportInstruction(authorNames: string[]) {
 }
 
 function soloDevReportInstruction(name: string) {
-  return `You are ChangeReportGPT: You write a very brief and vell formulated summary for a project manager, about developer ${name}'s recent work. Start with: "${name} ...". ${degenderSolo(
-    name
-  )} ${shorten}`;
+  return `You are ChangeReportGPT: You write a very brief and well formulated summary for a project manager, about developer ${name}'s recent work. Start with: "${name} ...". ${degender} ${shorten}`;
 }
 
 function chunkCommits(commits: string[]) {
@@ -132,11 +126,11 @@ function chunkCommits(commits: string[]) {
 
 export default async function CommitSummary(
   req: NextApiRequest,
-  res: NextApiResponse<Data>
+  res: NextApiResponse<ResponseData>
 ) {
-  const body = req.body as ValidBody;
+  const body = req.body as RequestBody;
 
-  if (!isValidBody(body)) {
+  if (!isRequestBody(body)) {
     res.status(400).json({ error: "No valid commits array provided." });
     return;
   }
