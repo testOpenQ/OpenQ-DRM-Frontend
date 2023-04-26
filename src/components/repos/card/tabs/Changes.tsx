@@ -11,6 +11,13 @@ import {
 import useLocalStorage from "~/hooks/useLocalstorage";
 import type { RepoQueryResponseData } from "~/lib/githubData/repo/query";
 
+type AuthorsByName = Map<
+  string,
+  RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0]["author"]
+>;
+type RawCommit =
+  RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0];
+
 export default function ChangesTab({
   repo,
   lastScanData,
@@ -22,6 +29,11 @@ export default function ChangesTab({
   since: string;
   until: string;
 }) {
+  const [showCommitSummaryInfo, setShowCommitSummaryInfo] = useLocalStorage(
+    "ui.info.commit-summary",
+    true
+  );
+
   const summaries = useLiveQuery(() => getRepoCommitSummaries(repo.id));
   const [latestSummary, setLatestSummary] = useState<CommitSummary | null>(
     null
@@ -33,10 +45,35 @@ export default function ChangesTab({
     }
   }, [summaries]);
 
-  const [showCommitSummaryInfo, setShowCommitSummaryInfo] = useLocalStorage(
-    "ui.info.commit-summary",
-    true
-  );
+  const [authorsByName, setAuthorsByName] = useState<AuthorsByName>(new Map());
+  const [rawCommits, setRawCommits] = useState<RawCommit[]>([]);
+
+  useEffect(() => {
+    if (!lastScanData) {
+      return;
+    }
+
+    setAuthorsByName(() => {
+      const authors = new Map<
+        string,
+        RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0]["author"]
+      >();
+
+      lastScanData.defaultBranchRef.target.history.nodes.forEach((commit) => {
+        if (commit.author.user?.login) {
+          authors.set(commit.author.user.login, commit.author);
+        }
+      });
+
+      return authors;
+    });
+
+    setRawCommits(
+      lastScanData.defaultBranchRef.target.history.nodes.filter(
+        (commit) => commit.author.user?.login
+      )
+    );
+  }, [lastScanData]);
 
   const [generatingSummary, setGeneratingSummary] = useState(false);
 
@@ -45,10 +82,9 @@ export default function ChangesTab({
       throw new Error("No data available.");
     }
 
-    const rawCommits =
-      lastScanData.defaultBranchRef.target.history.nodes.filter(
-        (commit) => commit.author.user?.login
-      );
+    if (!rawCommits || rawCommits.length === 0) {
+      throw new Error("No commits available.");
+    }
 
     setGeneratingSummary(true);
     fetch("/api/commit-summary", {
@@ -71,8 +107,9 @@ export default function ChangesTab({
           console.log(
             "$" +
               (
-                data.totalConsumedTokens.input * 0.03 +
-                data.totalConsumedTokens.output * 0.06
+                (data.totalConsumedTokens.input * 0.03 +
+                  data.totalConsumedTokens.output * 0.06) /
+                1000
               ).toFixed(2)
           );
 
@@ -86,6 +123,34 @@ export default function ChangesTab({
         }
       )
       .catch(console.error);
+  }
+
+  function getSummaryHtml(summary: string, authorsByName: AuthorsByName) {
+    let html = summary
+      .replace(
+        /(critical|severe|serious|bugs?|hot[ -]?fix|urgent|breaking change)/gi,
+        '<strong class="text-red-400">$1</strong>'
+      )
+      .replace(
+        /(feature(s)?|fix(e[sd])?|design|test(s)?|terms of use|terms of service|licen[sc]e)/gi,
+        '<strong class="text-sky-400">$1</strong>'
+      )
+      .replace(
+        /\(#(\d+)\)/gi,
+        `<a href="https://github.com/${repo.fullName}/issues/$1" target="_blank" class="text-lime-400">(#$1)</a>`
+      );
+
+    authorsByName.forEach((author, login) => {
+      html = html.replace(
+        new RegExp(`${login}`, "gi"),
+        `<a href="https://github.com/${login}" target="_blank" class="font-bold inline-flex items-center">
+          <img src="${author.user.avatarUrl}" class="w-3 h-3 rounded-full inline-block mr-1" />
+          ${login}
+        </a>`
+      );
+    });
+
+    return html;
   }
 
   return (
@@ -118,15 +183,7 @@ export default function ChangesTab({
           <div
             className="leading-normal text-gray-300"
             dangerouslySetInnerHTML={{
-              __html: latestSummary.summary
-                .replace(
-                  /(critical|severe|serious|bugs?|hot[ -]?fix|urgent)/gi,
-                  '<strong class="text-red-300">$1</strong>'
-                )
-                .replace(
-                  /(feature(s)?|fix(e[sd])?|design|test(s)?|terms of use|terms of service|licen[sc]e)/gi,
-                  '<strong class="text-indigo-300">$1</strong>'
-                ),
+              __html: getSummaryHtml(latestSummary.summary, authorsByName),
             }}
           />
           {showCommitSummaryInfo && (

@@ -27,14 +27,15 @@ type RequestBody = {
   commits: Commit[];
 };
 
-// In the instructions it mentions 300 WORDS. That's a "linguistic" instruction for the GPT and different from tokens.
+// In the instructions it mentions 250 WORDS. That's a "linguistic" instruction for the GPT and different from tokens.
 // The "max_tokens" parameter in the OpenAI API is not supposed be used to limit the GPTs output "linguistically".
-// It would produce cut-off results, if, let's say, you limit the output to 100 (~85 words) tokens and then say "Write 10.000 words essay about AI."
+// It would produce cut-off results, if, let's say, you limit the output to 100 tokens (~80 words) and then say "Write 10.000 words essay about AI."
 // (It won't reply with "I can't do that because you configured me wrong.")
-const MAX_REPORT_TOKEN_LENGTH = 300;
+const MAX_REPORT_TOKEN_LENGTH = 500;
+const DESIRED_MAX_REPORT_WORDS = 250;
 
-const reportInstruction = `You are ChangeReportGPT: Summarize git commit messages for a project manager, starting with "The team has been working on...". Infer a developer's gender from the username and use "he" or "she" accordingly. If uncertain, use the username. Keep the report concise and relevant, excluding inactive developers and avoiding redundancy. Limit your report to 300 words.`;
-const combineInstruction = `Combine the separate reports provided by the user into a single version, ensuring that the final report is not significantly longer than the longest individual report.`;
+const reportInstruction = `You are ChangeReportGPT: You write insightful reports for project managers. Prefer non-technical language, where possible. Start immediately to summarize the team's work and highlight individual developers. Infer a developer's gender from the username and use "he" or "she" accordingly. If uncertain, use the username. Keep the report concise and relevant, excluding inactive developers and avoiding redundancy. The input consists of separate chat messages containing either a username of a commit message. The output must be a single report of no more than ${DESIRED_MAX_REPORT_WORDS} words.`;
+const combineInstruction = `Combine the separate reports provided by the user into a single version. Limit your report to ${DESIRED_MAX_REPORT_WORDS} words.`;
 const reportInstructionTokenCount = countTokens(reportInstruction);
 const combineInstructionTokenCount = countTokens(combineInstruction);
 
@@ -196,7 +197,7 @@ async function generateReport(commits: Commit[]) {
       });
       populateContextWithCommits(context, chunk);
 
-      return completeChat(context);
+      return completeChat(context, MAX_REPORT_TOKEN_LENGTH, 0.5);
     })
   );
 
@@ -212,6 +213,8 @@ async function generateReport(commits: Commit[]) {
     totalConsumedTokens.input += completion.consumedTokens.input;
     totalConsumedTokens.output += completion.consumedTokens.output;
   }
+
+  console.log("\n\nREPORTS:\n\n", reports);
 
   let finalReport: string | undefined = undefined;
 
