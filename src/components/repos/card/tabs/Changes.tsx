@@ -45,7 +45,10 @@ export default function ChangesTab({
       throw new Error("No data available.");
     }
 
-    const rawCommits = lastScanData.defaultBranchRef.target.history.nodes;
+    const rawCommits =
+      lastScanData.defaultBranchRef.target.history.nodes.filter(
+        (commit) => commit.author.user?.login
+      );
 
     setGeneratingSummary(true);
     fetch("/api/commit-summary", {
@@ -56,18 +59,32 @@ export default function ChangesTab({
       body: JSON.stringify({ commits: rawCommits }),
     })
       .then((res) => res.json())
-      .then((data: { summary: string }) => {
-        if (!data.summary || typeof data.summary !== "string") {
-          throw new Error("Invalid summary response");
+      .then(
+        (data: {
+          report: string;
+          totalConsumedTokens: { input: number; output: number };
+        }) => {
+          if (!data.report || typeof data.report !== "string") {
+            throw new Error("Invalid summary response");
+          }
+
+          console.log(
+            "$" +
+              (
+                data.totalConsumedTokens.input * 0.03 +
+                data.totalConsumedTokens.output * 0.06
+              ).toFixed(2)
+          );
+
+          setGeneratingSummary(false);
+          addCommitSummary({
+            repoId: repo.id,
+            summary: data.report,
+            since,
+            until,
+          }).catch(console.error);
         }
-        setGeneratingSummary(false);
-        addCommitSummary({
-          repoId: repo.id,
-          summary: data.summary,
-          since,
-          until,
-        }).catch(console.error);
-      })
+      )
       .catch(console.error);
   }
 

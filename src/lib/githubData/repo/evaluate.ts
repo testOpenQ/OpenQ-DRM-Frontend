@@ -83,6 +83,10 @@ export function evaluateRepoData(
   const commitsTrend = calculateTrend(commitsByDayNormalized.commitCount);
 
   const authors = commits.reduce((acc, commit) => {
+    if (!commit.author?.user?.login) {
+      return acc;
+    }
+
     if (acc.some((a) => a.user.id === commit.author.user.id)) return acc;
 
     acc.push(commit.author);
