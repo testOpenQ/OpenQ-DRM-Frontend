@@ -143,8 +143,8 @@ export default function ChangesTab({
     authorsByName.forEach((author, login) => {
       html = html.replace(
         new RegExp(`${login}`, "gi"),
-        `<a href="https://github.com/${login}" target="_blank" class="font-bold inline-flex items-center">
-          <img src="${author.user.avatarUrl}" class="w-3 h-3 rounded-full inline-block mr-1" />
+        `<a href="https://github.com/${login}" target="_blank" class="font-bold pr-1 whitespace-nowrap">
+          <img src="${author.user.avatarUrl}" class="w-3 h-3 rounded-full inline-block ml-1" />
           ${login}
         </a>`
       );
