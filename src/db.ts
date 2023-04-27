@@ -103,11 +103,27 @@ interface Repo extends RepoModel {
   id: number;
 }
 
+interface EvaluationModel {
+  id?: number;
+  evaluationType: "user" | "repo";
+  targetId?: number;
+  dataIds: { [key: string]: number };
+  result: { [key: string]: any };
+  done: boolean;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Evaluation extends EvaluationModel {
+  id: number;
+}
+
 class Db extends Dexie {
   campaigns!: Table<CampaignModel, number>;
   repos!: Table<RepoModel, number>;
   users!: Table<UserModel, number>;
   commitSummaries!: Table<CommitSummaryModel, number>;
+  evaluations!: Table<EvaluationModel, number>;
 
   constructor() {
     super(`openq-drm`);
@@ -116,6 +132,7 @@ class Db extends Dexie {
       repos: `++id, name, owner, campaignId`,
       users: `++id, login, campaignId`,
       commitSummaries: `++id, repoId, userId`,
+      evaluations: `++id, evaluationType, targetId, done`,
     });
   }
 }
@@ -242,6 +259,15 @@ function getLatestRepoScan(
   });
 }
 
+function getEvaluationsByTypeAndTagetId(
+  evaluationType: "user" | "repo",
+  targetId: number
+) {
+  return db.evaluations
+    .where({ evaluationType, targetId })
+    .toArray() as Promise<Evaluation[]>;
+}
+
 export {
   type CampaignModel,
   type Campaign,
@@ -251,6 +277,8 @@ export {
   type User,
   type RepoModel,
   type Repo,
+  type EvaluationModel,
+  type Evaluation,
   getCampaigns,
   getCampaign,
   addCampaign,
@@ -270,6 +298,7 @@ export {
   getPendingScans,
   getLatestUserScan,
   getLatestRepoScan,
+  getEvaluationsByTypeAndTagetId,
   db,
   scansDb,
 };
