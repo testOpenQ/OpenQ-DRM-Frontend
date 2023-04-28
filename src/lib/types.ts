@@ -52,3 +52,19 @@ export type GithubRestUser = {
   created_at: string;
   updated_at: string;
 };
+
+export type RateLimit = {
+  used: number;
+  remaining: number;
+  reset: number;
+};
+
+export type RateLimits = {
+  core: RateLimit;
+  graphql: RateLimit;
+  search: RateLimit;
+};
+
+export type RateLimitsResponse = {
+  resources: RateLimits;
+};

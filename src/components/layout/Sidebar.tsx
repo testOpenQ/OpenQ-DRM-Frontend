@@ -10,6 +10,7 @@ import {
 import SidebarDivider from "./SidebarDivider";
 import ConnectGithub from "../ConnectGithub";
 import { useCampaigns } from "~/store/CampaignsProvider";
+import RateLimitInfo from "../RateLimitInfo";
 
 export default function Sidebar() {
   const campaigns = useCampaigns();
@@ -19,6 +20,7 @@ export default function Sidebar() {
       <div className="flex h-full flex-col whitespace-nowrap bg-gray-900/50">
         <ConnectGithub />
         <ScanInfo />
+        <RateLimitInfo />
         <SidebarDivider />
         <SidebarLink href="/">
           <div className="mr-3 p-1.5">
