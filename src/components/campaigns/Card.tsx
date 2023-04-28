@@ -5,8 +5,8 @@ import Link from "next/link";
 import { useLiveQuery } from "dexie-react-hooks";
 
 export default function CampaignCard({ campaign }: { campaign: Campaign }) {
-  const repos = useLiveQuery(() => getRepos(campaign.id));
-  const users = useLiveQuery(() => getUsers(campaign.id));
+  const repos = useLiveQuery(() => getRepos(campaign.repoIds));
+  const users = useLiveQuery(() => getUsers(campaign.userIds));
 
   const numberOfRepos = repos?.length ?? 0;
   const numberOfUsers = users?.length ?? 0;

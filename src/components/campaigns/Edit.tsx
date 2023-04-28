@@ -11,7 +11,7 @@ import {
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import Button from "../base/Button";
-import { TrashIcon } from "@heroicons/react/24/outline";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 import Textarea from "../base/Textarea";
 import Headline from "../layout/Headline";
 import { useRouter } from "next/router";
@@ -26,9 +26,11 @@ import {
   mapRestOrgToModel,
   mapRestRepoToModel,
   mapRestUserToModel,
+  searchRepos,
 } from "~/lib/github/rest";
 import LoadingSpinner from "../LoadingSpinner";
 import CSVUploadButton from "../CSVUploadButton";
+import DepsUploadButton from "../DepsUploadButton";
 
 export default function EditCampaign({ campaignId }: { campaignId: string }) {
   const { data } = useSession();
@@ -146,6 +148,18 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
     router.push(`/campaigns/${campaign.id}`).catch(console.error);
   }
 
+  function removeUser(user: UserModel) {
+    setUsers((users) => users.filter((u) => u.login !== user.login));
+  }
+
+  function removeRepo(repo: RepoModel) {
+    setRepos((repos) => repos.filter((r) => r.fullName !== repo.fullName));
+  }
+
+  function removeOrg(org: OrgModel) {
+    setOrgs((orgs) => orgs.filter((o) => o.login !== org.login));
+  }
+
   function addGithubUrlsFromText(text: string) {
     const GITHUB_URL_REGEX = /https?:\/\/github\.com(\/[\w-]+){1,2}/g;
     const githubUrls = text.match(GITHUB_URL_REGEX);
@@ -160,6 +174,57 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
       .map((url) => url.replace(/https?:\/\/github\.com\//, ""))
       .join("\n");
     handleSetTextareaInput(newTextareaInput);
+  }
+
+  function findReposByDeps(depsFile: string) {
+    if (!accessToken) return;
+
+    let deps: unknown;
+
+    try {
+      deps = JSON.parse(depsFile);
+    } catch {
+      console.log("Invalid JSON");
+    }
+
+    if (!deps) return;
+
+    type DepsJson = {
+      name: string;
+      dependencies: Record<string, string>;
+      excludedRepos: string[];
+    };
+
+    function isDepsJson(obj: unknown): obj is DepsJson {
+      return (
+        typeof obj === "object" &&
+        obj !== null &&
+        "name" in obj &&
+        "dependencies" in obj &&
+        "excludedRepos" in obj &&
+        typeof obj.name === "string" &&
+        typeof obj.dependencies === "object" &&
+        typeof obj.excludedRepos === "object" &&
+        Array.isArray(obj.excludedRepos) &&
+        obj.excludedRepos.every((repo) => typeof repo === "string")
+      );
+    }
+
+    if (!isDepsJson(deps)) {
+      return;
+    }
+
+    const depsNames = Object.keys(deps.dependencies);
+
+    for (const depName of depsNames) {
+      searchRepos(
+        `${depName} filename:package extension:json`,
+        deps.excludedRepos,
+        accessToken
+      ).then((foundRepos) => {
+        setRepos((repos) => [...repos, ...foundRepos.map(mapRestRepoToModel)]);
+      });
+    }
   }
 
   if (!campaign) return <>Campaign does not exist.</>;
@@ -179,6 +244,7 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
         />
         <div className="mt-2 flex justify-end">
           <CSVUploadButton onFileUpload={addGithubUrlsFromText} />
+          <DepsUploadButton onFileUpload={findReposByDeps} />
         </div>
       </div>
 
@@ -198,7 +264,7 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
         )}
       </div>
 
-      <div className="mt-6 grid grid-cols-2 gap-3">
+      <div className="mt-3 grid grid-cols-2 gap-3">
         {orgs.length > 0 && (
           <div>
             <h2 className="mb-2 text-xl font-bold text-indigo-700">
@@ -208,7 +274,7 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
               {orgs.map((org) => (
                 <li
                   key={org.githubRestId}
-                  className="flex items-center rounded-md bg-gray-800/20 px-2 py-1"
+                  className="flex items-center overflow-hidden rounded-md bg-gray-800/20 text-gray-400"
                 >
                   <Image
                     src={org.avatarUrl}
@@ -218,6 +284,12 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
                     className="mr-2 inline-block h-5 w-5 rounded-full"
                   />
                   {org.name}
+                  <DiscreetButton
+                    className="ml-auto rounded-none hover:!bg-gray-800/50 hover:text-red-600"
+                    onClick={() => removeOrg(org)}
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </DiscreetButton>
                 </li>
               ))}
             </ul>
@@ -230,7 +302,7 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
               {users.map((user) => (
                 <li
                   key={user.githubRestId}
-                  className="flex items-center rounded-md bg-gray-800/20 px-2 py-1"
+                  className="flex items-center overflow-hidden rounded-md bg-gray-800/20 text-gray-400"
                 >
                   <Image
                     src={user.avatarUrl}
@@ -240,6 +312,12 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
                     className="mr-2 inline-block h-5 w-5 rounded-full"
                   />
                   {user.login}
+                  <DiscreetButton
+                    className="ml-auto rounded-none hover:!bg-gray-800/50 hover:text-red-600"
+                    onClick={() => removeUser(user)}
+                  >
+                    <XMarkIcon className="h-4 w-4" />
+                  </DiscreetButton>
                 </li>
               ))}
             </ul>
@@ -256,16 +334,22 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
             {repos.map((repo) => (
               <li
                 key={repo.githubRestId}
-                className="flex items-center rounded-md bg-gray-800/20 px-2 py-1"
+                className="flex items-center overflow-hidden rounded-md bg-gray-800/20 text-gray-400"
               >
                 <Image
                   src={repo.ownerAvatarUrl}
                   width={20}
                   height={20}
                   alt="avatar"
-                  className="mr-2 inline-block h-5 w-5 rounded-full"
+                  className="my-1 ml-2 mr-2 inline-block h-5 w-5 rounded-full"
                 />
                 {repo.fullName}
+                <DiscreetButton
+                  className="ml-auto rounded-none hover:!bg-gray-800/50 hover:text-red-600"
+                  onClick={() => removeRepo(repo)}
+                >
+                  <XMarkIcon className="h-4 w-4" />
+                </DiscreetButton>
               </li>
             ))}
           </ul>
@@ -275,12 +359,11 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
       <div className="mt-6 flex">
         <DiscreetButton
           onClick={() => handleDeleteCampaign(campaign.id)}
-          className="hover:!bg-red-700"
+          className="ml-auto mr-3 hover:!bg-red-700"
         >
           cancel
         </DiscreetButton>
         <Button
-          className="ml-auto"
           onClick={handleContinue}
           disabled={
             isFetching || orgs.length + repos.length + users.length === 0

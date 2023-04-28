@@ -160,3 +160,38 @@ export async function fetchAllOrgRepos(
   const repos = await fetchAllPages(url, accessToken, 1, 100);
   return repos;
 }
+
+export async function searchRepos(
+  query: string,
+  excludedRepos: string[],
+  accessToken: string
+): Promise<GithubRestRepo[]> {
+  const url = `https://api.github.com/search/code?q=${encodeURIComponent(
+    query
+  )}&per_page=10&sort=stars&order=desc`;
+  const response = await fetch(url, options(accessToken));
+
+  if (!response.ok) {
+    throw new Error(`Failed to search repos: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+
+  if (data.items.length === 0) {
+    return [];
+  }
+
+  const repos = data.items.reduce((acc: any[], item: any) => {
+    if (excludedRepos.includes(item.repository.full_name)) {
+      return acc;
+    }
+
+    if (acc.find((repo) => repo.id === item.repository.id)) {
+      return acc;
+    }
+
+    return acc.concat(item.repository);
+  }, []);
+
+  return repos;
+}

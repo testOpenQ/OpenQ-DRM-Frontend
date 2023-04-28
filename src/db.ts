@@ -18,9 +18,9 @@ import {
 interface CampaignModel {
   id?: number;
   name: string;
-  orgsIds: number[];
-  reposIds: number[];
-  usersIds: number[];
+  orgIds: number[];
+  repoIds: number[];
+  userIds: number[];
 }
 
 interface Campaign extends CampaignModel {
@@ -187,12 +187,8 @@ function addOrg(org: OrgModel) {
   return db.orgs.add(org);
 }
 
-function getRepos(campaignId?: number | string) {
-  return (
-    campaignId
-      ? db.repos.where({ campaignId: Number(campaignId) }).toArray()
-      : db.repos.toArray()
-  ) as Promise<Repo[]>;
+function getRepos(repoIds: number[]) {
+  return db.repos.where("id").anyOf(repoIds).toArray() as Promise<Repo[]>;
 }
 
 function addRepo(repo: RepoModel) {
@@ -207,12 +203,8 @@ function deleteRepo(id: number | string) {
   return db.repos.delete(Number(id));
 }
 
-function getUsers(id?: number | string) {
-  return (
-    id
-      ? db.users.where({ campaignId: Number(id) }).toArray()
-      : db.users.toArray()
-  ) as Promise<User[]>;
+function getUsers(userIds: number[]) {
+  return db.users.where("id").anyOf(userIds).toArray() as Promise<User[]>;
 }
 
 function addUser(user: UserModel) {
