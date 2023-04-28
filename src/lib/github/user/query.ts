@@ -1,6 +1,6 @@
 import type { DocumentNode } from "graphql";
 import gql from "graphql-tag";
-import { rateLimit, pageInfo } from "~/lib/githubData/queryFragments";
+import { rateLimit, pageInfo } from "~/lib/github/queryFragments";
 
 export const USER_QUERY: DocumentNode = gql`query (
   $login: String!,

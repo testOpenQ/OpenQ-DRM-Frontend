@@ -9,15 +9,18 @@ import { type DocumentNode } from "graphql";
 import {
   USER_QUERY,
   type UserQueryResponseData,
-} from "./lib/githubData/user/query";
+} from "./lib/github/user/query";
 import {
   REPO_QUERY,
   type RepoQueryResponseData,
-} from "./lib/githubData/repo/query";
+} from "./lib/github/repo/query";
 
 interface CampaignModel {
   id?: number;
   name: string;
+  orgsIds: number[];
+  reposIds: number[];
+  usersIds: number[];
 }
 
 interface Campaign extends CampaignModel {
@@ -37,11 +40,34 @@ interface CommitSummary extends CommitSummaryModel {
   id: number;
 }
 
+interface OrgModel {
+  id?: number;
+  login: string;
+  githubRestId: number;
+  githubGraphqlId: string;
+  avatarUrl: string;
+  gravatarId: string;
+  name: string;
+  company: string;
+  blog: string;
+  location: string;
+  email: string;
+  bio: string;
+  twitterUsername: string;
+  followers: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+interface Org extends OrgModel {
+  id: number;
+}
+
 interface UserModel {
   id?: number;
   login: string;
-  restId: number;
-  graphqlId: string;
+  githubRestId: number;
+  githubGraphqlId: string;
   avatarUrl: string;
   gravatarId: string;
   name: string;
@@ -54,10 +80,8 @@ interface UserModel {
   twitterUsername: string;
   followers: number;
   following: number;
-  created_at: string;
-  updated_at: string;
-  campaignId: number;
-  lastScanId?: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 interface User extends UserModel {
@@ -95,8 +119,6 @@ interface RepoModel {
   visibility: string;
   defaultBranch: string;
   subscribersCount: number;
-  campaignId: number;
-  lastScanId?: number;
 }
 
 interface Repo extends RepoModel {
@@ -105,7 +127,7 @@ interface Repo extends RepoModel {
 
 interface EvaluationModel {
   id?: number;
-  evaluationType: "user" | "repo";
+  evaluationType: "user" | "repo" | "org";
   targetId?: number;
   dataIds: { [key: string]: number };
   result: { [key: string]: any };
@@ -120,6 +142,7 @@ interface Evaluation extends EvaluationModel {
 
 class Db extends Dexie {
   campaigns!: Table<CampaignModel, number>;
+  orgs!: Table<OrgModel, number>;
   repos!: Table<RepoModel, number>;
   users!: Table<UserModel, number>;
   commitSummaries!: Table<CommitSummaryModel, number>;
@@ -129,8 +152,9 @@ class Db extends Dexie {
     super(`openq-drm`);
     this.version(1).stores({
       campaigns: `++id, name`,
-      repos: `++id, name, owner, campaignId`,
-      users: `++id, login, campaignId`,
+      orgs: `++id, login`,
+      repos: `++id, fullName`,
+      users: `++id, login`,
       commitSummaries: `++id, repoId, userId`,
       evaluations: `++id, evaluationType, targetId, done`,
     });
@@ -157,6 +181,10 @@ async function saveCampaign(campaign: Campaign) {
 
 function deleteCampaign(id: number | string) {
   return db.campaigns.delete(Number(id));
+}
+
+function addOrg(org: OrgModel) {
+  return db.orgs.add(org);
 }
 
 function getRepos(campaignId?: number | string) {
@@ -273,6 +301,8 @@ export {
   type Campaign,
   type CommitSummaryModel,
   type CommitSummary,
+  type OrgModel,
+  type Org,
   type UserModel,
   type User,
   type RepoModel,
@@ -284,6 +314,7 @@ export {
   addCampaign,
   saveCampaign,
   deleteCampaign,
+  addOrg,
   getRepos,
   addRepo,
   editRepo,

@@ -5,6 +5,8 @@ import {
   addUser,
   deleteCampaign,
   getCampaign,
+  OrgModel,
+  addOrg,
 } from "~/db";
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -17,60 +19,16 @@ import DiscreetButton from "../base/DiscreetButton";
 import { useSession } from "next-auth/react";
 import useDebounce from "~/hooks/useDebounce";
 import Image from "next/image";
-
-type GithubRestRepo = {
-  id: number;
-  node_id: string;
-  name: string;
-  full_name: string;
-  private: boolean;
-  owner: {
-    login: string;
-    avatar_url: string;
-  };
-  description: string;
-  fork: boolean;
-  created_at: string;
-  updated_at: string;
-  pushed_at: string;
-  homepage: string;
-  size: number;
-  stargazers_count: number;
-  watchers_count: number;
-  language: string;
-  has_issues: boolean;
-  has_projects: boolean;
-  has_discussions: boolean;
-  forks_count: number;
-  archived: boolean;
-  disabled: boolean;
-  open_issues_count: number;
-  license: string;
-  topics: string[];
-  visibility: string;
-  default_branch: string;
-  subscribers_count: number;
-};
-
-type GithubRestUser = {
-  login: string;
-  id: number;
-  node_id: string;
-  avatar_url: string;
-  gravatar_id: string;
-  name: string;
-  company: string;
-  blog: string;
-  location: string;
-  email: string;
-  hireable: boolean;
-  bio: string;
-  twitter_username: string;
-  followers: number;
-  following: number;
-  created_at: string;
-  updated_at: string;
-};
+import {
+  fetchAllOrgRepos,
+  fetchRepo,
+  fetchUser,
+  mapRestOrgToModel,
+  mapRestRepoToModel,
+  mapRestUserToModel,
+} from "~/lib/github/rest";
+import LoadingSpinner from "../LoadingSpinner";
+import CSVUploadButton from "../CSVUploadButton";
 
 export default function EditCampaign({ campaignId }: { campaignId: string }) {
   const { data } = useSession();
@@ -85,10 +43,13 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
   const [textareaInputRows, setTextareaInputRows] =
     useState<number>(INITIAL_INPUT_ROWS);
 
+  const [orgs, setOrgs] = useState<OrgModel[]>([]);
   const [users, setUsers] = useState<UserModel[]>([]);
   const [repos, setRepos] = useState<RepoModel[]>([]);
   const [notFoundUsers, setNotFoundUsers] = useState<string[]>([]);
   const [notFoundRepos, setNotFoundRepos] = useState<string[]>([]);
+
+  const [isFetching, setIsFetching] = useState<boolean>(false);
 
   function handleSetTextareaInput(value: string) {
     setTextareaInput(value);
@@ -108,121 +69,57 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
 
     setUsers([]);
     setRepos([]);
+    setOrgs([]);
     setNotFoundUsers([]);
     setNotFoundRepos([]);
 
     items.forEach((item) => {
+      setIsFetching(true);
       if (item.includes("/")) {
-        fetch(`https://api.github.com/repos/${item}`, {
-          headers: {
-            Authorization: "token " + accessToken,
-          },
-        })
-          .then((res) => res.json())
-          .then((res: unknown) => {
-            if (
-              typeof res === "object" &&
-              res !== null &&
-              "message" in (res as { message?: string }) &&
-              (res as { message?: string }).message === "Not Found"
-            ) {
-              throw new Error("Not Found");
-            }
-
-            return res as GithubRestRepo;
-          })
+        fetchRepo(item, accessToken)
           .then((repo) => {
-            setRepos((repos) => [
-              ...repos,
-              {
-                githubRestId: repo.id,
-                githubGraphqlid: repo.node_id,
-                name: repo.name,
-                fullName: repo.full_name,
-                private: repo.private,
-                ownerLogin: repo.owner.login,
-                ownerAvatarUrl: repo.owner.avatar_url,
-                description: repo.description,
-                fork: repo.fork,
-                createdAt: repo.created_at,
-                updatedAt: repo.updated_at,
-                pushedAt: repo.pushed_at,
-                homepage: repo.homepage,
-                size: repo.size,
-                stargazersCount: repo.stargazers_count,
-                watchersCount: repo.watchers_count,
-                language: repo.language,
-                hasIssues: repo.has_issues,
-                hasProjects: repo.has_projects,
-                hasDiscussions: repo.has_discussions,
-                forksCount: repo.forks_count,
-                archived: repo.archived,
-                disabled: repo.disabled,
-                openIssuesCount: repo.open_issues_count,
-                license: repo.license,
-                topics: repo.topics,
-                visibility: repo.visibility,
-                defaultBranch: repo.default_branch,
-                subscribersCount: repo.subscribers_count,
-                campaignId: campaign.id,
-              },
-            ]);
+            setRepos((repos) => [...repos, mapRestRepoToModel(repo)]);
           })
           .catch(() => {
             console.log("Not found repo", item);
             setNotFoundRepos((notFoundRepos) => [...notFoundRepos, item]);
+          })
+          .finally(() => {
+            setIsFetching(false);
           });
       } else {
-        fetch(`https://api.github.com/users/${item}`, {
-          headers: {
-            Authorization: "token " + accessToken,
-          },
-        })
-          .then((res) => res.json())
-          .then((res) => {
-            if (
-              typeof res === "object" &&
-              res !== null &&
-              "message" in (res as { message?: string }) &&
-              (res as { message?: string }).message === "Not Found"
-            ) {
-              throw new Error("Not Found");
-            }
-
-            return res as GithubRestUser;
-          })
+        fetchUser(item, accessToken)
           .then((user) => {
-            setUsers((users) => [
-              ...users,
-              {
-                login: user.login,
-                restId: user.id,
-                graphqlId: user.node_id,
-                avatarUrl: user.avatar_url,
-                gravatarId: user.gravatar_id,
-                name: user.name,
-                company: user.company,
-                blog: user.blog,
-                location: user.location,
-                email: user.email,
-                hireable: user.hireable,
-                bio: user.bio,
-                twitterUsername: user.twitter_username,
-                followers: user.followers,
-                following: user.following,
-                created_at: user.created_at,
-                updated_at: user.updated_at,
-                campaignId: campaign.id,
-              },
-            ]);
+            if (user.type === "Organization") {
+              setOrgs((orgs) => [...orgs, mapRestOrgToModel(user)]);
+
+              fetchAllOrgRepos(item, accessToken)
+                .then((orgRepos) => {
+                  setRepos((repos) => [
+                    ...repos,
+                    ...orgRepos.map(mapRestRepoToModel),
+                  ]);
+                })
+                .catch(() => {
+                  console.log("Not found org repos", item);
+                })
+                .finally(() => {
+                  setIsFetching(false);
+                });
+            } else {
+              setUsers((users) => [...users, mapRestUserToModel(user)]);
+            }
           })
           .catch(() => {
-            console.log("Not found user", item);
+            console.log("Not found user/org", item);
             setNotFoundUsers((notFoundUsers) => [...notFoundUsers, item]);
+          })
+          .finally(() => {
+            setIsFetching(false);
           });
       }
     });
-  }, [debouncedTextareaInput]); // see yarn lint warning. how to fix?
+  }, [debouncedTextareaInput]);
 
   function handleDeleteCampaign(id: number) {
     router
@@ -242,24 +139,32 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
       addUser(user).catch(console.error);
     });
 
+    orgs.forEach((org) => {
+      addOrg(org).catch(console.error);
+    });
+
     router.push(`/campaigns/${campaign.id}`).catch(console.error);
+  }
+
+  function addGithubUrlsFromText(text: string) {
+    const GITHUB_URL_REGEX = /https?:\/\/github\.com(\/[\w-]+){1,2}/g;
+    const githubUrls = text.match(GITHUB_URL_REGEX);
+
+    if (!githubUrls) return;
+
+    let newTextareaInput = textareaInput;
+    if (textareaInput) {
+      newTextareaInput += "\n";
+    }
+    newTextareaInput += githubUrls.join("\n");
+    handleSetTextareaInput(newTextareaInput);
   }
 
   if (!campaign) return <>Campaign does not exist.</>;
 
   return (
     <>
-      <Headline>
-        {campaign.name}
-        <div className="ml-auto flex">
-          <DiscreetButton
-            onClick={() => handleDeleteCampaign(campaign.id)}
-            className="hover:!bg-red-700"
-          >
-            <TrashIcon className="h-5 w-5" />
-          </DiscreetButton>
-        </div>
-      </Headline>
+      <Headline>{campaign.name}</Headline>
       <h1 className="text-3xl font-bold text-indigo-700">
         Add users and repositories to your campaign.
       </h1>
@@ -270,75 +175,119 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
           setValue={handleSetTextareaInput}
           placeholder={`https://github.com/org/repo\nhttps://github.com/user\norg/repo\nuser`}
         />
+        <div className="mt-2 flex justify-end">
+          <CSVUploadButton onFileUpload={addGithubUrlsFromText} />
+        </div>
       </div>
-      {(users.length > 0 || repos.length > 0) && (
-        <>
-          <div className="flex">
-            <Button className="ml-auto" onClick={handleContinue}>
-              Continue
-            </Button>
-          </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            {notFoundRepos.length + notFoundUsers.length > 0 && (
-              <div>
-                <h2 className="text-xl font-bold text-yellow-700">Not found</h2>
-                <ul className="list-inside list-none space-y-1">
-                  {notFoundRepos.map((name) => (
-                    <li key={name}>{name}</li>
-                  ))}
-                  {notFoundUsers.map((name) => (
-                    <li key={name}>{name}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        {notFoundRepos.length + notFoundUsers.length > 0 && (
+          <div>
+            <h2 className="text-xl font-bold text-yellow-700">Not found</h2>
+            <ul className="list-inside list-none space-y-1">
+              {notFoundRepos.map((name) => (
+                <li key={name}>{name}</li>
+              ))}
+              {notFoundUsers.map((name) => (
+                <li key={name}>{name}</li>
+              ))}
+            </ul>
           </div>
+        )}
+      </div>
 
-          <div className="mt-6 grid grid-cols-2 gap-3">
-            {repos.length > 0 && (
-              <div>
-                <h2 className="text-xl font-bold text-indigo-700">
-                  Repositories
-                </h2>
-                <ul className="list-inside list-none space-y-1">
-                  {repos.map((repo) => (
-                    <li key={repo.githubRestId}>
-                      <Image
-                        src={repo.ownerAvatarUrl}
-                        width={20}
-                        height={20}
-                        alt="avatar"
-                        className="mr-1 inline-block h-5 w-5 rounded-full"
-                      />
-                      {repo.fullName}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-            {users.length > 0 && (
-              <div>
-                <h2 className="text-xl font-bold text-indigo-700">Users</h2>
-                <ul className="list-inside list-none space-y-1">
-                  {users.map((user) => (
-                    <li key={user.restId}>
-                      <Image
-                        src={user.avatarUrl}
-                        width={20}
-                        height={20}
-                        alt="avatar"
-                        className="mr-1 inline-block h-5 w-5 rounded-full"
-                      />
-                      {user.login}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
+      <div className="mt-6 grid grid-cols-2 gap-3">
+        {orgs.length > 0 && (
+          <div>
+            <h2 className="mb-2 text-xl font-bold text-indigo-700">
+              Organizations
+            </h2>
+            <ul className="mb-3 list-inside list-none space-y-1">
+              {orgs.map((org) => (
+                <li
+                  key={org.githubRestId}
+                  className="flex items-center rounded-md bg-gray-800/20 px-2 py-1"
+                >
+                  <Image
+                    src={org.avatarUrl}
+                    width={20}
+                    height={20}
+                    alt="avatar"
+                    className="mr-2 inline-block h-5 w-5 rounded-full"
+                  />
+                  {org.name}
+                </li>
+              ))}
+            </ul>
           </div>
-        </>
+        )}
+        {users.length > 0 && (
+          <div>
+            <h2 className="mb-2 text-xl font-bold text-indigo-700">Users</h2>
+            <ul className="list-inside list-none space-y-1">
+              {users.map((user) => (
+                <li
+                  key={user.githubRestId}
+                  className="flex items-center rounded-md bg-gray-800/20 px-2 py-1"
+                >
+                  <Image
+                    src={user.avatarUrl}
+                    width={20}
+                    height={20}
+                    alt="avatar"
+                    className="mr-2 inline-block h-5 w-5 rounded-full"
+                  />
+                  {user.login}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
+
+      {repos.length > 0 && (
+        <div>
+          <h2 className="mb-2 mt-3 text-xl font-bold text-indigo-700">
+            Repositories
+          </h2>
+          <ul className="grid list-inside list-none grid-cols-2 gap-1">
+            {repos.map((repo) => (
+              <li
+                key={repo.githubRestId}
+                className="flex items-center rounded-md bg-gray-800/20 px-2 py-1"
+              >
+                <Image
+                  src={repo.ownerAvatarUrl}
+                  width={20}
+                  height={20}
+                  alt="avatar"
+                  className="mr-2 inline-block h-5 w-5 rounded-full"
+                />
+                {repo.fullName}
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
+
+      <div className="mt-6 flex">
+        <DiscreetButton
+          onClick={() => handleDeleteCampaign(campaign.id)}
+          className="hover:!bg-red-700"
+        >
+          cancel
+        </DiscreetButton>
+        <Button
+          className="ml-auto"
+          onClick={handleContinue}
+          disabled={
+            isFetching || orgs.length + repos.length + users.length === 0
+          }
+        >
+          {isFetching && <LoadingSpinner className="mr-2" />}
+          Create Campaign
+        </Button>
+      </div>
     </>
   );
 }

@@ -9,7 +9,7 @@ import {
   CommitSummary,
 } from "~/db";
 import useLocalStorage from "~/hooks/useLocalstorage";
-import type { RepoQueryResponseData } from "~/lib/githubData/repo/query";
+import type { RepoQueryResponseData } from "~/lib/github/repo/query";
 
 type AuthorsByName = Map<
   string,

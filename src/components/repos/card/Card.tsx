@@ -9,10 +9,7 @@ import { Scan } from "@mktcodelib/github-scanner";
 import CardHeader from "./Header";
 import Tabs from "./tabs/Tabs";
 import { useEffect, useState } from "react";
-import {
-  RepoEvaluation,
-  evaluateRepoData,
-} from "~/lib/githubData/repo/evaluate";
+import { RepoEvaluation, evaluateRepoData } from "~/lib/github/repo/evaluate";
 import { useLiveQuery } from "dexie-react-hooks";
 
 export default function Card({

@@ -5,7 +5,7 @@ import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../../base/DiscreetButton";
 import Image from "next/image";
 import { Scanner } from "@mktcodelib/github-scanner";
-import { REPO_QUERY, RepoQueryResponseData } from "~/lib/githubData/repo/query";
+import { REPO_QUERY, RepoQueryResponseData } from "~/lib/github/repo/query";
 import { useEffect, useState } from "react";
 import DeleteButton from "./DeleteButton";
 
