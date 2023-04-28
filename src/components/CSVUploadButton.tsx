@@ -28,9 +28,7 @@ const CSVUploadButton: React.FC<CSVUploadButtonProps> = ({ onFileUpload }) => {
 
   return (
     <>
-      <DiscreetButton onClick={handleClick} className="text-xs">
-        Import CSV
-      </DiscreetButton>
+      <DiscreetButton onClick={handleClick}>Import from CSV</DiscreetButton>
       <input
         type="file"
         ref={fileInputRef}
