@@ -156,7 +156,9 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
     if (textareaInput) {
       newTextareaInput += "\n";
     }
-    newTextareaInput += githubUrls.join("\n");
+    newTextareaInput += githubUrls
+      .map((url) => url.replace(/https?:\/\/github\.com\//, ""))
+      .join("\n");
     handleSetTextareaInput(newTextareaInput);
   }
 
