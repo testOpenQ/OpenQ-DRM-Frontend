@@ -4,29 +4,27 @@ import CardScores from "./Scores";
 import { signIn, useSession } from "next-auth/react";
 import { scansDb, type Repo } from "~/db";
 import Button from "../../base/Button";
-import { generateFakeScores } from "~/lib/scores";
 import { Scan } from "@mktcodelib/github-scanner";
 import CardHeader from "./Header";
 import Tabs from "./tabs/Tabs";
 import { useEffect, useState } from "react";
 import { RepoEvaluation, evaluateRepoData } from "~/lib/github/repo/evaluate";
 import { useLiveQuery } from "dexie-react-hooks";
+import { useSubmitScore } from "~/store/ScoresProvider";
 
 export default function Card({
   repo,
   since,
   until,
-  ranks,
-  submitScore,
 }: {
   repo: Repo;
   since: string;
   until: string;
-  ranks: { [key: string]: number };
-  submitScore: (score: number, category: string) => void;
 }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
+
+  const submitScore = useSubmitScore();
 
   const [repoEvaluation, setRepoEvaluation] = useState<RepoEvaluation | null>(
     null
@@ -37,14 +35,15 @@ export default function Card({
     [repo.lastScanId]
   );
 
-  const fakeScores = generateFakeScores(repo.fullName);
-
   useEffect(() => {
     (async () => {
       if (lastScan) {
         const repoEvaluation = evaluateRepoData(lastScan.data.repository);
         setRepoEvaluation(repoEvaluation);
-        submitScore(repoEvaluation.commitsTrend, "activity");
+        submitScore(repo.id, "activity", 10);
+        submitScore(repo.id, "growth", 3);
+        submitScore(repo.id, "popularity", 3);
+        submitScore(repo.id, "reputation", 8);
       }
     })();
   }, [lastScan]);
@@ -80,12 +79,7 @@ export default function Card({
           )}
         </div>
         <div className="flex-1 px-5 py-3">
-          <CardScores
-            activity={fakeScores[1] || 0}
-            growth={fakeScores[1] || 0}
-            popularity={fakeScores[2] || 0}
-            reputation={fakeScores[3] || 0}
-          />
+          <CardScores repo={repo} />
         </div>
       </div>
       {repoEvaluation && <CardActivityChart repoEvaluation={repoEvaluation} />}

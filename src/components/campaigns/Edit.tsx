@@ -7,6 +7,7 @@ import {
   getCampaign,
   OrgModel,
   addOrg,
+  updateCampaign,
 } from "~/db";
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -31,6 +32,7 @@ import {
 import LoadingSpinner from "../LoadingSpinner";
 import CSVUploadButton from "../CSVUploadButton";
 import DepsUploadButton from "../DepsUploadButton";
+import { isDepsJson } from "~/lib/types";
 
 export default function EditCampaign({ campaignId }: { campaignId: string }) {
   const { data } = useSession();
@@ -130,20 +132,25 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
       .catch((err) => console.log(err));
   }
 
-  function handleContinue() {
+  async function handleContinue() {
     if (!campaign) return;
 
-    repos.forEach((repo) => {
-      addRepo(repo).catch(console.error);
-    });
+    for (const repo of repos) {
+      const id = await addRepo(repo);
+      campaign.repoIds.push(id);
+    }
 
-    users.forEach((user) => {
-      addUser(user).catch(console.error);
-    });
+    for (const user of users) {
+      const id = await addUser(user);
+      campaign.userIds.push(id);
+    }
 
-    orgs.forEach((org) => {
-      addOrg(org).catch(console.error);
-    });
+    for (const org of orgs) {
+      const id = await addOrg(org);
+      campaign.orgIds.push(id);
+    }
+
+    await updateCampaign(campaign.id, campaign);
 
     router.push(`/campaigns/${campaign.id}`).catch(console.error);
   }
@@ -188,27 +195,6 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
     }
 
     if (!deps) return;
-
-    type DepsJson = {
-      name: string;
-      dependencies: Record<string, string>;
-      excludedRepos: string[];
-    };
-
-    function isDepsJson(obj: unknown): obj is DepsJson {
-      return (
-        typeof obj === "object" &&
-        obj !== null &&
-        "name" in obj &&
-        "dependencies" in obj &&
-        "excludedRepos" in obj &&
-        typeof obj.name === "string" &&
-        typeof obj.dependencies === "object" &&
-        typeof obj.excludedRepos === "object" &&
-        Array.isArray(obj.excludedRepos) &&
-        obj.excludedRepos.every((repo) => typeof repo === "string")
-      );
-    }
 
     if (!isDepsJson(deps)) {
       return;
