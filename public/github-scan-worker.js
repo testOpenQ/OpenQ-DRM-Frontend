@@ -7302,8 +7302,9 @@ DexiePromise.rejectionMapper = mapError;
 setDebug(debug, dexieStackFrameFilter);
 
 var name = "@mktcodelib/github-scanner";
-var version = "0.2.2";
-var description = "Utilities to fetch larger amounts of data from GitHub.";
+var version = "0.3.2";
+var description =
+  "Fetch and store larger amounts of GitHub data in the browser.";
 var main = "dist/index.js";
 var module$1 = "dist/index.mjs";
 var types = "dist/index.d.ts";
@@ -7416,6 +7417,14 @@ onmessage = (event) =>
     let finalData;
     let finalPaginators;
     let finalVariables;
+    postMessage({
+      type: "started",
+      payload: {
+        scanId,
+        paginators,
+        variables,
+      },
+    });
     try {
       for (
         var _d = true, fetcher_1 = __asyncValues(fetcher), fetcher_1_1;
