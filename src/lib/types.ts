@@ -68,3 +68,44 @@ export type RateLimits = {
 export type RateLimitsResponse = {
   resources: RateLimits;
 };
+
+export type DepsJson = {
+  name: string;
+  dependencies: Record<string, string>;
+  excludedRepos: string[];
+};
+
+export function isDepsJson(obj: unknown): obj is DepsJson {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "name" in obj &&
+    "dependencies" in obj &&
+    "excludedRepos" in obj &&
+    typeof obj.name === "string" &&
+    typeof obj.dependencies === "object" &&
+    typeof obj.excludedRepos === "object" &&
+    Array.isArray(obj.excludedRepos) &&
+    obj.excludedRepos.every((repo) => typeof repo === "string")
+  );
+}
+
+export const ScoreCategory = {
+  activity: "activity",
+  growth: "growth",
+  popularity: "popularity",
+  reputation: "reputation",
+} as const;
+
+export type ScoreCategory = (typeof ScoreCategory)[keyof typeof ScoreCategory];
+
+export type Scores = {
+  activity: number;
+  growth: number;
+  popularity: number;
+  reputation: number;
+};
+
+export type RepoScores = {
+  [repoId: number]: Scores;
+};
