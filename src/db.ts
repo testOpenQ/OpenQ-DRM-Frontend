@@ -127,11 +127,11 @@ interface Repo extends RepoModel {
 
 interface EvaluationModel {
   id?: number;
-  evaluationType: "user" | "repo" | "org";
+  type: "user" | "repo" | "org";
   targetId?: number;
-  dataIds: { [key: string]: number };
-  result: { [key: string]: any };
-  done: boolean;
+  dataIds?: { [key: string]: number | null };
+  result?: { [key: string]: any };
+  done: 1 | 0;
   createdAt: string;
   updatedAt: string;
 }
@@ -156,7 +156,7 @@ class Db extends Dexie {
       repos: `++id, fullName`,
       users: `++id, login`,
       commitSummaries: `++id, repoId, userId`,
-      evaluations: `++id, evaluationType, targetId, done`,
+      evaluations: `++id, type, targetId, [type+targetId], done`,
     });
   }
 }
@@ -213,6 +213,10 @@ function deleteRepo(id: number | string) {
 
 function getUsers(userIds: number[]) {
   return db.users.where("id").anyOf(userIds).toArray() as Promise<User[]>;
+}
+
+function getUser(id: number | string) {
+  return () => db.users.get(Number(id)) as Promise<User | undefined>;
 }
 
 function addUser(user: UserModel) {
@@ -288,12 +292,20 @@ function getLatestRepoScan(
 }
 
 function getEvaluationsByTypeAndTagetId(
-  evaluationType: "user" | "repo",
+  type: "org" | "user" | "repo",
   targetId: number
 ) {
-  return db.evaluations
-    .where({ evaluationType, targetId })
-    .toArray() as Promise<Evaluation[]>;
+  return db.evaluations.where({ type, targetId }).toArray() as Promise<
+    Evaluation[]
+  >;
+}
+
+function addEvaluation(evaluation: EvaluationModel) {
+  return db.evaluations.add(evaluation);
+}
+
+function updateEvaluation(id: number, changes: Partial<EvaluationModel>) {
+  return db.evaluations.update(id, changes);
 }
 
 export {
@@ -322,6 +334,7 @@ export {
   editRepo,
   deleteRepo,
   getUsers,
+  getUser,
   addUser,
   editUser,
   deleteUser,
@@ -332,6 +345,8 @@ export {
   getLatestUserScan,
   getLatestRepoScan,
   getEvaluationsByTypeAndTagetId,
+  addEvaluation,
+  updateEvaluation,
   db,
   scansDb,
 };
