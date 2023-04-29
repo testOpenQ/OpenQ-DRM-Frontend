@@ -12,7 +12,12 @@ export default function Welcome() {
 
   function handleAddCampaign() {
     setCampaignName("");
-    addCampaign({ name: campaignName })
+    addCampaign({
+      name: campaignName,
+      repoIds: [],
+      userIds: [],
+      orgIds: [],
+    })
       .then((id) => {
         router
           .push(`/campaigns/${id.toString()}`)
