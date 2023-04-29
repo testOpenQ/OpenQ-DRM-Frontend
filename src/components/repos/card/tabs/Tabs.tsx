@@ -2,7 +2,7 @@ import { useState } from "react";
 import { type Repo } from "~/db";
 import ChangesTab from "./Changes";
 import DiscreetButton from "../../../base/DiscreetButton";
-import { RepoQueryResponseData } from "~/lib/github/repo/query";
+import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
 
 enum CardTabs {
   Changes = "changes",
@@ -13,12 +13,12 @@ enum CardTabs {
 
 export default function Tabs({
   repo,
-  lastScanData,
+  evaluation,
   since,
   until,
 }: {
   repo: Repo;
-  lastScanData: RepoQueryResponseData;
+  evaluation: RepoEvaluationResult;
   since: string;
   until: string;
 }) {
@@ -79,7 +79,7 @@ export default function Tabs({
       >
         <ChangesTab
           repo={repo}
-          lastScanData={lastScanData}
+          evaluation={evaluation}
           since={since}
           until={until}
         />

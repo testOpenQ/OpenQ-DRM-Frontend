@@ -1,5 +1,7 @@
 import { normalize } from "~/lib/numbers";
-import type { CommitAuthor, RepoQueryResponseData } from "./query";
+import { CommitAuthor, REPO_QUERY, RepoQueryResponseData } from "./query";
+import { addEvaluation, db, updateEvaluation } from "~/db";
+import { Scanner } from "@mktcodelib/github-scanner";
 
 export type CommitsByDay = Record<
   string,
@@ -16,7 +18,7 @@ export type CommitsByAuthor = Record<
   { commitCount: number; linesChanged: number }
 >;
 
-export type RepoEvaluation = {
+export type RepoEvaluationResult = {
   commitCount: number;
   linesChanged: number;
   commitsByDay: CommitsByDay;
@@ -41,7 +43,7 @@ function calculateTrend(normalizedNumbers: number[]) {
 
 export function evaluateRepoData(
   repoData: RepoQueryResponseData
-): RepoEvaluation {
+): RepoEvaluationResult {
   const {
     defaultBranchRef: {
       target: {
@@ -125,4 +127,51 @@ export function evaluateRepoData(
     commitsByAuthor,
     authors,
   };
+}
+
+export async function evaluateRepo(
+  id: number,
+  accessToken: string,
+  since: string,
+  until: string
+) {
+  const repo = await db.repos.get(id);
+
+  if (!repo) {
+    throw new Error(`Repo ${id} not found in database`);
+  }
+
+  const evaluationId = await addEvaluation({
+    type: "repo",
+    targetId: id,
+    done: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+
+  const scanner = new Scanner({ accessToken });
+  const variables = {
+    owner: repo.ownerLogin,
+    name: repo.name,
+    since,
+    until,
+    first: 100,
+  };
+
+  const { scanId } = await scanner.scan<{ repository: RepoQueryResponseData }>({
+    query: REPO_QUERY,
+    variables,
+    update: ({ data }) => {
+      updateEvaluation(evaluationId, {
+        result: evaluateRepoData(data.repository),
+      });
+    },
+    done: (_) => {
+      updateEvaluation(evaluationId, { done: 1 });
+    },
+  });
+
+  updateEvaluation(evaluationId, { dataIds: { userData: scanId } });
+
+  return evaluationId;
 }

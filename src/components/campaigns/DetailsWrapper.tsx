@@ -25,19 +25,19 @@ export default function Wrapper({ campaignId }: { campaignId: string }) {
       getOrgs(campaign.orgIds).then(setOrgs);
       getUsers(campaign.userIds).then(setUsers);
       getRepos(campaign.repoIds).then(setRepos);
+
+      if (
+        campaign.orgIds.length +
+          campaign.userIds.length +
+          campaign.repoIds.length ===
+        0
+      ) {
+        router.push(`/campaigns/${campaignId}/edit`).catch(console.error);
+      }
     }
   }, [campaign]);
 
   if (!campaign) return <>Campaign does not exist.</>;
-
-  if (
-    campaign.orgIds.length +
-      campaign.userIds.length +
-      campaign.repoIds.length ===
-    0
-  ) {
-    router.push(`/campaigns/${campaignId}/edit`).catch(console.error);
-  }
 
   return (
     <Details campaign={campaign} orgs={orgs} users={users} repos={repos} />

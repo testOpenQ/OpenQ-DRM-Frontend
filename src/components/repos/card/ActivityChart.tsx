@@ -10,10 +10,10 @@ import {
 } from "chart.js";
 import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
-import { RepoEvaluation } from "~/lib/github/repo/evaluate";
+import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
 import { formatter } from "~/lib/numbers";
 
-function prepareChartData(repoEvaluation: RepoEvaluation) {
+function prepareChartData(repoEvaluation: RepoEvaluationResult) {
   const commits = repoEvaluation.commitsByDayNormalized.commitCount;
   commits.reverse();
   const linesChanged = repoEvaluation.commitsByDayNormalized.linesChanged;
@@ -49,7 +49,7 @@ function prepareChartData(repoEvaluation: RepoEvaluation) {
 export default function CardActivityChart({
   repoEvaluation,
 }: {
-  repoEvaluation: RepoEvaluation;
+  repoEvaluation: RepoEvaluationResult;
 }) {
   ChartJS.register(
     CategoryScale,

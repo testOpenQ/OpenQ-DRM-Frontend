@@ -9,23 +9,22 @@ import {
   CommitSummary,
 } from "~/db";
 import useLocalStorage from "~/hooks/useLocalstorage";
+import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
 import type { RepoQueryResponseData } from "~/lib/github/repo/query";
 
 type AuthorsByName = Map<
   string,
   RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0]["author"]
 >;
-type RawCommit =
-  RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0];
 
 export default function ChangesTab({
   repo,
-  lastScanData,
+  evaluation,
   since,
   until,
 }: {
   repo: Repo;
-  lastScanData: RepoQueryResponseData | null;
+  evaluation: RepoEvaluationResult;
   since: string;
   until: string;
 }) {
@@ -45,54 +44,16 @@ export default function ChangesTab({
     }
   }, [summaries]);
 
-  const [authorsByName, setAuthorsByName] = useState<AuthorsByName>(new Map());
-  const [rawCommits, setRawCommits] = useState<RawCommit[]>([]);
-
-  useEffect(() => {
-    if (!lastScanData) {
-      return;
-    }
-
-    setAuthorsByName(() => {
-      const authors = new Map<
-        string,
-        RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0]["author"]
-      >();
-
-      lastScanData.defaultBranchRef.target.history.nodes.forEach((commit) => {
-        if (commit.author.user?.login) {
-          authors.set(commit.author.user.login, commit.author);
-        }
-      });
-
-      return authors;
-    });
-
-    setRawCommits(
-      lastScanData.defaultBranchRef.target.history.nodes.filter(
-        (commit) => commit.author.user?.login
-      )
-    );
-  }, [lastScanData]);
-
   const [generatingSummary, setGeneratingSummary] = useState(false);
 
   function generateSummary() {
-    if (!lastScanData) {
-      throw new Error("No data available.");
-    }
-
-    if (!rawCommits || rawCommits.length === 0) {
-      throw new Error("No commits available.");
-    }
-
     setGeneratingSummary(true);
     fetch("/api/commit-summary", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ commits: rawCommits }),
+      body: JSON.stringify({ commits: evaluation.rawCommits }),
     })
       .then((res) => res.json())
       .then(
@@ -104,8 +65,8 @@ export default function ChangesTab({
             throw new Error("Invalid summary response");
           }
 
-          console.log(
-            "$" +
+          console.info(
+            "Summary cost: $" +
               (
                 (data.totalConsumedTokens.input * 0.03 +
                   data.totalConsumedTokens.output * 0.06) /
@@ -155,10 +116,6 @@ export default function ChangesTab({
 
   return (
     <div className="p-3">
-      {!lastScanData && (
-        <div className="text-center font-bold">No data available yet.</div>
-      )}
-
       {!generatingSummary && summaries?.length === 0 && (
         <div className="flex flex-col items-center justify-center">
           <Button
@@ -183,7 +140,10 @@ export default function ChangesTab({
           <div
             className="leading-normal text-gray-300"
             dangerouslySetInnerHTML={{
-              __html: getSummaryHtml(latestSummary.summary, authorsByName),
+              __html: getSummaryHtml(
+                latestSummary.summary,
+                evaluation.authorsByName
+              ),
             }}
           />
           {showCommitSummaryInfo && (

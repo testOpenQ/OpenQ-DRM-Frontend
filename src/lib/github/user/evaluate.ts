@@ -1,6 +1,8 @@
-import type { UserQueryResponseData } from "./query";
+import { Scanner } from "@mktcodelib/github-scanner";
+import { USER_QUERY, UserQueryResponseData } from "./query";
+import { addEvaluation, db, updateEvaluation } from "~/db";
 
-export type UserEvaluation = {
+export type UserEvaluationResult = {
   forkCount: number;
   stargazerCount: number;
   followersForkCount: number;
@@ -13,7 +15,7 @@ export type UserEvaluation = {
 
 export function evaluateUserData(
   userData: UserQueryResponseData
-): UserEvaluation {
+): UserEvaluationResult {
   const {
     followers: { nodes: followers },
     repositories: { nodes: repositories },
@@ -88,4 +90,38 @@ export function evaluateUserData(
     mergedPullRequestCount30d,
     mergedPullRequestCount365d,
   };
+}
+
+export async function evaluateUser(id: number, accessToken: string) {
+  const user = await db.users.get(id);
+
+  if (!user) {
+    throw new Error(`User ${id} not found in database`);
+  }
+
+  const evaluationId = await addEvaluation({
+    type: "user",
+    targetId: id,
+    done: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  });
+
+  const scanner = new Scanner({ accessToken });
+  const variables = { login: user.login };
+
+  const { scanId } = await scanner.scan<{ user: UserQueryResponseData }>({
+    query: USER_QUERY,
+    variables,
+    update: ({ data }) => {
+      updateEvaluation(evaluationId, { result: evaluateUserData(data.user) });
+    },
+    done: (_) => {
+      updateEvaluation(evaluationId, { done: 1 });
+    },
+  });
+
+  updateEvaluation(evaluationId, { dataIds: { userData: scanId } });
+
+  return evaluationId;
 }

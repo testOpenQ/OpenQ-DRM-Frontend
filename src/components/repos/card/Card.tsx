@@ -2,13 +2,11 @@ import CardActivityChart from "./ActivityChart";
 import CardMembers from "./Members";
 import CardScores from "./Scores";
 import { signIn, useSession } from "next-auth/react";
-import { scansDb, type Repo } from "~/db";
+import { type Repo, getEvaluationsByTypeAndTagetId } from "~/db";
 import Button from "../../base/Button";
-import { Scan } from "@mktcodelib/github-scanner";
 import CardHeader from "./Header";
 import Tabs from "./tabs/Tabs";
-import { useEffect, useState } from "react";
-import { RepoEvaluation, evaluateRepoData } from "~/lib/github/repo/evaluate";
+import { useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useSubmitScore } from "~/store/ScoresProvider";
 
@@ -26,27 +24,17 @@ export default function Card({
 
   const submitScore = useSubmitScore();
 
-  const [repoEvaluation, setRepoEvaluation] = useState<RepoEvaluation | null>(
-    null
-  );
-
-  const lastScan = useLiveQuery(
-    () => scansDb.scans.get(repo.lastScanId || 0) as Promise<Scan>,
-    [repo.lastScanId]
+  const evaluations = useLiveQuery(
+    () => getEvaluationsByTypeAndTagetId("repo", repo.id),
+    [repo.id]
   );
 
   useEffect(() => {
-    (async () => {
-      if (lastScan) {
-        const repoEvaluation = evaluateRepoData(lastScan.data.repository);
-        setRepoEvaluation(repoEvaluation);
-        submitScore(repo.id, "activity", 10);
-        submitScore(repo.id, "growth", 3);
-        submitScore(repo.id, "popularity", 3);
-        submitScore(repo.id, "reputation", 8);
-      }
-    })();
-  }, [lastScan]);
+    submitScore(repo.id, "activity", 10);
+    submitScore(repo.id, "growth", 3);
+    submitScore(repo.id, "popularity", 3);
+    submitScore(repo.id, "reputation", 8);
+  });
 
   function handleSignIn() {
     signIn("github").catch(console.error);
@@ -57,10 +45,12 @@ export default function Card({
       <CardHeader repo={repo} since={since} until={until} />
       <div className="flex flex-col sm:flex-row">
         <div className="flex grow flex-col items-center justify-center">
-          {repoEvaluation && (
-            <CardMembers members={repoEvaluation.authors.map((a) => a.user)} />
+          {evaluations && evaluations[0] && evaluations[0].result && (
+            <CardMembers
+              members={evaluations[0].result.authors.map((a) => a.user)}
+            />
           )}
-          {!repoEvaluation && (
+          {!evaluations?.length && (
             <div className="flex grow flex-col items-center justify-center px-12">
               {accessToken && (
                 <div className="text-sm text-gray-600">
@@ -82,13 +72,17 @@ export default function Card({
           <CardScores repo={repo} />
         </div>
       </div>
-      {repoEvaluation && <CardActivityChart repoEvaluation={repoEvaluation} />}
-      <Tabs
-        repo={repo}
-        lastScanData={lastScan?.data.repository}
-        since={since}
-        until={until}
-      />
+      {evaluations && evaluations[0] && evaluations[0].result && (
+        <>
+          <CardActivityChart repoEvaluation={evaluations[0].result} />
+          <Tabs
+            repo={repo}
+            evaluation={evaluations[0].result}
+            since={since}
+            until={until}
+          />
+        </>
+      )}
     </div>
   );
 }
