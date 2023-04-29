@@ -171,6 +171,10 @@ function getCampaign(id: number | string) {
   return () => db.campaigns.get(Number(id)) as Promise<Campaign | undefined>;
 }
 
+function updateCampaign(id: number | string, changes: Partial<CampaignModel>) {
+  return db.campaigns.update(Number(id), changes);
+}
+
 async function addCampaign(campaign: CampaignModel) {
   return await db.campaigns.add(campaign);
 }
@@ -185,6 +189,10 @@ function deleteCampaign(id: number | string) {
 
 function addOrg(org: OrgModel) {
   return db.orgs.add(org);
+}
+
+function getOrgs(orgIds: number[]) {
+  return db.orgs.where("id").anyOf(orgIds).toArray() as Promise<Org[]>;
 }
 
 function getRepos(repoIds: number[]) {
@@ -304,9 +312,11 @@ export {
   getCampaigns,
   getCampaign,
   addCampaign,
+  updateCampaign,
   saveCampaign,
   deleteCampaign,
   addOrg,
+  getOrgs,
   getRepos,
   addRepo,
   editRepo,
