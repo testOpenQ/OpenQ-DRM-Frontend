@@ -10,7 +10,10 @@ import {
 } from "~/db";
 import useLocalStorage from "~/hooks/useLocalstorage";
 import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
-import type { RepoQueryResponseData } from "~/lib/github/repo/query";
+import type {
+  CommitAuthor,
+  RepoQueryResponseData,
+} from "~/lib/github/repo/query";
 import CardActivityChart from "../ActivityChart";
 
 type AuthorsByName = Map<
@@ -90,7 +93,7 @@ export default function ChangesTab({
       .catch(console.error);
   }
 
-  function getSummaryHtml(summary: string, authorsByName: AuthorsByName) {
+  function getSummaryHtml(summary: string, authors: CommitAuthor[]) {
     let html = summary
       .replace(
         /(critical|severe|serious|bugs?|hot[ -]?fix|urgent|breaking change)/gi,
@@ -105,12 +108,12 @@ export default function ChangesTab({
         `<a href="https://github.com/${repo.fullName}/issues/$1" target="_blank" class="text-lime-400">(#$1)</a>`
       );
 
-    authorsByName.forEach((author, login) => {
+    authors.forEach((author) => {
       html = html.replace(
-        new RegExp(`${login}`, "gi"),
-        `<a href="https://github.com/${login}" target="_blank" class="font-bold pr-1 whitespace-nowrap">
+        new RegExp(`${author.user.login}`, "gi"),
+        `<a href="https://github.com/${author.user.login}" target="_blank" class="font-bold pr-1 whitespace-nowrap">
           <img src="${author.user.avatarUrl}" class="w-3 h-3 rounded-full inline-block ml-1" />
-          ${login}
+          ${author.user.login}
         </a>`
       );
     });
@@ -144,11 +147,11 @@ export default function ChangesTab({
         {latestSummary && (
           <>
             <div
-              className="leading-normal text-gray-300"
+              className="mt-3 leading-normal text-gray-300"
               dangerouslySetInnerHTML={{
                 __html: getSummaryHtml(
                   latestSummary.summary,
-                  evaluationResult.authorsByName
+                  evaluationResult.authors
                 ),
               }}
             />

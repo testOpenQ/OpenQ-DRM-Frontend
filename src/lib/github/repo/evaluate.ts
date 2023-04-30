@@ -21,6 +21,7 @@ export type CommitsByAuthor = Record<
 export type RepoEvaluationResult = {
   commitCount: number;
   linesChanged: number;
+  rawCommits: RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"];
   commitsByDay: CommitsByDay;
   commitsByDayNormalized: CommitsByDayNormalized;
   commitsTrend: number;
@@ -119,6 +120,7 @@ export function evaluateRepoData(
   return {
     commitCount,
     linesChanged,
+    rawCommits: commits,
     commitsByDay,
     commitsByDayNormalized: {
       commitCount: normalize(
