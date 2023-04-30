@@ -152,9 +152,9 @@ class Db extends Dexie {
     super(`openq-drm`);
     this.version(1).stores({
       campaigns: `++id, name`,
-      orgs: `++id, login`,
-      repos: `++id, fullName`,
-      users: `++id, login`,
+      orgs: `++id, login, githubRestId, githubGraphqlId`,
+      repos: `++id, fullName, githubRestId, githubGraphqlId`,
+      users: `++id, login, githubRestId, githubGraphqlId`,
       commitSummaries: `++id, repoId, userId`,
       evaluations: `++id, type, targetId, [type+targetId], done`,
     });
@@ -187,8 +187,22 @@ function deleteCampaign(id: number | string) {
   return db.campaigns.delete(Number(id));
 }
 
-function addOrg(org: OrgModel) {
+async function addOrg(org: OrgModel) {
+  const existingOrg = await db.orgs
+    .where("githubRestId")
+    .equals(org.githubRestId)
+    .first();
+
+  if (existingOrg && existingOrg.id) {
+    editOrg(existingOrg.id, org);
+    return existingOrg.id;
+  }
+
   return db.orgs.add(org);
+}
+
+function editOrg(orgId: number, changes: Partial<OrgModel>) {
+  return db.orgs.update(orgId, changes);
 }
 
 function getOrgs(orgIds: number[]) {
@@ -199,7 +213,17 @@ function getRepos(repoIds: number[]) {
   return db.repos.where("id").anyOf(repoIds).toArray() as Promise<Repo[]>;
 }
 
-function addRepo(repo: RepoModel) {
+async function addRepo(repo: RepoModel) {
+  const existingRepo = await db.repos
+    .where("githubRestId")
+    .equals(repo.githubRestId)
+    .first();
+
+  if (existingRepo && existingRepo.id) {
+    editRepo(existingRepo.id, repo);
+    return existingRepo.id;
+  }
+
   return db.repos.add(repo);
 }
 
@@ -228,7 +252,17 @@ function getUser(id: number | string) {
   return () => db.users.get(Number(id)) as Promise<User | undefined>;
 }
 
-function addUser(user: UserModel) {
+async function addUser(user: UserModel) {
+  const existingUser = await db.users
+    .where("githubRestId")
+    .equals(user.githubRestId)
+    .first();
+
+  if (existingUser && existingUser.id) {
+    editUser(existingUser.id, user);
+    return existingUser.id;
+  }
+
   return db.users.add(user);
 }
 
