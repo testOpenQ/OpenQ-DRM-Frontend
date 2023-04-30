@@ -9,6 +9,7 @@ import Tabs from "./tabs/Tabs";
 import { useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useSubmitScore } from "~/store/ScoresProvider";
+import { generateFakeScores } from "~/lib/scores";
 
 export default function Card({
   repo,
@@ -36,11 +37,13 @@ export default function Card({
     : previousEvaluation;
   const isEvaluating = latestEvaluation !== undefined && !latestEvaluation.done;
 
+  const fakeScores = generateFakeScores(repo.fullName);
+
   useEffect(() => {
-    submitScore(repo.id, "activity", 10);
-    submitScore(repo.id, "growth", 3);
-    submitScore(repo.id, "popularity", 3);
-    submitScore(repo.id, "reputation", 8);
+    submitScore(repo.id, "activity", fakeScores.activity);
+    submitScore(repo.id, "growth", fakeScores.growth);
+    submitScore(repo.id, "popularity", fakeScores.popularity);
+    submitScore(repo.id, "reputation", fakeScores.reputation);
   });
 
   function handleSignIn() {

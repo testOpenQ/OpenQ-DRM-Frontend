@@ -32,5 +32,10 @@ export function generateFakeScores(repoFullName: string) {
     numbers.push(Math.min(Math.floor(random() * 11) + 4, 10));
   }
 
-  return numbers;
+  return {
+    activity: numbers[0] || 0,
+    growth: numbers[1] || 0,
+    popularity: numbers[2] || 0,
+    reputation: numbers[3] || 0,
+  };
 }

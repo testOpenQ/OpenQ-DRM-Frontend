@@ -25,20 +25,22 @@ export function ScoresProvider({ children }: { children: ReactNode }) {
 
   const submitScore = useCallback(
     (repoId: number, category: string, score: number) => {
-      const current = scores[repoId] || {
-        activity: 0,
-        growth: 0,
-        popularity: 0,
-        reputation: 0,
-      };
+      setScores((scores) => {
+        const current = scores[repoId] || {
+          activity: 0,
+          growth: 0,
+          popularity: 0,
+          reputation: 0,
+        };
 
-      setScores((scores) => ({
-        ...scores,
-        [repoId]: {
-          ...current,
-          [category]: score,
-        },
-      }));
+        return {
+          ...scores,
+          [repoId]: {
+            ...current,
+            [category]: score,
+          },
+        };
+      });
     },
     []
   );
