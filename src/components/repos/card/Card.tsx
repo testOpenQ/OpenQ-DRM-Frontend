@@ -29,7 +29,12 @@ export default function Card({
     [repo.id]
   );
 
-  const lastEvaluation = evaluations?.[0];
+  const latestEvaluation = evaluations?.[0];
+  const previousEvaluation = evaluations?.[1];
+  const displayedEvaluation = latestEvaluation?.result
+    ? latestEvaluation
+    : previousEvaluation;
+  const isEvaluating = latestEvaluation !== undefined && !latestEvaluation.done;
 
   useEffect(() => {
     submitScore(repo.id, "activity", 10);
@@ -48,13 +53,13 @@ export default function Card({
         repo={repo}
         since={since}
         until={until}
-        isEvaluating={lastEvaluation !== undefined && !lastEvaluation.done}
+        isEvaluating={isEvaluating}
       />
       <div className="flex flex-col sm:flex-row">
         <div className="flex grow flex-col items-center justify-center">
-          {evaluations && evaluations[0] && evaluations[0].result && (
+          {displayedEvaluation && displayedEvaluation.result && (
             <CardMembers
-              members={evaluations[0].result.authors.map((a) => a.user)}
+              members={displayedEvaluation.result.authors.map((a) => a.user)}
             />
           )}
           {!evaluations?.length && (
@@ -79,12 +84,12 @@ export default function Card({
           <CardScores repo={repo} />
         </div>
       </div>
-      {evaluations && evaluations[0] && evaluations[0].result && (
+      {displayedEvaluation && displayedEvaluation.result && (
         <>
-          <CardActivityChart evaluation={evaluations[0].result} />
+          <CardActivityChart evaluation={displayedEvaluation.result} />
           <Tabs
             repo={repo}
-            evaluation={evaluations[0].result}
+            evaluation={displayedEvaluation.result}
             since={since}
             until={until}
           />
