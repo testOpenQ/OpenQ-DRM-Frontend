@@ -74,7 +74,7 @@ export default function Card({
       </div>
       {evaluations && evaluations[0] && evaluations[0].result && (
         <>
-          <CardActivityChart repoEvaluation={evaluations[0].result} />
+          <CardActivityChart evaluation={evaluations[0].result} />
           <Tabs
             repo={repo}
             evaluation={evaluations[0].result}

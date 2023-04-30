@@ -47,9 +47,9 @@ function prepareChartData(repoEvaluation: RepoEvaluationResult) {
 }
 
 export default function CardActivityChart({
-  repoEvaluation,
+  evaluation,
 }: {
-  repoEvaluation: RepoEvaluationResult;
+  evaluation: RepoEvaluationResult;
 }) {
   ChartJS.register(
     CategoryScale,
@@ -60,19 +60,19 @@ export default function CardActivityChart({
   );
 
   const data: ChartData<"line"> = useMemo(
-    () => prepareChartData(repoEvaluation),
-    [repoEvaluation]
+    () => prepareChartData(evaluation),
+    [evaluation]
   );
 
   return (
     <div className="bg-gray-900/50 pt-3">
       <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs text-gray-400">
         <div>
-          {formatter.format(repoEvaluation.commitCount)} commits
+          {formatter.format(evaluation.commitCount)} commits
           <div className="mr-2 mt-1 h-1 w-full rounded-full bg-white"></div>
         </div>
         <div>
-          {formatter.format(repoEvaluation.linesChanged)} changes
+          {formatter.format(evaluation.linesChanged)} changes
           <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-gray-400"></div>
         </div>
       </div>
