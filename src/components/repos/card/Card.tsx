@@ -15,13 +15,9 @@ import { RepoEvaluation } from "~/lib/github/repo/evaluate";
 export default function Card({
   campaignId,
   repo,
-  since,
-  until,
 }: {
-  campaignId: number;
+  campaignId?: number;
   repo: Repo;
-  since: string;
-  until: string;
 }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
@@ -58,8 +54,6 @@ export default function Card({
       <CardHeader
         campaignId={campaignId}
         repo={repo}
-        since={since}
-        until={until}
         isEvaluating={isEvaluating}
       />
       <div className="flex flex-col sm:flex-row">
@@ -94,12 +88,7 @@ export default function Card({
       {displayedEvaluation && displayedEvaluation.result && (
         <>
           <CardActivityChart evaluation={displayedEvaluation.result} />
-          <Tabs
-            repo={repo}
-            evaluation={displayedEvaluation.result}
-            since={since}
-            until={until}
-          />
+          <Tabs repo={repo} evaluation={displayedEvaluation.result} />
         </>
       )}
     </div>

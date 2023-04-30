@@ -13,19 +13,6 @@ export default function CampaignsDetails({
   users: User[];
   repos: Repo[];
 }) {
-  const since = useMemo(() => {
-    const since = new Date();
-    since.setHours(0, 0, 0, 0);
-    since.setMonth(since.getMonth() - 1);
-    return since.toISOString();
-  }, []);
-
-  const until = useMemo(() => {
-    const until = new Date();
-    until.setHours(0, 0, 0, 0);
-    return until.toISOString();
-  }, []);
-
   return (
     <>
       <EditableHeadline campaign={campaign} />
@@ -36,13 +23,7 @@ export default function CampaignsDetails({
           <ScoresProvider>
             <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
               {repos.map((repo) => (
-                <RepoCard
-                  campaignId={campaign.id}
-                  key={repo.id}
-                  repo={repo}
-                  since={since}
-                  until={until}
-                />
+                <RepoCard campaignId={campaign.id} key={repo.id} repo={repo} />
               ))}
             </div>
           </ScoresProvider>

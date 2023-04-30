@@ -10,14 +10,10 @@ import { evaluateRepo } from "~/lib/github/repo/evaluate";
 export default function CardHeader({
   campaignId,
   repo,
-  since,
-  until,
   isEvaluating,
 }: {
-  campaignId: number;
+  campaignId?: number;
   repo: Repo;
-  since: string;
-  until: string;
   isEvaluating: boolean;
 }) {
   const { data } = useSession();
@@ -26,7 +22,19 @@ export default function CardHeader({
   async function evaluate() {
     if (!accessToken) return;
 
-    await evaluateRepo(repo.id, accessToken, since, until);
+    const since = new Date();
+    since.setHours(0, 0, 0, 0);
+    since.setMonth(since.getMonth() - 1);
+
+    const until = new Date();
+    until.setHours(0, 0, 0, 0);
+
+    await evaluateRepo(
+      repo.id,
+      accessToken,
+      since.toISOString(),
+      until.toISOString()
+    );
   }
 
   return (
@@ -54,7 +62,9 @@ export default function CardHeader({
             {!isEvaluating && <ArrowPathIcon className="h-4 w-4" />}
           </DiscreetButton>
         )}
-        {!isEvaluating && <DeleteButton repo={repo} campaignId={campaignId} />}
+        {!isEvaluating && !!campaignId && (
+          <DeleteButton repo={repo} campaignId={campaignId} />
+        )}
       </div>
     </div>
   );

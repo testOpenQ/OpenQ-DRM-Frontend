@@ -20,13 +20,9 @@ type AuthorsByName = Map<
 export default function ChangesTab({
   repo,
   evaluation,
-  since,
-  until,
 }: {
   repo: Repo;
   evaluation: RepoEvaluationResult;
-  since: string;
-  until: string;
 }) {
   const [showCommitSummaryInfo, setShowCommitSummaryInfo] = useLocalStorage(
     "ui.info.commit-summary",
@@ -74,12 +70,19 @@ export default function ChangesTab({
               ).toFixed(2)
           );
 
+          const since = new Date();
+          since.setHours(0, 0, 0, 0);
+          since.setMonth(since.getMonth() - 1);
+
+          const until = new Date();
+          until.setHours(0, 0, 0, 0);
+
           setGeneratingSummary(false);
           addCommitSummary({
             repoId: repo.id,
             summary: data.report,
-            since,
-            until,
+            since: since.toISOString(),
+            until: until.toISOString(),
           }).catch(console.error);
         }
       )
