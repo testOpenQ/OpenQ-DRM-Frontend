@@ -25,21 +25,21 @@ function prepareChartData(repoEvaluation: RepoEvaluationResult) {
       {
         data: commits,
         borderColor: "white",
-        borderWidth: 3,
-        pointBorderWidth: 0,
-        pointRadius: 0,
-        pointHoverRadius: 0,
-        fill: true,
-        tension: 0.4,
-      },
-      {
-        data: linesChanged,
-        borderColor: "gray",
         borderWidth: 2,
         pointBorderWidth: 0,
         pointRadius: 0,
         pointHoverRadius: 0,
-        fill: true,
+        fill: false,
+        tension: 0.4,
+      },
+      {
+        data: linesChanged,
+        borderColor: "rgb(79 70 229)",
+        borderWidth: 2,
+        pointBorderWidth: 0,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        fill: false,
         tension: 0.4,
       },
     ],
@@ -65,15 +65,15 @@ export default function CardActivityChart({
   );
 
   return (
-    <div className="bg-gray-900/50 pt-3">
+    <div className="pt-3">
       <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs text-gray-400">
         <div>
-          {formatter.format(evaluationResult.commitCount)} commits
-          <div className="mr-2 mt-1 h-1 w-full rounded-full bg-white"></div>
+          {formatter.format(evaluationResult.commitCount)} changes
+          <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-white"></div>
         </div>
         <div>
-          {formatter.format(evaluationResult.linesChanged)} changes
-          <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-gray-400"></div>
+          {formatter.format(evaluationResult.linesChanged)} lines
+          <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-indigo-600"></div>
         </div>
       </div>
       <Line data={data} options={options} />

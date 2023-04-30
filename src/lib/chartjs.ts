@@ -1,7 +1,7 @@
 import { ChartOptions } from "chart.js";
 
 export const options: ChartOptions<"line"> = {
-  aspectRatio: 15,
+  aspectRatio: 10,
   layout: {
     padding: {
       top: 5,
