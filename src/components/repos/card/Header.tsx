@@ -1,13 +1,12 @@
 import { useSession } from "next-auth/react";
-import { type Repo, deleteRepo, editRepo } from "~/db";
+import type { Repo } from "~/db";
 import LoadingSpinner from "../../LoadingSpinner";
-import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../../base/DiscreetButton";
 import Image from "next/image";
-import { Scanner } from "@mktcodelib/github-scanner";
-import { REPO_QUERY, RepoQueryResponseData } from "~/lib/github/repo/query";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import DeleteButton from "./DeleteButton";
+import { evaluateRepo } from "~/lib/github/repo/evaluate";
 
 export default function CardHeader({
   repo,
@@ -24,43 +23,14 @@ export default function CardHeader({
   const [isScanning, setIsScanning] = useState(false);
 
   async function scan() {
-    if (!accessToken) {
-      console.log("No access token set");
-      return;
-    }
-
-    if (isScanning) {
-      console.log("Already scanning");
-      return;
-    }
+    if (!accessToken) return;
 
     setIsScanning(true);
 
-    const queryVariables = {
-      owner: repo.ownerLogin,
-      name: repo.name,
-      since,
-      until,
-      first: 50,
-    };
-
-    const scanner = new Scanner({ accessToken });
-    await scanner.scan<{ repository: RepoQueryResponseData }>(
-      REPO_QUERY,
-      queryVariables,
-      ({ scanId }) => {
-        editRepo(repo.id, { lastScanId: scanId }).catch(console.error);
-      }
-    );
+    await evaluateRepo(repo.id, accessToken, since, until);
 
     setIsScanning(false);
   }
-
-  useEffect(() => {
-    if (!repo.lastScanId) {
-      scan();
-    }
-  });
 
   return (
     <div className="flex items-center justify-between bg-gray-900/50 px-3 py-2 font-bold">
