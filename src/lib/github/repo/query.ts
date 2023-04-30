@@ -61,6 +61,7 @@ export type RepoQueryResponseData = {
       history: {
         totalCount: number;
         nodes: {
+          message: string;
           additions: number;
           deletions: number;
           changedFilesIfAvailable: number;
