@@ -3,12 +3,13 @@ import Headline from "./layout/Headline";
 import DiscreetButton from "./base/DiscreetButton";
 import Link from "next/link";
 import { EyeIcon, PlusIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
 import CampaignsOverview from "./overview/Campaigns";
 import EvaluationsOverview from "./overview/Evaluations";
+import useLocalStorage from "~/hooks/useLocalstorage";
 
 export default function Overview({ campaigns }: { campaigns: Campaign[] }) {
-  const [viewMode, setViewMode] = useState<"campaigns" | "evaluations">(
+  const [viewMode, setViewMode] = useLocalStorage<"campaigns" | "evaluations">(
+    "ui.overview.viewMode",
     "campaigns"
   );
 
