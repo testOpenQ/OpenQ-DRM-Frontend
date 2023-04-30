@@ -5,11 +5,11 @@ import {
   PointElement,
   LineElement,
   Filler,
-  type ChartOptions,
   type ChartData,
 } from "chart.js";
 import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
+import { options } from "~/lib/chartjs";
 import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
 import { formatter } from "~/lib/numbers";
 
@@ -63,37 +63,6 @@ export default function CardActivityChart({
     () => prepareChartData(repoEvaluation),
     [repoEvaluation]
   );
-
-  const options: ChartOptions<"line"> = useMemo(() => {
-    return {
-      aspectRatio: 15,
-      layout: {
-        padding: {
-          top: 5,
-        },
-      },
-      plugins: {
-        legend: {
-          display: false,
-        },
-        title: {
-          display: false,
-        },
-        filler: {
-          drawTime: "beforeDatasetsDraw",
-          propagate: true,
-        },
-      },
-      scales: {
-        x: {
-          display: false,
-        },
-        y: {
-          display: false,
-        },
-      },
-    };
-  }, []);
 
   return (
     <div className="bg-gray-900/50 pt-3">
