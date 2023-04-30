@@ -88,8 +88,6 @@ export default async function ChatCompletion(
 
   const { context, maxResponseTokens, temperature } = req.body;
 
-  console.log("Chat Context", context);
-
   let response: string | undefined;
   let error: string | undefined;
   const consumedTokens = {
@@ -106,7 +104,6 @@ export default async function ChatCompletion(
     });
 
     response = completion.data.choices[0]?.message?.content;
-    console.log("AI reponse:", response);
 
     if (!response) {
       throw new Error(
