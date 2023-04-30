@@ -300,6 +300,10 @@ function getEvaluationsByTypeAndTagetId(
   >;
 }
 
+function getEvaluation(id: number) {
+  return db.evaluations.get(id) as Promise<Evaluation | undefined>;
+}
+
 function addEvaluation(evaluation: EvaluationModel) {
   return db.evaluations.add(evaluation);
 }
@@ -345,6 +349,7 @@ export {
   getLatestUserScan,
   getLatestRepoScan,
   getEvaluationsByTypeAndTagetId,
+  getEvaluation,
   addEvaluation,
   updateEvaluation,
   db,
