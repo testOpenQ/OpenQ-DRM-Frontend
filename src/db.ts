@@ -295,9 +295,10 @@ function getEvaluationsByTypeAndTagetId(
   type: "org" | "user" | "repo",
   targetId: number
 ) {
-  return db.evaluations.where({ type, targetId }).toArray() as Promise<
-    Evaluation[]
-  >;
+  return db.evaluations
+    .where({ type, targetId })
+    .reverse()
+    .toArray() as Promise<Evaluation[]>;
 }
 
 function getEvaluation(id: number) {
