@@ -3,6 +3,7 @@ import { type Repo } from "~/db";
 import ChangesTab from "./Changes";
 import DiscreetButton from "../../../base/DiscreetButton";
 import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
+import DevelopersTab from "./Developers";
 
 enum CardTabs {
   Changes = "changes",
@@ -30,7 +31,9 @@ export default function Tabs({
       <div className="flex">
         <DiscreetButton
           className={`w-full !rounded-b-none !rounded-tl-none text-sm font-normal ${
-            showTab === CardTabs.Changes ? "!bg-gray-900/50 !text-gray-300" : ""
+            showTab === CardTabs.Changes
+              ? "!bg-gray-900/50 !text-gray-300 hover:!bg-gray-900/50"
+              : ""
           }`}
           onClick={() => handleClickTab(CardTabs.Changes)}
         >
@@ -38,7 +41,9 @@ export default function Tabs({
         </DiscreetButton>
         <DiscreetButton
           className={`w-full !rounded-b-none text-sm font-normal ${
-            showTab === CardTabs.Issues ? "!bg-gray-900/50 !text-gray-300" : ""
+            showTab === CardTabs.Issues
+              ? "!bg-gray-900/50 !text-gray-300 hover:!bg-gray-900/50"
+              : ""
           }`}
           onClick={() => handleClickTab(CardTabs.Issues)}
           disabled
@@ -48,7 +53,7 @@ export default function Tabs({
         <DiscreetButton
           className={`w-full !rounded-b-none text-sm font-normal ${
             showTab === CardTabs.Discussions
-              ? "!bg-gray-900/50 !text-gray-300"
+              ? "!bg-gray-900/50 !text-gray-300 hover:!bg-gray-900/50"
               : ""
           }`}
           onClick={() => handleClickTab(CardTabs.Discussions)}
@@ -59,11 +64,10 @@ export default function Tabs({
         <DiscreetButton
           className={`w-full !rounded-b-none !rounded-tr-none text-sm font-normal ${
             showTab === CardTabs.Developers
-              ? "!bg-gray-900/50 !text-gray-300"
+              ? "!bg-gray-900/50 !text-gray-300 hover:!bg-gray-900/50"
               : ""
           }`}
           onClick={() => handleClickTab(CardTabs.Developers)}
-          disabled
         >
           Developers
         </DiscreetButton>
@@ -74,6 +78,13 @@ export default function Tabs({
         } overflow-auto bg-gray-900/50 transition-all`}
       >
         <ChangesTab repo={repo} evaluationResult={evaluationResult} />
+      </div>
+      <div
+        className={`${
+          showTab === "developers" ? "" : "max-h-0"
+        } overflow-auto bg-gray-900/50 transition-all`}
+      >
+        <DevelopersTab repo={repo} evaluationResult={evaluationResult} />
       </div>
     </div>
   );

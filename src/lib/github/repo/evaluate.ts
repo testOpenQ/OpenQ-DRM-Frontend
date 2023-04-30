@@ -18,6 +18,11 @@ export type CommitsByAuthor = Record<
   { commitCount: number; linesChanged: number }
 >;
 
+export type AuthorWithCommits = CommitAuthor & {
+  commitCount: number;
+  linesChanged: number;
+};
+
 export type RepoEvaluationResult = {
   commitCount: number;
   linesChanged: number;
@@ -173,8 +178,13 @@ export async function evaluateRepo(
         result: evaluateRepoData(data.repository),
       });
     },
-    done: (_) => {
+    done: ({ data }) => {
       updateEvaluation(evaluationId, { done: 1 });
+
+      const result = evaluateRepoData(data.repository);
+
+      for (const author of result.authors) {
+      }
     },
   });
 

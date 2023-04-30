@@ -32,6 +32,7 @@ export const REPO_QUERY: DocumentNode = gql`query (
                   avatarUrl
                   bio
                   websiteUrl
+                  twitterUsername
                 }
               }
             }
@@ -43,7 +44,6 @@ export const REPO_QUERY: DocumentNode = gql`query (
 }`;
 
 export type CommitAuthor = {
-  email: string;
   user: {
     id: string;
     login: string;
@@ -51,6 +51,7 @@ export type CommitAuthor = {
     avatarUrl: string;
     bio: string;
     websiteUrl: string;
+    twitterUsername: string;
   };
 };
 
