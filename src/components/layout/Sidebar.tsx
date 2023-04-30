@@ -16,7 +16,7 @@ export default function Sidebar() {
   const campaigns = useCampaigns();
 
   return (
-    <div className="w-[320px] bg-gray-800">
+    <div className="w-[320px] flex-none bg-gray-800">
       <div className="flex h-full flex-col whitespace-nowrap bg-gray-900/50">
         <ConnectGithub />
         <ScanInfo />
