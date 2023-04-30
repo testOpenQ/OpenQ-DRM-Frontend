@@ -8,11 +8,13 @@ import DeleteButton from "./DeleteButton";
 import { evaluateRepo } from "~/lib/github/repo/evaluate";
 
 export default function CardHeader({
+  campaignId,
   repo,
   since,
   until,
   isEvaluating,
 }: {
+  campaignId: number;
   repo: Repo;
   since: string;
   until: string;
@@ -52,7 +54,7 @@ export default function CardHeader({
             {!isEvaluating && <ArrowPathIcon className="h-4 w-4" />}
           </DiscreetButton>
         )}
-        {!isEvaluating && <DeleteButton repo={repo} />}
+        {!isEvaluating && <DeleteButton repo={repo} campaignId={campaignId} />}
       </div>
     </div>
   );

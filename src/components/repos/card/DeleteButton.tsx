@@ -3,9 +3,15 @@ import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import Button from "~/components/base/Button";
 import DiscreetButton from "~/components/base/DiscreetButton";
-import { Repo, deleteRepo } from "~/db";
+import { Repo, removeRepoFromCampaign } from "~/db";
 
-export default function DeleteButton({ repo }: { repo: Repo }) {
+export default function DeleteButton({
+  repo,
+  campaignId,
+}: {
+  repo: Repo;
+  campaignId: number;
+}) {
   let [isOpen, setIsOpen] = useState(false);
 
   function closeConfirmModal() {
@@ -16,8 +22,8 @@ export default function DeleteButton({ repo }: { repo: Repo }) {
     setIsOpen(true);
   }
 
-  function handleDeleteRepo() {
-    deleteRepo(repo.id).catch(console.error);
+  async function handleDeleteRepo() {
+    await removeRepoFromCampaign(repo.id, campaignId);
     closeConfirmModal();
   }
 
@@ -57,24 +63,26 @@ export default function DeleteButton({ repo }: { repo: Repo }) {
                     as="h3"
                     className="text-lg font-medium leading-6 text-gray-900"
                   >
-                    Delete {repo.fullName}?
+                    Remove {repo.fullName} from this campaign?
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      You can add the repository back at any time.
+                      The repository and its existing evaluations won't be
+                      deleted, just removed from this campaign. You can add the
+                      repo back to the campaign at any time.
                     </p>
                   </div>
 
                   <div className="mt-4 flex">
                     <DiscreetButton
                       onClick={closeConfirmModal}
-                      className="!text-gray-400 hover:!bg-gray-200"
+                      className="!text-red-600 hover:!bg-gray-100"
                     >
                       Cancel
                     </DiscreetButton>
                     <Button onClick={handleDeleteRepo} className="ml-auto">
                       <TrashIcon className="mr-2 h-4 w-4" />
-                      Delete
+                      Remove
                     </Button>
                   </div>
                 </Dialog.Panel>

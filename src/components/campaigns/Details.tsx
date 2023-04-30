@@ -37,6 +37,7 @@ export default function CampaignsDetails({
             <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
               {repos.map((repo) => (
                 <RepoCard
+                  campaignId={campaign.id}
                   key={repo.id}
                   repo={repo}
                   since={since}

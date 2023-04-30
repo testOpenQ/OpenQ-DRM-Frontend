@@ -13,10 +13,12 @@ import { generateFakeScores } from "~/lib/scores";
 import { RepoEvaluation } from "~/lib/github/repo/evaluate";
 
 export default function Card({
+  campaignId,
   repo,
   since,
   until,
 }: {
+  campaignId: number;
   repo: Repo;
   since: string;
   until: string;
@@ -54,6 +56,7 @@ export default function Card({
   return (
     <div className="mb-auto overflow-hidden rounded-lg bg-gray-800">
       <CardHeader
+        campaignId={campaignId}
         repo={repo}
         since={since}
         until={until}

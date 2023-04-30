@@ -211,6 +211,15 @@ function deleteRepo(id: number | string) {
   return db.repos.delete(Number(id));
 }
 
+function removeRepoFromCampaign(repoId: number, campaignId: number) {
+  return db.campaigns
+    .where("id")
+    .equals(campaignId)
+    .modify((campaign) => {
+      campaign.repoIds = campaign.repoIds.filter((id) => id !== repoId);
+    });
+}
+
 function getUsers(userIds: number[]) {
   return db.users.where("id").anyOf(userIds).toArray() as Promise<User[]>;
 }
@@ -338,6 +347,7 @@ export {
   addRepo,
   editRepo,
   deleteRepo,
+  removeRepoFromCampaign,
   getUsers,
   getUser,
   addUser,
