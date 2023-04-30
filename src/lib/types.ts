@@ -53,6 +53,26 @@ export type GithubRestUser = {
   updated_at: string;
 };
 
+export type GithubGraphQLUser = {
+  id: string;
+  databaseId: number;
+  login: string;
+  avatarUrl: string;
+  name: string;
+  company: string;
+  isHireable: boolean;
+  websiteUrl: string;
+  location: string;
+  email: string;
+  bio: string;
+  twitterUsername: string;
+  followers: {
+    totalCount: number;
+  };
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type RateLimit = {
   used: number;
   remaining: number;

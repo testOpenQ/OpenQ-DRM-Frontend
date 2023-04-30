@@ -46,10 +46,9 @@ interface OrgModel {
   githubRestId: number;
   githubGraphqlId: string;
   avatarUrl: string;
-  gravatarId: string;
   name: string;
   company: string;
-  blog: string;
+  website: string;
   location: string;
   email: string;
   bio: string;
@@ -65,21 +64,19 @@ interface Org extends OrgModel {
 
 interface UserModel {
   id?: number;
-  login: string;
   githubRestId: number;
   githubGraphqlId: string;
-  avatarUrl: string;
-  gravatarId: string;
+  login: string;
   name: string;
+  avatarUrl: string;
   company: string;
-  blog: string;
+  website: string;
   location: string;
   email: string;
-  hireable: boolean;
+  isHireable: boolean;
   bio: string;
   twitterUsername: string;
-  followers: number;
-  following: number;
+  followersCount: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -132,6 +129,8 @@ interface EvaluationModel {
   dataIds?: { [key: string]: number | null };
   result?: { [key: string]: any };
   done: 1 | 0;
+  since?: string;
+  until?: string;
   createdAt: string;
   updatedAt: string;
 }
@@ -250,6 +249,12 @@ function getUsers(userIds: number[]) {
 
 function getUser(id: number | string) {
   return () => db.users.get(Number(id)) as Promise<User | undefined>;
+}
+
+function getUserByLogin(login: string) {
+  return db.users.where("login").equals(login).first() as Promise<
+    User | undefined
+  >;
 }
 
 async function addUser(user: UserModel) {
@@ -384,6 +389,7 @@ export {
   removeRepoFromCampaign,
   getUsers,
   getUser,
+  getUserByLogin,
   addUser,
   editUser,
   deleteUser,

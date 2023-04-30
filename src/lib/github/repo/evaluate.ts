@@ -1,7 +1,17 @@
 import { normalize } from "~/lib/numbers";
 import { CommitAuthor, REPO_QUERY, RepoQueryResponseData } from "./query";
-import { Evaluation, addEvaluation, db, updateEvaluation } from "~/db";
+import {
+  Evaluation,
+  addEvaluation,
+  addUser,
+  db,
+  getUser,
+  getUserByLogin,
+  updateEvaluation,
+} from "~/db";
 import { Scanner } from "@mktcodelib/github-scanner";
+import { UserEvaluationResult, evaluateUser } from "../user/evaluate";
+import { mapGraphQLUserToModel } from "../graphql";
 
 export type CommitsByDay = Record<
   string,
@@ -32,6 +42,9 @@ export type RepoEvaluationResult = {
   commitsTrend: number;
   commitsByAuthor: CommitsByAuthor;
   authors: CommitAuthor[];
+  userEvaluationIds: {
+    [userId: string]: number;
+  };
 };
 
 export type RepoEvaluation = Evaluation & {
@@ -138,6 +151,7 @@ export function evaluateRepoData(
     commitsTrend,
     commitsByAuthor,
     authors,
+    userEvaluationIds: {},
   };
 }
 
@@ -157,6 +171,8 @@ export async function evaluateRepo(
     type: "repo",
     targetId: id,
     done: 0,
+    since,
+    until,
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   });
@@ -178,13 +194,29 @@ export async function evaluateRepo(
         result: evaluateRepoData(data.repository),
       });
     },
-    done: ({ data }) => {
-      updateEvaluation(evaluationId, { done: 1 });
-
+    done: async ({ data }) => {
       const result = evaluateRepoData(data.repository);
 
       for (const author of result.authors) {
+        const user = await getUserByLogin(author.user.login);
+        let userId = user?.id;
+        if (!userId) {
+          userId = await addUser(mapGraphQLUserToModel(author.user));
+        }
+
+        const userEvaluationId = await evaluateUser(
+          userId,
+          accessToken,
+          since,
+          until
+        );
+        result.userEvaluationIds[userId] = userEvaluationId;
       }
+
+      updateEvaluation(evaluationId, {
+        result,
+        done: 1,
+      });
     },
   });
 

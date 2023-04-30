@@ -97,7 +97,12 @@ export function evaluateUserData(
   };
 }
 
-export async function evaluateUser(id: number, accessToken: string) {
+export async function evaluateUser(
+  id: number,
+  accessToken: string,
+  since: string,
+  until: string
+) {
   const user = await db.users.get(id);
 
   if (!user) {

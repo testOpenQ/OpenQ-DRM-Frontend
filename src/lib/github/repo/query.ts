@@ -27,12 +27,22 @@ export const REPO_QUERY: DocumentNode = gql`query (
               author {
                 user {
                   id
+                  databaseId
                   login
-                  email
                   avatarUrl
-                  bio
+                  name
+                  company
+                  isHireable
                   websiteUrl
+                  location
+                  email
+                  bio
                   twitterUsername
+                  followers {
+                    totalCount
+                  }
+                  createdAt
+                  updatedAt
                 }
               }
             }
@@ -46,12 +56,22 @@ export const REPO_QUERY: DocumentNode = gql`query (
 export type CommitAuthor = {
   user: {
     id: string;
+    databaseId: number;
     login: string;
+    name: string;
     email: string;
     avatarUrl: string;
     bio: string;
     websiteUrl: string;
     twitterUsername: string;
+    company: string;
+    isHireable: boolean;
+    location: string;
+    followers: {
+      totalCount: number;
+    };
+    createdAt: string;
+    updatedAt: string;
   };
 };
 

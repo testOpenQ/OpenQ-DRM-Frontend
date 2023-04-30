@@ -35,6 +35,8 @@ export default function Card({
     : previousEvaluation;
   const isEvaluating = latestEvaluation !== undefined && !latestEvaluation.done;
 
+  console.log(latestEvaluation?.result);
+
   const fakeScores = generateFakeScores(repo.fullName);
 
   useEffect(() => {
