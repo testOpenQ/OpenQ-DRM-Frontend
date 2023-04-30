@@ -11,6 +11,7 @@ import {
 import useLocalStorage from "~/hooks/useLocalstorage";
 import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
 import type { RepoQueryResponseData } from "~/lib/github/repo/query";
+import CardActivityChart from "../ActivityChart";
 
 type AuthorsByName = Map<
   string,
@@ -19,10 +20,10 @@ type AuthorsByName = Map<
 
 export default function ChangesTab({
   repo,
-  evaluation,
+  evaluationResult,
 }: {
   repo: Repo;
-  evaluation: RepoEvaluationResult;
+  evaluationResult: RepoEvaluationResult;
 }) {
   const [showCommitSummaryInfo, setShowCommitSummaryInfo] = useLocalStorage(
     "ui.info.commit-summary",
@@ -49,7 +50,7 @@ export default function ChangesTab({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ commits: evaluation.rawCommits }),
+      body: JSON.stringify({ commits: evaluationResult.rawCommits }),
     })
       .then((res) => res.json())
       .then(
@@ -118,53 +119,56 @@ export default function ChangesTab({
   }
 
   return (
-    <div className="p-3">
-      {!generatingSummary && summaries?.length === 0 && (
-        <div className="flex flex-col items-center justify-center">
-          <Button
-            className="mt-2"
-            onClick={generateSummary}
-            disabled={generatingSummary}
-          >
-            Generate summary
-          </Button>
-        </div>
-      )}
+    <>
+      <CardActivityChart evaluationResult={evaluationResult} />
+      <div className="p-3">
+        {!generatingSummary && summaries?.length === 0 && (
+          <div className="flex flex-col items-center justify-center">
+            <Button
+              className="mt-2"
+              onClick={generateSummary}
+              disabled={generatingSummary}
+            >
+              Generate summary
+            </Button>
+          </div>
+        )}
 
-      {generatingSummary && (
-        <div className="my-3 flex items-center justify-center">
-          <LoadingSpinner className="mr-2 opacity-50" />
-          Generating summary...
-        </div>
-      )}
+        {generatingSummary && (
+          <div className="my-3 flex items-center justify-center">
+            <LoadingSpinner className="mr-2 opacity-50" />
+            Generating summary...
+          </div>
+        )}
 
-      {latestSummary && (
-        <>
-          <div
-            className="leading-normal text-gray-300"
-            dangerouslySetInnerHTML={{
-              __html: getSummaryHtml(
-                latestSummary.summary,
-                evaluation.authorsByName
-              ),
-            }}
-          />
-          {showCommitSummaryInfo && (
-            <div className="mt-2 text-xs font-bold">
-              This summary was generated automatically. It might not be
-              absolutely perfect but indicates the workload and general
-              direction of the project.{" "}
-              <a
-                href="#"
-                className="font-normal text-indigo-400"
-                onClick={() => setShowCommitSummaryInfo(false)}
-              >
-                Got it! Don&apos;t show this message any more.
-              </a>
-            </div>
-          )}
-        </>
-      )}
-    </div>
+        {latestSummary && (
+          <>
+            <div
+              className="leading-normal text-gray-300"
+              dangerouslySetInnerHTML={{
+                __html: getSummaryHtml(
+                  latestSummary.summary,
+                  evaluationResult.authorsByName
+                ),
+              }}
+            />
+            {showCommitSummaryInfo && (
+              <div className="mt-2 text-xs font-bold">
+                This summary was generated automatically. It might not be
+                absolutely perfect but indicates the workload and general
+                direction of the project.{" "}
+                <a
+                  href="#"
+                  className="font-normal text-indigo-400"
+                  onClick={() => setShowCommitSummaryInfo(false)}
+                >
+                  Got it! Don&apos;t show this message any more.
+                </a>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 }

@@ -1,4 +1,3 @@
-import CardActivityChart from "./ActivityChart";
 import CardMembers from "./Members";
 import CardScores from "./Scores";
 import { signIn, useSession } from "next-auth/react";
@@ -86,10 +85,7 @@ export default function Card({
         </div>
       </div>
       {displayedEvaluation && displayedEvaluation.result && (
-        <>
-          <CardActivityChart evaluation={displayedEvaluation.result} />
-          <Tabs repo={repo} evaluation={displayedEvaluation.result} />
-        </>
+        <Tabs repo={repo} evaluationResult={displayedEvaluation.result} />
       )}
     </div>
   );

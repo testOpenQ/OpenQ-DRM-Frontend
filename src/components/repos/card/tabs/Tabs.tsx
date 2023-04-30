@@ -13,10 +13,10 @@ enum CardTabs {
 
 export default function Tabs({
   repo,
-  evaluation,
+  evaluationResult,
 }: {
   repo: Repo;
-  evaluation: RepoEvaluationResult;
+  evaluationResult: RepoEvaluationResult;
 }) {
   const [showTab, setShowTab] = useState<CardTabs | null>(null);
 
@@ -73,7 +73,7 @@ export default function Tabs({
           showTab === "changes" ? "" : "max-h-0"
         } overflow-auto bg-gray-900/50 transition-all`}
       >
-        <ChangesTab repo={repo} evaluation={evaluation} />
+        <ChangesTab repo={repo} evaluationResult={evaluationResult} />
       </div>
     </div>
   );
