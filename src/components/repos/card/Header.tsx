@@ -36,7 +36,7 @@ export default function CardHeader({
           src={repo.ownerAvatarUrl}
           width={24}
           height={24}
-          className="mr-2 rounded-full"
+          className="mr-2 rounded-full bg-white/5"
           alt="avatar"
         />
         {repo.fullName}
