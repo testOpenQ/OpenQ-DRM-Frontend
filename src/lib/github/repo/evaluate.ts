@@ -1,6 +1,6 @@
 import { normalize } from "~/lib/numbers";
 import { CommitAuthor, REPO_QUERY, RepoQueryResponseData } from "./query";
-import { addEvaluation, db, updateEvaluation } from "~/db";
+import { Evaluation, addEvaluation, db, updateEvaluation } from "~/db";
 import { Scanner } from "@mktcodelib/github-scanner";
 
 export type CommitsByDay = Record<
@@ -26,6 +26,11 @@ export type RepoEvaluationResult = {
   commitsTrend: number;
   commitsByAuthor: CommitsByAuthor;
   authors: CommitAuthor[];
+};
+
+export type RepoEvaluation = Evaluation & {
+  type: "repo";
+  result?: RepoEvaluationResult;
 };
 
 function calculateTrend(normalizedNumbers: number[]) {

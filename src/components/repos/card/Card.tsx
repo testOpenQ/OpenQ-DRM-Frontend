@@ -10,6 +10,7 @@ import { useEffect } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import { useSubmitScore } from "~/store/ScoresProvider";
 import { generateFakeScores } from "~/lib/scores";
+import { RepoEvaluation } from "~/lib/github/repo/evaluate";
 
 export default function Card({
   repo,
@@ -28,7 +29,7 @@ export default function Card({
   const evaluations = useLiveQuery(
     () => getEvaluationsByTypeAndTagetId("repo", repo.id),
     [repo.id]
-  );
+  ) as RepoEvaluation[];
 
   const latestEvaluation = evaluations?.[0];
   const previousEvaluation = evaluations?.[1];

@@ -1,6 +1,6 @@
 import { Scanner } from "@mktcodelib/github-scanner";
 import { USER_QUERY, UserQueryResponseData } from "./query";
-import { addEvaluation, db, updateEvaluation } from "~/db";
+import { Evaluation, addEvaluation, db, updateEvaluation } from "~/db";
 
 export type UserEvaluationResult = {
   forkCount: number;
@@ -11,6 +11,11 @@ export type UserEvaluationResult = {
   mergedPullRequestCount: number;
   mergedPullRequestCount30d: number;
   mergedPullRequestCount365d: number;
+};
+
+export type UserEvaluation = Evaluation & {
+  type: "user";
+  result?: UserEvaluationResult;
 };
 
 export function evaluateUserData(
