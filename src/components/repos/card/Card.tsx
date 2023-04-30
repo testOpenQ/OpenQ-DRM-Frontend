@@ -29,6 +29,8 @@ export default function Card({
     [repo.id]
   );
 
+  const lastEvaluation = evaluations?.[0];
+
   useEffect(() => {
     submitScore(repo.id, "activity", 10);
     submitScore(repo.id, "growth", 3);
@@ -42,7 +44,12 @@ export default function Card({
 
   return (
     <div className="mb-auto overflow-hidden rounded-lg bg-gray-800">
-      <CardHeader repo={repo} since={since} until={until} />
+      <CardHeader
+        repo={repo}
+        since={since}
+        until={until}
+        isEvaluating={lastEvaluation !== undefined && !lastEvaluation.done}
+      />
       <div className="flex flex-col sm:flex-row">
         <div className="flex grow flex-col items-center justify-center">
           {evaluations && evaluations[0] && evaluations[0].result && (
