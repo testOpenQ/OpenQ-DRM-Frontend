@@ -183,7 +183,7 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
     handleSetTextareaInput(newTextareaInput);
   }
 
-  function findReposByDeps(depsFile: string) {
+  async function findReposByDeps(depsFile: string) {
     if (!accessToken) return;
 
     let deps: unknown;
@@ -202,15 +202,17 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
 
     const depsNames = Object.keys(deps.dependencies);
 
+    setIsFetching(true);
     for (const depName of depsNames) {
-      searchRepos(
+      const foundRepos = await searchRepos(
         `${depName} filename:package extension:json`,
         deps.excludedRepos,
         accessToken
-      ).then((foundRepos) => {
-        setRepos((repos) => [...repos, ...foundRepos.map(mapRestRepoToModel)]);
-      });
+      );
+
+      setRepos((repos) => [...repos, ...foundRepos.map(mapRestRepoToModel)]);
     }
+    setIsFetching(false);
   }
 
   if (!campaign) return <>Campaign does not exist.</>;
