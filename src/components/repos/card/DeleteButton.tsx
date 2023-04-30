@@ -23,8 +23,8 @@ export default function DeleteButton({ repo }: { repo: Repo }) {
 
   return (
     <>
-      <DiscreetButton>
-        <XMarkIcon className="h-4 w-4" onClick={openConfirmModal} />
+      <DiscreetButton onClick={openConfirmModal}>
+        <XMarkIcon className="h-4 w-4" />
       </DiscreetButton>
 
       <Transition appear show={isOpen} as={Fragment}>
