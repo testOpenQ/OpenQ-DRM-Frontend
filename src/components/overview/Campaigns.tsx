@@ -1,4 +1,4 @@
-import type { Campaign } from "~/db";
+import type { Campaign } from "~/store/model";
 import Card from "../campaigns/Card";
 
 export default function CampaignsOverview({

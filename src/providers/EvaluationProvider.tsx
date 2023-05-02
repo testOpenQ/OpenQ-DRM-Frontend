@@ -5,7 +5,8 @@ import React, {
   createContext,
   useContext,
 } from "react";
-import { type Evaluation, getEvaluationsByTypeAndTagetId } from "~/db";
+import { type Evaluation } from "~/store/model";
+import { getEvaluationsByTypeAndTagetId } from "~/store";
 
 const EvaluationContext = createContext<Evaluation[] | undefined>(undefined);
 const LatestEvaluationContext = createContext<Evaluation | undefined>(

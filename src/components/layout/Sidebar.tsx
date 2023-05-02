@@ -9,7 +9,7 @@ import {
 } from "@heroicons/react/24/outline";
 import SidebarDivider from "./SidebarDivider";
 import ConnectGithub from "../ConnectGithub";
-import { useCampaigns } from "~/store/CampaignsProvider";
+import { useCampaigns } from "~/providers/CampaignsProvider";
 import RateLimitInfo from "../RateLimitInfo";
 
 export default function Sidebar() {

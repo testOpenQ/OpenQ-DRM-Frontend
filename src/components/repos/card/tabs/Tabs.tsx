@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { type Repo } from "~/db";
+import type { Repo } from "~/store/model";
 import ChangesTab from "./Changes";
 import DiscreetButton from "../../../base/DiscreetButton";
 import DevelopersTab from "./Developers";

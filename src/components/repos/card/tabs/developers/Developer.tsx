@@ -3,12 +3,8 @@ import { useLiveQuery } from "dexie-react-hooks";
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import {
-  getEvaluation,
-  getUser,
-  type RepoContributorEvaluation,
-  type User,
-} from "~/db";
+import { type RepoContributorEvaluation, type User } from "~/store/model";
+import { getEvaluation, getUser } from "~/store";
 
 export default function Contributor({
   evaluationId,

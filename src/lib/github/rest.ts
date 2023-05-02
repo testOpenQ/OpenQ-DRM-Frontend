@@ -1,4 +1,4 @@
-import type { OrgModel, RepoModel, UserModel } from "~/db";
+import type { OrgModel, RepoModel, UserModel } from "~/store/model";
 import {
   isGithubRestRepo,
   isGithubRestUser,

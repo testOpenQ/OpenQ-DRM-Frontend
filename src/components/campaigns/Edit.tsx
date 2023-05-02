@@ -1,3 +1,4 @@
+import { type RepoModel, type UserModel, type OrgModel } from "~/store/model";
 import {
   addOrg,
   addRepo,
@@ -5,10 +6,7 @@ import {
   deleteCampaign,
   getCampaign,
   updateCampaign,
-  type RepoModel,
-  type UserModel,
-  type OrgModel,
-} from "~/db";
+} from "~/store";
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
 import Button from "../base/Button";

@@ -1,12 +1,12 @@
 import { useSession } from "next-auth/react";
-import type { Repo } from "~/db";
+import type { Repo } from "~/store/model";
 import LoadingSpinner from "../../LoadingSpinner";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../../base/DiscreetButton";
 import Image from "next/image";
 import DeleteButton from "./DeleteButton";
 import { RepoEvaluator } from "~/lib/evaluation/Repo/RepoEvaluator";
-import { useIsEvaluating } from "~/store/EvaluationProvider";
+import { useIsEvaluating } from "~/providers/EvaluationProvider";
 
 export default function CardHeader({
   campaignId,

@@ -3,7 +3,8 @@ import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import Button from "~/components/base/Button";
 import DiscreetButton from "~/components/base/DiscreetButton";
-import { type Repo, removeRepoFromCampaign } from "~/db";
+import type { Repo } from "~/store/model";
+import { removeRepoFromCampaign } from "~/store";
 
 export default function DeleteButton({
   repo,

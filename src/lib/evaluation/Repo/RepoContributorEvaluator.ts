@@ -1,4 +1,5 @@
-import { type User, addEvaluation, updateEvaluation } from "~/db";
+import { type User } from "~/store/model";
+import { addEvaluation, updateEvaluation } from "~/store";
 import { Evaluator } from "../Evaluator";
 import { Scanner } from "@mktcodelib/github-scanner";
 import { USER_QUERY, type UserQueryResponseData } from "./queries";

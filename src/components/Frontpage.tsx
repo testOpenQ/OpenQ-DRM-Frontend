@@ -1,6 +1,6 @@
 import Welcome from "./Welcome";
 import Overview from "./Overview";
-import { useCampaigns } from "~/store/CampaignsProvider";
+import { useCampaigns } from "~/providers/CampaignsProvider";
 
 export default function WelcomeModal() {
   const campaigns = useCampaigns();

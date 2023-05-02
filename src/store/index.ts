@@ -11,145 +11,23 @@ import {
   USER_QUERY,
   type UserQueryResponseData,
   type RepoQueryResponseData,
-} from "./lib/evaluation/Repo/queries";
-import type { RepoEvaluationResult } from "./lib/evaluation/Repo/RepoEvaluator";
-import type { RepoContributorEvaluationResult } from "./lib/evaluation/Repo/RepoContributorEvaluator";
+} from "../lib/evaluation/Repo/queries";
+import type {
+  Campaign,
+  CampaignModel,
+  CommitSummary,
+  CommitSummaryModel,
+  Evaluation,
+  EvaluationModel,
+  Org,
+  OrgModel,
+  Repo,
+  RepoModel,
+  User,
+  UserModel,
+} from "./model";
 
-interface CampaignModel {
-  id?: number;
-  name: string;
-  orgIds: number[];
-  repoIds: number[];
-  userIds: number[];
-}
-
-interface Campaign extends CampaignModel {
-  id: number;
-}
-
-interface CommitSummaryModel {
-  id?: number;
-  repoId?: number;
-  userId?: number;
-  since?: string;
-  until?: string;
-  summary: string;
-}
-
-interface CommitSummary extends CommitSummaryModel {
-  id: number;
-}
-
-interface OrgModel {
-  id?: number;
-  login: string;
-  githubRestId: number;
-  githubGraphqlId: string;
-  avatarUrl: string;
-  name: string;
-  company: string;
-  website: string;
-  location: string;
-  email: string;
-  bio: string;
-  twitterUsername: string;
-  followers: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Org extends OrgModel {
-  id: number;
-}
-
-interface UserModel {
-  id?: number;
-  githubRestId: number;
-  githubGraphqlId: string;
-  login: string;
-  name: string;
-  avatarUrl: string;
-  company: string;
-  website: string;
-  location: string;
-  email: string;
-  isHireable: boolean;
-  bio: string;
-  twitterUsername: string;
-  followersCount: number;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface User extends UserModel {
-  id: number;
-}
-
-interface RepoModel {
-  id?: number;
-  githubRestId: number;
-  githubGraphqlid: string;
-  name: string;
-  fullName: string;
-  private: boolean;
-  ownerLogin: string;
-  ownerAvatarUrl: string;
-  description: string;
-  fork: boolean;
-  createdAt: string;
-  updatedAt: string;
-  pushedAt: string;
-  homepage: string;
-  size: number;
-  stargazersCount: number;
-  watchersCount: number;
-  language: string;
-  hasIssues: boolean;
-  hasProjects: boolean;
-  hasDiscussions: boolean;
-  forksCount: number;
-  archived: boolean;
-  disabled: boolean;
-  openIssuesCount: number;
-  license: string;
-  topics: string[];
-  visibility: string;
-  defaultBranch: string;
-  subscribersCount: number;
-}
-
-interface Repo extends RepoModel {
-  id: number;
-}
-
-interface EvaluationModel {
-  id?: number;
-  type: "repo" | "repo-contributor";
-  targetId: number;
-  params?: { [key: string]: any };
-  data?: { [key: string]: any };
-  result?: { [key: string]: any };
-  children?: number[];
-  done: 1 | 0;
-  createdAt: string;
-  updatedAt: string;
-}
-
-interface Evaluation extends EvaluationModel {
-  id: number;
-}
-
-interface RepoEvaluation extends Evaluation {
-  type: "repo";
-  result?: RepoEvaluationResult;
-}
-
-interface RepoContributorEvaluation extends Evaluation {
-  type: "repo-contributor";
-  result?: RepoContributorEvaluationResult;
-}
-
-class Db extends Dexie {
+class Store extends Dexie {
   campaigns!: Table<CampaignModel, number>;
   orgs!: Table<OrgModel, number>;
   repos!: Table<RepoModel, number>;
@@ -170,34 +48,34 @@ class Db extends Dexie {
   }
 }
 
-const db = new Db();
+const store = new Store();
 
 function getCampaigns() {
-  return db.campaigns.toArray() as Promise<Campaign[]>;
+  return store.campaigns.toArray() as Promise<Campaign[]>;
 }
 
 function getCampaign(id: number | string) {
-  return () => db.campaigns.get(Number(id)) as Promise<Campaign | undefined>;
+  return () => store.campaigns.get(Number(id)) as Promise<Campaign | undefined>;
 }
 
 function updateCampaign(id: number | string, changes: Partial<CampaignModel>) {
-  return db.campaigns.update(Number(id), changes);
+  return store.campaigns.update(Number(id), changes);
 }
 
 async function addCampaign(campaign: CampaignModel) {
-  return await db.campaigns.add(campaign);
+  return await store.campaigns.add(campaign);
 }
 
 async function saveCampaign(campaign: Campaign) {
-  return await db.campaigns.update(campaign.id, campaign);
+  return await store.campaigns.update(campaign.id, campaign);
 }
 
 function deleteCampaign(id: number | string) {
-  return db.campaigns.delete(Number(id));
+  return store.campaigns.delete(Number(id));
 }
 
 async function addOrg(org: OrgModel) {
-  const existingOrg = await db.orgs
+  const existingOrg = await store.orgs
     .where("githubRestId")
     .equals(org.githubRestId)
     .first();
@@ -207,23 +85,23 @@ async function addOrg(org: OrgModel) {
     return existingOrg.id;
   }
 
-  return db.orgs.add(org);
+  return store.orgs.add(org);
 }
 
 function editOrg(orgId: number, changes: Partial<OrgModel>) {
-  return db.orgs.update(orgId, changes);
+  return store.orgs.update(orgId, changes);
 }
 
 function getOrgs(orgIds: number[]) {
-  return db.orgs.where("id").anyOf(orgIds).toArray() as Promise<Org[]>;
+  return store.orgs.where("id").anyOf(orgIds).toArray() as Promise<Org[]>;
 }
 
 function getRepos(repoIds: number[]) {
-  return db.repos.where("id").anyOf(repoIds).toArray() as Promise<Repo[]>;
+  return store.repos.where("id").anyOf(repoIds).toArray() as Promise<Repo[]>;
 }
 
 async function addRepo(repo: RepoModel) {
-  const existingRepo = await db.repos
+  const existingRepo = await store.repos
     .where("githubRestId")
     .equals(repo.githubRestId)
     .first();
@@ -233,19 +111,19 @@ async function addRepo(repo: RepoModel) {
     return existingRepo.id;
   }
 
-  return db.repos.add(repo);
+  return store.repos.add(repo);
 }
 
 function editRepo(repoId: number, changes: Partial<RepoModel>) {
-  return db.repos.update(repoId, changes);
+  return store.repos.update(repoId, changes);
 }
 
 function deleteRepo(id: number | string) {
-  return db.repos.delete(Number(id));
+  return store.repos.delete(Number(id));
 }
 
 function removeRepoFromCampaign(repoId: number, campaignId: number) {
-  return db.campaigns
+  return store.campaigns
     .where("id")
     .equals(campaignId)
     .modify((campaign) => {
@@ -254,21 +132,21 @@ function removeRepoFromCampaign(repoId: number, campaignId: number) {
 }
 
 function getUsers(userIds: number[]) {
-  return db.users.where("id").anyOf(userIds).toArray() as Promise<User[]>;
+  return store.users.where("id").anyOf(userIds).toArray() as Promise<User[]>;
 }
 
 function getUser(id: number | string) {
-  return db.users.get(Number(id)) as Promise<User | undefined>;
+  return store.users.get(Number(id)) as Promise<User | undefined>;
 }
 
 function getUserByLogin(login: string) {
-  return db.users.where("login").equals(login).first() as Promise<
+  return store.users.where("login").equals(login).first() as Promise<
     User | undefined
   >;
 }
 
 async function addUser(user: UserModel) {
-  const existingUser = await db.users
+  const existingUser = await store.users
     .where("githubRestId")
     .equals(user.githubRestId)
     .first();
@@ -278,31 +156,31 @@ async function addUser(user: UserModel) {
     return existingUser.id;
   }
 
-  return db.users.add(user);
+  return store.users.add(user);
 }
 
 function editUser(userId: number, changes: Partial<UserModel>) {
-  return db.users.update(userId, changes);
+  return store.users.update(userId, changes);
 }
 
 function deleteUser(id: number | string) {
-  return db.users.delete(Number(id));
+  return store.users.delete(Number(id));
 }
 
 function getRepoCommitSummaries(repoId: number) {
-  return db.commitSummaries.where({ repoId }).toArray() as Promise<
+  return store.commitSummaries.where({ repoId }).toArray() as Promise<
     CommitSummary[]
   >;
 }
 
 function getUserCommitSummaries(userId: number) {
-  return db.commitSummaries.where({ userId }).toArray() as Promise<
+  return store.commitSummaries.where({ userId }).toArray() as Promise<
     CommitSummary[]
   >;
 }
 
 function addCommitSummary(commitSummary: CommitSummaryModel) {
-  return db.commitSummaries.add(commitSummary);
+  return store.commitSummaries.add(commitSummary);
 }
 
 async function getPendingScans() {
@@ -353,14 +231,14 @@ function getEvaluationsByTypeAndTagetId(
   type: "org" | "user" | "repo",
   targetId: number
 ) {
-  return db.evaluations
+  return store.evaluations
     .where({ type, targetId })
     .reverse()
     .toArray() as Promise<Evaluation[]>;
 }
 
 function getEvaluation(id: number) {
-  return db.evaluations.get(id) as Promise<Evaluation | undefined>;
+  return store.evaluations.get(id) as Promise<Evaluation | undefined>;
 }
 
 function addEvaluation(
@@ -373,7 +251,7 @@ function addEvaluation(
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
-  return db.evaluations.add(newEvaluation);
+  return store.evaluations.add(newEvaluation);
 }
 
 function updateEvaluation(
@@ -385,24 +263,12 @@ function updateEvaluation(
     ...changes,
     updatedAt: new Date().toISOString(),
   };
-  return db.evaluations.update(id, timestampedChanges);
+  return store.evaluations.update(id, timestampedChanges);
 }
 
 export {
-  type CampaignModel,
-  type Campaign,
-  type CommitSummaryModel,
-  type CommitSummary,
-  type OrgModel,
-  type Org,
-  type UserModel,
-  type User,
-  type RepoModel,
-  type Repo,
-  type EvaluationModel,
-  type Evaluation,
-  type RepoEvaluation,
-  type RepoContributorEvaluation,
+  store as db,
+  scansDb,
   getCampaigns,
   getCampaign,
   addCampaign,
@@ -432,6 +298,4 @@ export {
   getEvaluation,
   addEvaluation,
   updateEvaluation,
-  db,
-  scansDb,
 };

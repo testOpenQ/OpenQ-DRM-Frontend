@@ -4,7 +4,8 @@ import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
 import Button from "~/components/base/Button";
 import DiscreetButton from "~/components/base/DiscreetButton";
-import { type Campaign, deleteCampaign } from "~/db";
+import type { Campaign } from "~/store/model";
+import { deleteCampaign } from "~/store";
 
 export default function DeleteButton({ campaign }: { campaign: Campaign }) {
   const router = useRouter();

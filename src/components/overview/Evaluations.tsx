@@ -1,7 +1,8 @@
-import { getRepos, type Campaign, type Repo } from "~/db";
+import { type Campaign, type Repo } from "~/store/model";
+import { getRepos } from "~/store";
 import RepoCard from "../repos/card/Card";
 import { useEffect, useState } from "react";
-import { ScoresProvider } from "~/store/ScoresProvider";
+import { ScoresProvider } from "~/providers/ScoresProvider";
 
 export default function EvaluationsOverview({
   campaigns,

@@ -4,8 +4,8 @@ import { SessionProvider } from "next-auth/react";
 
 import "~/styles/globals.css";
 import Layout from "~/components/layout/Layout";
-import { PendingScansProvider } from "~/store/PendingScansProvider";
-import { CampaignsProvider } from "~/store/CampaignsProvider";
+import { PendingScansProvider } from "~/providers/PendingScansProvider";
+import { CampaignsProvider } from "~/providers/CampaignsProvider";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,

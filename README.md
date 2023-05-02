@@ -52,10 +52,10 @@ Charts in the UI are handled by [Chart.js](https://www.chartjs.org/).
 In addition to the database that contains the scans and is provided by the GitHub Scanner package, the DRM uses another, local database for managing other app data, like campaigns, repositories and users.
 
 ```ts
-import { db, scansDb } from "~/db";
+import { store, scansDb } from "~/store";
 
 // get all campaigns
-const campaigns = await db.campaigns.toArray();
+const campaigns = await store.campaigns.toArray();
 
 // get all scans
 const scans = await scansDb.scans.toArray();

@@ -1,4 +1,4 @@
-import type { Campaign } from "~/db";
+import type { Campaign } from "~/store/model";
 import Headline from "./layout/Headline";
 import DiscreetButton from "./base/DiscreetButton";
 import Link from "next/link";

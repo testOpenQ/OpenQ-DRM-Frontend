@@ -3,15 +3,14 @@ import { useEffect, useState } from "react";
 import LoadingSpinner from "~/components/LoadingSpinner";
 import Button from "~/components/base/Button";
 import {
-  addCommitSummary,
-  getRepoCommitSummaries,
   type RepoEvaluation,
   type Repo,
   type CommitSummary,
-} from "~/db";
+} from "~/store/model";
+import { addCommitSummary, getRepoCommitSummaries } from "~/store";
 import useLocalStorage from "~/hooks/useLocalstorage";
 import CardActivityChart from "../ActivityChart";
-import { useLatestEvaluation } from "~/store/EvaluationProvider";
+import { useLatestEvaluation } from "~/providers/EvaluationProvider";
 import type { RepoQueryResponseDataCommitAuthor } from "~/lib/evaluation/Repo/queries";
 import type { RepoEvaluationResult } from "~/lib/evaluation/Repo/RepoEvaluator";
 import WaitingForFirstEvaluation from "../WaitingForFirstEvaluation";

@@ -1,6 +1,7 @@
 import { useLiveQuery } from "dexie-react-hooks";
 import React, { createContext, useContext } from "react";
-import { type Campaign, getCampaigns } from "~/db";
+import { getCampaigns } from "~/store";
+import type { Campaign } from "~/store/model";
 
 const CampaignsContext = createContext<Campaign[]>([]);
 

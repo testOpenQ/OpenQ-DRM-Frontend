@@ -1,7 +1,7 @@
 import { type Scan } from "@mktcodelib/github-scanner";
 import { useLiveQuery } from "dexie-react-hooks";
 import React, { createContext, useContext } from "react";
-import { getPendingScans } from "~/db";
+import { getPendingScans } from "~/store";
 
 const PendingScansContext = createContext<Scan[]>([]);
 

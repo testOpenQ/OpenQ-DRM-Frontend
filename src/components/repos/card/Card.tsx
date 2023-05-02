@@ -1,10 +1,10 @@
 import CardMembers from "./Members";
 import CardScores from "./Scores";
-import type { Repo } from "~/db";
+import type { Repo } from "~/store/model";
 import CardHeader from "./Header";
 import Tabs from "./tabs/Tabs";
 import { useEffect } from "react";
-import { useSubmitScore } from "~/store/ScoresProvider";
+import { useSubmitScore } from "~/providers/ScoresProvider";
 import { generateFakeScores } from "~/lib/scores";
 
 export default function Card({

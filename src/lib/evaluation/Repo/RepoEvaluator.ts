@@ -4,10 +4,9 @@ import {
   addUser,
   getUserByLogin,
   updateEvaluation,
-  type Repo,
-  type User,
   getEvaluation,
-} from "~/db";
+} from "~/store";
+import type { Repo, User } from "~/store/model";
 import { Evaluator } from "../Evaluator";
 import {
   REPO_QUERY,
@@ -119,20 +118,23 @@ export class RepoEvaluator extends Evaluator<Repo> {
           children: childEvaluationIds,
         });
       },
-      done: async () => {
-        const watchChildren = setInterval(async () => {
-          const childEvaluations = await Promise.all(
-            childEvaluationIds.map((id) => getEvaluation(id))
-          );
+      done: () => {
+        const watchChildren = setInterval(() => {
+          Promise.all(childEvaluationIds.map((id) => getEvaluation(id)))
+            .then((childEvaluations) => {
+              const allDone = childEvaluations.every(
+                (evaluation) => !evaluation || evaluation.done
+              );
 
-          const allDone = childEvaluations.every(
-            (evaluation) => !evaluation || evaluation.done
-          );
-
-          if (allDone) {
-            await updateEvaluation(evaluationId, { done: 1 });
-            clearInterval(watchChildren);
-          }
+              if (allDone) {
+                updateEvaluation(evaluationId, { done: 1 })
+                  .then(() => {
+                    clearInterval(watchChildren);
+                  })
+                  .catch(console.error);
+              }
+            })
+            .catch(console.error);
         }, 3000);
       },
     });

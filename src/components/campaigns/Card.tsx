@@ -1,4 +1,5 @@
-import { type Campaign, getRepos, getUsers } from "~/db";
+import { type Campaign } from "~/store/model";
+import { getRepos, getUsers } from "~/store";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../base/DiscreetButton";
 import Link from "next/link";

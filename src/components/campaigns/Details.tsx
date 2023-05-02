@@ -1,8 +1,8 @@
-import type { Campaign, Repo, User, Org } from "~/db";
+import type { Campaign, Repo, User, Org } from "~/store/model";
 import RepoCard from "../repos/card/Card";
 import EditableHeadline from "./EditableHeadline";
-import { ScoresProvider } from "~/store/ScoresProvider";
-import { EvaluationProvider } from "~/store/EvaluationProvider";
+import { ScoresProvider } from "~/providers/ScoresProvider";
+import { EvaluationProvider } from "~/providers/EvaluationProvider";
 
 export default function CampaignsDetails({
   campaign,

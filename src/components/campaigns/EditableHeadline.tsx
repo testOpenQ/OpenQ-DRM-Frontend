@@ -5,7 +5,8 @@ import {
   PlusIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
-import { saveCampaign, type Campaign } from "~/db";
+import type { Campaign } from "~/store/model";
+import { saveCampaign } from "~/store";
 import DiscreetButton from "../base/DiscreetButton";
 import Headline from "../layout/Headline";
 import DeleteButton from "./DeleteButton";

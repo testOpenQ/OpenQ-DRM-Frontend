@@ -1,12 +1,5 @@
-import {
-  getCampaign,
-  getOrgs,
-  getRepos,
-  getUsers,
-  type Org,
-  type Repo,
-  type User,
-} from "~/db";
+import { type Org, type Repo, type User } from "~/store/model";
+import { getCampaign, getOrgs, getRepos, getUsers } from "~/store";
 import { useRouter } from "next/router";
 import { useLiveQuery } from "dexie-react-hooks";
 import Details from "./Details";
