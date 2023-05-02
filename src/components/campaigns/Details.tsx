@@ -1,8 +1,8 @@
 import type { Campaign, Repo, User, Org } from "~/db";
 import RepoCard from "../repos/card/Card";
-import { useMemo } from "react";
 import EditableHeadline from "./EditableHeadline";
 import { ScoresProvider } from "~/store/ScoresProvider";
+import { EvaluationProvider } from "~/store/EvaluationProvider";
 
 export default function CampaignsDetails({
   campaign,
@@ -23,7 +23,9 @@ export default function CampaignsDetails({
           <ScoresProvider>
             <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
               {repos.map((repo) => (
-                <RepoCard campaignId={campaign.id} key={repo.id} repo={repo} />
+                <EvaluationProvider target={repo} type="repo" key={repo.id}>
+                  <RepoCard campaignId={campaign.id} repo={repo} />
+                </EvaluationProvider>
               ))}
             </div>
           </ScoresProvider>

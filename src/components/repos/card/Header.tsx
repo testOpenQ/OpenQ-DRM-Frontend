@@ -5,22 +5,25 @@ import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../../base/DiscreetButton";
 import Image from "next/image";
 import DeleteButton from "./DeleteButton";
-import { evaluateRepo } from "~/lib/github/repo/evaluate";
+import { RepoEvaluator } from "~/lib/evaluation/Repo/RepoEvaluator";
+import { useState } from "react";
 
 export default function CardHeader({
   campaignId,
   repo,
-  isEvaluating,
 }: {
   campaignId?: number;
   repo: Repo;
-  isEvaluating: boolean;
 }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
 
-  async function evaluate() {
+  const [isEvaluating, setIsEvaluating] = useState(false);
+
+  async function evaluateRepo() {
     if (!accessToken) return;
+
+    setIsEvaluating(true);
 
     const since = new Date();
     since.setHours(0, 0, 0, 0);
@@ -29,12 +32,13 @@ export default function CardHeader({
     const until = new Date();
     until.setHours(0, 0, 0, 0);
 
-    await evaluateRepo(
-      repo.id,
-      accessToken,
-      since.toISOString(),
-      until.toISOString()
-    );
+    const evaluation = new RepoEvaluator(repo, accessToken);
+    await evaluation.evaluate({
+      since: since.toISOString(),
+      until: until.toISOString(),
+    });
+
+    setIsEvaluating(false);
   }
 
   return (
@@ -53,7 +57,7 @@ export default function CardHeader({
         {accessToken && (
           <DiscreetButton
             disabled={isEvaluating}
-            onClick={evaluate}
+            onClick={evaluateRepo}
             className={
               isEvaluating ? "!cursor-default hover:!bg-transparent" : ""
             }

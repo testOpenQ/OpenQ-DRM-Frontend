@@ -1,19 +1,19 @@
 import {
-  type Scan,
-  hashQuery,
   db as scansDb,
+  hashQuery,
+  type Scan,
   type QueryVariables,
 } from "@mktcodelib/github-scanner";
 import Dexie, { type Table } from "dexie";
 import { type DocumentNode } from "graphql";
 import {
+  REPO_QUERY,
   USER_QUERY,
   type UserQueryResponseData,
-} from "./lib/github/user/query";
-import {
-  REPO_QUERY,
   type RepoQueryResponseData,
-} from "./lib/github/repo/query";
+} from "./lib/evaluation/Repo/queries";
+import { RepoEvaluationResult } from "./lib/evaluation/Repo/RepoEvaluator";
+import { RepoContributorEvaluationResult } from "./lib/evaluation/Repo/RepoContributorEvaluator";
 
 interface CampaignModel {
   id?: number;
@@ -124,19 +124,29 @@ interface Repo extends RepoModel {
 
 interface EvaluationModel {
   id?: number;
-  type: "user" | "repo" | "org";
-  targetId?: number;
-  dataIds?: { [key: string]: number | null };
+  type: "repo" | "repo-contributor";
+  targetId: number;
+  params?: { [key: string]: any };
+  data?: { [key: string]: any };
   result?: { [key: string]: any };
+  children?: number[];
   done: 1 | 0;
-  since?: string;
-  until?: string;
   createdAt: string;
   updatedAt: string;
 }
 
 interface Evaluation extends EvaluationModel {
   id: number;
+}
+
+interface RepoEvaluation extends Evaluation {
+  type: "repo";
+  result?: RepoEvaluationResult;
+}
+
+interface RepoContributorEvaluation extends Evaluation {
+  type: "repo-contributor";
+  result?: RepoContributorEvaluationResult;
 }
 
 class Db extends Dexie {
@@ -248,7 +258,7 @@ function getUsers(userIds: number[]) {
 }
 
 function getUser(id: number | string) {
-  return () => db.users.get(Number(id)) as Promise<User | undefined>;
+  return db.users.get(Number(id)) as Promise<User | undefined>;
 }
 
 function getUserByLogin(login: string) {
@@ -353,12 +363,29 @@ function getEvaluation(id: number) {
   return db.evaluations.get(id) as Promise<Evaluation | undefined>;
 }
 
-function addEvaluation(evaluation: EvaluationModel) {
-  return db.evaluations.add(evaluation);
+function addEvaluation(
+  evaluation: Omit<EvaluationModel, "createdAt" | "updatedAt" | "done">
+) {
+  // TODO: replace this logic with dexie hooks
+  const newEvaluation: EvaluationModel = {
+    ...evaluation,
+    done: 0,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+  };
+  return db.evaluations.add(newEvaluation);
 }
 
-function updateEvaluation(id: number, changes: Partial<EvaluationModel>) {
-  return db.evaluations.update(id, changes);
+function updateEvaluation(
+  id: number,
+  changes: Partial<Omit<EvaluationModel, "createdAt" | "updatedAt">>
+) {
+  // TODO: replace this logic with dexie hooks
+  const timestampedChanges: Partial<EvaluationModel> = {
+    ...changes,
+    updatedAt: new Date().toISOString(),
+  };
+  return db.evaluations.update(id, timestampedChanges);
 }
 
 export {
@@ -374,6 +401,8 @@ export {
   type Repo,
   type EvaluationModel,
   type Evaluation,
+  type RepoEvaluation,
+  type RepoContributorEvaluation,
   getCampaigns,
   getCampaign,
   addCampaign,

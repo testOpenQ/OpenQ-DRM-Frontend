@@ -7,27 +7,18 @@ import {
   addCommitSummary,
   getRepoCommitSummaries,
   CommitSummary,
+  RepoEvaluation,
 } from "~/db";
 import useLocalStorage from "~/hooks/useLocalstorage";
-import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
-import type {
-  CommitAuthor,
-  RepoQueryResponseData,
-} from "~/lib/github/repo/query";
 import CardActivityChart from "../ActivityChart";
+import { useLatestEvaluation } from "~/store/EvaluationProvider";
+import { RepoQueryResponseDataCommitAuthor } from "~/lib/evaluation/Repo/queries";
+import { RepoEvaluationResult } from "~/lib/evaluation/Repo/RepoEvaluator";
+import WaitingForFirstEvaluation from "../WaitingForFirstEvaluation";
 
-type AuthorsByName = Map<
-  string,
-  RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0]["author"]
->;
+export default function ChangesTab({ repo }: { repo: Repo }) {
+  const latestEvaluation = useLatestEvaluation<RepoEvaluation>();
 
-export default function ChangesTab({
-  repo,
-  evaluationResult,
-}: {
-  repo: Repo;
-  evaluationResult: RepoEvaluationResult;
-}) {
   const [showCommitSummaryInfo, setShowCommitSummaryInfo] = useLocalStorage(
     "ui.info.commit-summary",
     true
@@ -46,14 +37,18 @@ export default function ChangesTab({
 
   const [generatingSummary, setGeneratingSummary] = useState(false);
 
-  function generateSummary() {
+  function generateSummary(evaluationResult: RepoEvaluationResult | undefined) {
+    if (!evaluationResult) {
+      return;
+    }
+
     setGeneratingSummary(true);
     fetch("/api/commit-summary", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ commits: evaluationResult.rawCommits }),
+      body: JSON.stringify({ commits: evaluationResult.commits }),
     })
       .then((res) => res.json())
       .then(
@@ -93,7 +88,10 @@ export default function ChangesTab({
       .catch(console.error);
   }
 
-  function getSummaryHtml(summary: string, authors: CommitAuthor[]) {
+  function getSummaryHtml(
+    summary: string,
+    authors: RepoQueryResponseDataCommitAuthor[]
+  ) {
     let html = summary
       .replace(
         /(critical|severe|serious|bugs?|hot[ -]?fix|urgent|breaking change)/gi,
@@ -121,15 +119,19 @@ export default function ChangesTab({
     return html;
   }
 
+  if (!latestEvaluation || latestEvaluation.result === undefined) {
+    return <WaitingForFirstEvaluation />;
+  }
+
   return (
     <>
-      <CardActivityChart evaluationResult={evaluationResult} />
+      <CardActivityChart evaluationResult={latestEvaluation.result} />
       <div className="p-3">
         {!generatingSummary && summaries?.length === 0 && (
           <div className="flex flex-col items-center justify-center">
             <Button
               className="mt-2"
-              onClick={generateSummary}
+              onClick={() => generateSummary(latestEvaluation.result)}
               disabled={generatingSummary}
             >
               Generate summary
@@ -151,7 +153,7 @@ export default function ChangesTab({
               dangerouslySetInnerHTML={{
                 __html: getSummaryHtml(
                   latestSummary.summary,
-                  evaluationResult.authors
+                  latestEvaluation.result.authors
                 ),
               }}
             />

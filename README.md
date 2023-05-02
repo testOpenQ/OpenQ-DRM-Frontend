@@ -43,7 +43,7 @@ After running the app for the first time, you'll find [a database named `@mktcod
 
 The stored "raw" data is then digested by functions that extract the desired essence from it.
 
-Find the related utilities in `src/lib/github`.
+Find the related utilities in `src/lib/evaluation`.
 
 Charts in the UI are handled by [Chart.js](https://www.chartjs.org/).
 

@@ -2,23 +2,15 @@ import { useState } from "react";
 import { type Repo } from "~/db";
 import ChangesTab from "./Changes";
 import DiscreetButton from "../../../base/DiscreetButton";
-import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
 import DevelopersTab from "./Developers";
 
 enum CardTabs {
   Changes = "changes",
-  Issues = "issues",
-  Discussions = "discussions",
+  Conversation = "conversation",
   Developers = "developers",
 }
 
-export default function Tabs({
-  repo,
-  evaluationResult,
-}: {
-  repo: Repo;
-  evaluationResult: RepoEvaluationResult;
-}) {
+export default function Tabs({ repo }: { repo: Repo }) {
   const [showTab, setShowTab] = useState<CardTabs | null>(null);
 
   function handleClickTab(tab: CardTabs) {
@@ -41,25 +33,14 @@ export default function Tabs({
         </DiscreetButton>
         <DiscreetButton
           className={`w-full !rounded-b-none text-sm font-normal ${
-            showTab === CardTabs.Issues
+            showTab === CardTabs.Conversation
               ? "!bg-gray-900/50 !text-gray-300 hover:!bg-gray-900/50"
               : ""
           }`}
-          onClick={() => handleClickTab(CardTabs.Issues)}
+          onClick={() => handleClickTab(CardTabs.Conversation)}
           disabled
         >
-          Issues
-        </DiscreetButton>
-        <DiscreetButton
-          className={`w-full !rounded-b-none text-sm font-normal ${
-            showTab === CardTabs.Discussions
-              ? "!bg-gray-900/50 !text-gray-300 hover:!bg-gray-900/50"
-              : ""
-          }`}
-          onClick={() => handleClickTab(CardTabs.Discussions)}
-          disabled
-        >
-          Discussions
+          Conversation
         </DiscreetButton>
         <DiscreetButton
           className={`w-full !rounded-b-none !rounded-tr-none text-sm font-normal ${
@@ -77,14 +58,14 @@ export default function Tabs({
           showTab === "changes" ? "" : "max-h-0"
         } overflow-auto bg-gray-900/50 transition-all`}
       >
-        <ChangesTab repo={repo} evaluationResult={evaluationResult} />
+        <ChangesTab repo={repo} />
       </div>
       <div
         className={`${
           showTab === "developers" ? "" : "max-h-0"
         } overflow-auto bg-gray-900/50 transition-all`}
       >
-        <DevelopersTab repo={repo} evaluationResult={evaluationResult} />
+        <DevelopersTab />
       </div>
     </div>
   );

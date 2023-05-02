@@ -1,15 +1,11 @@
 import CardMembers from "./Members";
 import CardScores from "./Scores";
-import { signIn, useSession } from "next-auth/react";
-import { type Repo, getEvaluationsByTypeAndTagetId } from "~/db";
-import Button from "../../base/Button";
+import type { Repo } from "~/db";
 import CardHeader from "./Header";
 import Tabs from "./tabs/Tabs";
 import { useEffect } from "react";
-import { useLiveQuery } from "dexie-react-hooks";
 import { useSubmitScore } from "~/store/ScoresProvider";
 import { generateFakeScores } from "~/lib/scores";
-import { RepoEvaluation } from "~/lib/github/repo/evaluate";
 
 export default function Card({
   campaignId,
@@ -18,24 +14,7 @@ export default function Card({
   campaignId?: number;
   repo: Repo;
 }) {
-  const { data } = useSession();
-  const accessToken = data?.accessToken;
-
   const submitScore = useSubmitScore();
-
-  const evaluations = useLiveQuery(
-    () => getEvaluationsByTypeAndTagetId("repo", repo.id),
-    [repo.id]
-  ) as RepoEvaluation[];
-
-  const latestEvaluation = evaluations?.[0];
-  const previousEvaluation = evaluations?.[1];
-  const displayedEvaluation = latestEvaluation?.result
-    ? latestEvaluation
-    : previousEvaluation;
-  const isEvaluating = latestEvaluation !== undefined && !latestEvaluation.done;
-
-  console.log(latestEvaluation?.result);
 
   const fakeScores = generateFakeScores(repo.fullName);
 
@@ -46,49 +25,18 @@ export default function Card({
     submitScore(repo.id, "reputation", fakeScores.reputation);
   });
 
-  function handleSignIn() {
-    signIn("github").catch(console.error);
-  }
-
   return (
     <div className="mb-auto overflow-hidden rounded-lg bg-gray-800">
-      <CardHeader
-        campaignId={campaignId}
-        repo={repo}
-        isEvaluating={isEvaluating}
-      />
+      <CardHeader repo={repo} campaignId={campaignId} />
       <div className="flex flex-col sm:flex-row">
         <div className="flex grow flex-col items-center justify-center">
-          {displayedEvaluation && displayedEvaluation.result && (
-            <CardMembers
-              members={displayedEvaluation.result.authors.map((a) => a.user)}
-            />
-          )}
-          {!evaluations?.length && (
-            <div className="flex grow flex-col items-center justify-center px-12">
-              {accessToken && (
-                <div className="text-sm text-gray-600">
-                  Waiting for first scan to begin...
-                </div>
-              )}
-              {!accessToken && (
-                <Button className="w-full flex-col" onClick={handleSignIn}>
-                  <span className="text-center text-xs font-normal text-indigo-400">
-                    Start fetching data:
-                  </span>
-                  Connect to GitHub
-                </Button>
-              )}
-            </div>
-          )}
+          <CardMembers />
         </div>
         <div className="flex-1 px-5 py-3">
           <CardScores repo={repo} />
         </div>
       </div>
-      {displayedEvaluation && displayedEvaluation.result && (
-        <Tabs repo={repo} evaluationResult={displayedEvaluation.result} />
-      )}
+      <Tabs repo={repo} />
     </div>
   );
 }
