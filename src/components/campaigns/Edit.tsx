@@ -61,11 +61,11 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
     setTextareaInputRows(Math.max(rows.length + 1, INITIAL_INPUT_ROWS));
   }
 
-  useEffect(() => {
+  function search() {
     if (!accessToken) return;
     if (!campaign) return;
 
-    const items = textareaInput
+    const items = debouncedTextareaInput
       .split("\n")
       .filter(Boolean)
       .map((url) => url.trim())
@@ -123,7 +123,9 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
           });
       }
     });
-  }, [debouncedTextareaInput]);
+  }
+
+  useEffect(search, [debouncedTextareaInput, accessToken, campaign]);
 
   function handleDeleteCampaign(id: number) {
     router
