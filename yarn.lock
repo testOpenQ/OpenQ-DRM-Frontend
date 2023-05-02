@@ -77,10 +77,10 @@
   resolved "https://registry.yarnpkg.com/@kurkle/color/-/color-0.3.2.tgz#5acd38242e8bde4f9986e7913c8fdf49d3aa199f"
   integrity sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==
 
-"@mktcodelib/github-scanner@^0.3.2":
-  version "0.3.2"
-  resolved "https://registry.yarnpkg.com/@mktcodelib/github-scanner/-/github-scanner-0.3.2.tgz#ce86576d79d84f69840f3d424688e7fbf894de4a"
-  integrity sha512-HFcrPLUpLFnbLGtXv8/rdp6A6eOC/y1M+CPczoNQ3YjW7Cp+tn3lScOErRgOXH5I1t2QHZc2De/8gMtnbKB1Mw==
+"@mktcodelib/github-scanner@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@mktcodelib/github-scanner/-/github-scanner-0.3.3.tgz#ccd5fbb1c9faef9bf3d73a0a7a55b01ab02f5fe8"
+  integrity sha512-QfNvuXnWccxDKQQ1R26DZXlFTyirjZdedZgbdCRa3oz0p1Zpns7DOpzr8FsZUqm64qracnRid9OrYY2yCWIhKg==
   dependencies:
     "@mktcodelib/graphql-fetch-all" "^0.10.2"
     "@types/lodash" "^4.14.191"

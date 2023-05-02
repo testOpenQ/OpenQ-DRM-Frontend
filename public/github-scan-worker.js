@@ -7302,7 +7302,7 @@ DexiePromise.rejectionMapper = mapError;
 setDebug(debug, dexieStackFrameFilter);
 
 var name = "@mktcodelib/github-scanner";
-var version = "0.3.2";
+var version = "0.3.3";
 var description =
   "Fetch and store larger amounts of GitHub data in the browser.";
 var main = "dist/index.js";
