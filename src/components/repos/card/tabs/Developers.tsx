@@ -11,7 +11,11 @@ export default function DevelopersTab() {
   }
 
   if (!latestEvaluation.children || latestEvaluation.children.length === 0) {
-    return <div>No contributors evaluated yet.</div>;
+    return (
+      <div className="p-3 text-center text-gray-600">
+        No contributors evaluated yet.
+      </div>
+    );
   }
 
   return (
