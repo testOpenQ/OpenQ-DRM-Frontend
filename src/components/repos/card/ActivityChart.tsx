@@ -13,14 +13,14 @@ import { options } from "~/lib/chartjs";
 import type { RepoEvaluationResult } from "~/lib/evaluation/Repo/RepoEvaluator";
 import { formatter } from "~/lib/numbers";
 
-function prepareChartData(repoEvaluation: RepoEvaluationResult) {
-  const commits = repoEvaluation.commitsByDayNormalized.commitCount;
+function prepareChartData(evaluationResult: RepoEvaluationResult) {
+  const commits = evaluationResult.commitsByDayNormalized.commitCount;
   commits.reverse();
-  const linesChanged = repoEvaluation.commitsByDayNormalized.linesChanged;
+  const linesChanged = evaluationResult.commitsByDayNormalized.linesChanged;
   linesChanged.reverse();
 
   return {
-    labels: Object.keys(repoEvaluation.commitsByDay),
+    labels: Object.keys(evaluationResult.commitsByDay),
     datasets: [
       {
         data: commits,
