@@ -3,6 +3,7 @@ import { getRepos } from "~/store";
 import RepoCard from "../repos/card/Card";
 import { useEffect, useState } from "react";
 import { ScoresProvider } from "~/providers/ScoresProvider";
+import { EvaluationProvider } from "~/providers/EvaluationProvider";
 
 export default function EvaluationsOverview({
   campaigns,
@@ -23,7 +24,9 @@ export default function EvaluationsOverview({
     <ScoresProvider>
       <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
         {repos.map((repo) => (
-          <RepoCard key={repo.id} repo={repo} />
+          <EvaluationProvider target={repo} type="repo" key={repo.id}>
+            <RepoCard repo={repo} />
+          </EvaluationProvider>
         ))}
       </div>
     </ScoresProvider>
