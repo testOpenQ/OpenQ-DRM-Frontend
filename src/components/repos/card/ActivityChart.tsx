@@ -10,7 +10,7 @@ import {
 import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import { options } from "~/lib/chartjs";
-import { RepoEvaluationResult } from "~/lib/github/repo/evaluate";
+import type { RepoEvaluationResult } from "~/lib/evaluation/Repo/RepoEvaluator";
 import { formatter } from "~/lib/numbers";
 
 function prepareChartData(repoEvaluation: RepoEvaluationResult) {

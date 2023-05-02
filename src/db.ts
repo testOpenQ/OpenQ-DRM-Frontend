@@ -12,8 +12,8 @@ import {
   type UserQueryResponseData,
   type RepoQueryResponseData,
 } from "./lib/evaluation/Repo/queries";
-import { RepoEvaluationResult } from "./lib/evaluation/Repo/RepoEvaluator";
-import { RepoContributorEvaluationResult } from "./lib/evaluation/Repo/RepoContributorEvaluator";
+import type { RepoEvaluationResult } from "./lib/evaluation/Repo/RepoEvaluator";
+import type { RepoContributorEvaluationResult } from "./lib/evaluation/Repo/RepoContributorEvaluator";
 
 interface CampaignModel {
   id?: number;
@@ -203,7 +203,7 @@ async function addOrg(org: OrgModel) {
     .first();
 
   if (existingOrg && existingOrg.id) {
-    editOrg(existingOrg.id, org);
+    await editOrg(existingOrg.id, org);
     return existingOrg.id;
   }
 
@@ -229,7 +229,7 @@ async function addRepo(repo: RepoModel) {
     .first();
 
   if (existingRepo && existingRepo.id) {
-    editRepo(existingRepo.id, repo);
+    await editRepo(existingRepo.id, repo);
     return existingRepo.id;
   }
 
@@ -274,7 +274,7 @@ async function addUser(user: UserModel) {
     .first();
 
   if (existingUser && existingUser.id) {
-    editUser(existingUser.id, user);
+    await editUser(existingUser.id, user);
     return existingUser.id;
   }
 

@@ -1,6 +1,6 @@
 import { useScores } from "~/store/ScoresProvider";
 import CardScore from "./Score";
-import { Repo } from "~/db";
+import type { Repo } from "~/db";
 
 export default function CardScores({ repo }: { repo: Repo }) {
   const scores = useScores();

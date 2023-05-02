@@ -1,6 +1,6 @@
 import { useLatestEvaluation } from "~/store/EvaluationProvider";
 import CardMember from "./Member";
-import { RepoEvaluation } from "~/db";
+import type { RepoEvaluation } from "~/db";
 import WaitingForFirstEvaluation from "./WaitingForFirstEvaluation";
 
 export default function CardMembers() {

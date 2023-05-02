@@ -1,7 +1,7 @@
-import { User, addEvaluation, updateEvaluation } from "~/db";
-import { Evaluation } from "../Evaluation";
+import { type User, addEvaluation, updateEvaluation } from "~/db";
+import { Evaluator } from "../Evaluator";
 import { Scanner } from "@mktcodelib/github-scanner";
-import { USER_QUERY, UserQueryResponseData } from "./queries";
+import { USER_QUERY, type UserQueryResponseData } from "./queries";
 
 export type RepoContributorEvaluationResult = {
   forkCount: number;
@@ -14,12 +14,12 @@ export type RepoContributorEvaluationResult = {
   mergedPullRequestCount365d: number;
 };
 
-export class RepoContributorEvaluator extends Evaluation<User> {
+export class RepoContributorEvaluator extends Evaluator<User> {
   constructor(user: User, accessToken: string) {
     super(user, accessToken);
   }
 
-  async evaluate(): Promise<number> {
+  async evaluate() {
     const evaluationId = await addEvaluation({
       type: "repo-contributor",
       targetId: this.target.id,
@@ -32,13 +32,13 @@ export class RepoContributorEvaluator extends Evaluation<User> {
     await scanner.scan<{ user: UserQueryResponseData }>({
       query: USER_QUERY,
       variables,
-      update: ({ data }) => {
-        updateEvaluation(evaluationId, {
+      update: async ({ data }) => {
+        await updateEvaluation(evaluationId, {
           result: this.digestUserData(data.user),
         });
       },
-      done: ({ data }) => {
-        updateEvaluation(evaluationId, {
+      done: async ({ data }) => {
+        await updateEvaluation(evaluationId, {
           result: this.digestUserData(data.user),
           done: 1,
         });

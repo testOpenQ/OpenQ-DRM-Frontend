@@ -3,7 +3,7 @@ import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import Button from "~/components/base/Button";
 import DiscreetButton from "~/components/base/DiscreetButton";
-import { Repo, removeRepoFromCampaign } from "~/db";
+import { type Repo, removeRepoFromCampaign } from "~/db";
 
 export default function DeleteButton({
   repo,
@@ -12,7 +12,7 @@ export default function DeleteButton({
   repo: Repo;
   campaignId: number;
 }) {
-  let [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   function closeConfirmModal() {
     setIsOpen(false);
@@ -22,9 +22,10 @@ export default function DeleteButton({
     setIsOpen(true);
   }
 
-  async function handleDeleteRepo() {
-    await removeRepoFromCampaign(repo.id, campaignId);
-    closeConfirmModal();
+  function handleDeleteRepo() {
+    removeRepoFromCampaign(repo.id, campaignId)
+      .then(closeConfirmModal)
+      .catch(console.error);
   }
 
   return (
@@ -67,7 +68,7 @@ export default function DeleteButton({
                   </Dialog.Title>
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">
-                      The repository and its existing evaluations won't be
+                      The repository and its existing evaluations won&apos;t be
                       deleted, just removed from this campaign. You can add the
                       repo back to the campaign at any time.
                     </p>

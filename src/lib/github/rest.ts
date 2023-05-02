@@ -1,5 +1,12 @@
-import { OrgModel, RepoModel, UserModel } from "~/db";
-import { GithubRestRepo, GithubRestUser } from "../types";
+import type { OrgModel, RepoModel, UserModel } from "~/db";
+import {
+  isGithubRestRepo,
+  isGithubRestUser,
+  isGitHubRestCodeSearchResult,
+  type GithubRestRepo,
+  type GithubRestUser,
+  type GitHubRestCodeSearchResultItem,
+} from "../types";
 
 function options(accessToken: string): RequestInit {
   return {
@@ -22,7 +29,11 @@ export async function fetchRepo(
     throw new Error(`Failed to fetch repo: ${response.statusText}`);
   }
 
-  const repo: GithubRestRepo = await response.json();
+  const repo = (await response.json()) as unknown;
+
+  if (!isGithubRestRepo(repo)) {
+    throw new Error(`Failed to parse unexpected repo data.`);
+  }
 
   return repo;
 }
@@ -74,7 +85,11 @@ export async function fetchUser(
     throw new Error(`Failed to fetch user: ${response.statusText}`);
   }
 
-  const user: GithubRestUser = await response.json();
+  const user = (await response.json()) as unknown;
+
+  if (!isGithubRestUser(user)) {
+    throw new Error(`Failed to parse unexpected user data.`);
+  }
 
   return user;
 }
@@ -118,13 +133,13 @@ export function mapRestOrgToModel(org: GithubRestUser): OrgModel {
   };
 }
 
-export async function fetchAllPages(
+export async function fetchAllPages<TItem>(
   url: string,
   accessToken: string,
   page: number,
   perPage: number,
-  accumulatedData: any[] = []
-): Promise<any[]> {
+  accumulatedData: TItem[] = []
+): Promise<TItem[]> {
   const response = await fetch(
     `${url}?page=${page}&per_page=${perPage}`,
     options(accessToken)
@@ -134,13 +149,13 @@ export async function fetchAllPages(
     throw new Error(`Failed to fetch data: ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as TItem[];
 
   if (data.length === 0) {
     return accumulatedData;
   }
 
-  return fetchAllPages(
+  return fetchAllPages<TItem>(
     url,
     accessToken,
     page + 1,
@@ -154,7 +169,8 @@ export async function fetchAllOrgRepos(
   accessToken: string
 ): Promise<GithubRestRepo[]> {
   const url = `https://api.github.com/orgs/${orgName}/repos`;
-  const repos = await fetchAllPages(url, accessToken, 1, 100);
+  const repos = await fetchAllPages<GithubRestRepo>(url, accessToken, 1, 100);
+
   return repos;
 }
 
@@ -172,23 +188,30 @@ export async function searchRepos(
     throw new Error(`Failed to search repos: ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data = (await response.json()) as unknown;
+
+  if (!isGitHubRestCodeSearchResult(data)) {
+    throw new Error(`Failed to parse unexpected search result.`);
+  }
 
   if (data.items.length === 0) {
     return [];
   }
 
-  const repos = data.items.reduce((acc: any[], item: any) => {
-    if (excludedRepos.includes(item.repository.full_name)) {
-      return acc;
-    }
+  const repos = data.items.reduce(
+    (acc: GithubRestRepo[], item: GitHubRestCodeSearchResultItem) => {
+      if (excludedRepos.includes(item.repository.full_name)) {
+        return acc;
+      }
 
-    if (acc.find((repo) => repo.id === item.repository.id)) {
-      return acc;
-    }
+      if (acc.find((repo) => repo.id === item.repository.id)) {
+        return acc;
+      }
 
-    return acc.concat(item.repository);
-  }, []);
+      return acc.concat(item.repository);
+    },
+    []
+  );
 
   return repos;
 }

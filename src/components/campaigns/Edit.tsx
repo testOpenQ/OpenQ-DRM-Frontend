@@ -1,13 +1,13 @@
 import {
-  type RepoModel,
-  type UserModel,
+  addOrg,
   addRepo,
   addUser,
   deleteCampaign,
   getCampaign,
-  OrgModel,
-  addOrg,
   updateCampaign,
+  type RepoModel,
+  type UserModel,
+  type OrgModel,
 } from "~/db";
 import { useEffect, useState } from "react";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -132,27 +132,29 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
       .catch((err) => console.log(err));
   }
 
-  async function handleContinue() {
+  function handleContinue() {
     if (!campaign) return;
 
-    for (const repo of repos) {
-      const id = await addRepo(repo);
-      campaign.repoIds.push(id);
-    }
+    (async () => {
+      for (const repo of repos) {
+        const id = await addRepo(repo);
+        campaign.repoIds.push(id);
+      }
 
-    for (const user of users) {
-      const id = await addUser(user);
-      campaign.userIds.push(id);
-    }
+      for (const user of users) {
+        const id = await addUser(user);
+        campaign.userIds.push(id);
+      }
 
-    for (const org of orgs) {
-      const id = await addOrg(org);
-      campaign.orgIds.push(id);
-    }
+      for (const org of orgs) {
+        const id = await addOrg(org);
+        campaign.orgIds.push(id);
+      }
 
-    await updateCampaign(campaign.id, campaign);
+      await updateCampaign(campaign.id, campaign);
 
-    router.push(`/campaigns/${campaign.id}`).catch(console.error);
+      router.push(`/campaigns/${campaign.id}`).catch(console.error);
+    })().catch(console.error);
   }
 
   function removeUser(user: UserModel) {
@@ -183,7 +185,7 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
     handleSetTextareaInput(newTextareaInput);
   }
 
-  async function findReposByDeps(depsFile: string) {
+  function findReposByDeps(depsFile: string) {
     if (!accessToken) return;
 
     let deps: unknown;
@@ -204,13 +206,18 @@ export default function EditCampaign({ campaignId }: { campaignId: string }) {
 
     setIsFetching(true);
     for (const depName of depsNames) {
-      const foundRepos = await searchRepos(
+      searchRepos(
         `${depName} filename:package extension:json`,
         deps.excludedRepos,
         accessToken
-      );
-
-      setRepos((repos) => [...repos, ...foundRepos.map(mapRestRepoToModel)]);
+      )
+        .then((foundRepos) => {
+          setRepos((repos) => [
+            ...repos,
+            ...foundRepos.map(mapRestRepoToModel),
+          ]);
+        })
+        .catch(console.error);
     }
     setIsFetching(false);
   }

@@ -1,5 +1,5 @@
 import React, {
-  ReactNode,
+  type ReactNode,
   createContext,
   useCallback,
   useContext,
@@ -10,7 +10,9 @@ import type { RepoScores } from "~/lib/types";
 const ScoresContext = createContext<RepoScores>({});
 const SubmitScoreContext = createContext<
   (repoId: number, category: string, score: number) => void
->(() => {});
+>(() => {
+  // TODO: implement
+});
 
 export function useScores() {
   return useContext(ScoresContext);

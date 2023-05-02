@@ -1,7 +1,7 @@
 import { useSession } from "next-auth/react";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { getRateLimits } from "~/lib/github/rateLimits";
-import { RateLimits } from "~/lib/types";
+import type { RateLimits } from "~/lib/types";
 
 export default function RateLimitInfo() {
   const { data } = useSession();
@@ -13,9 +13,11 @@ export default function RateLimitInfo() {
     if (!accessToken) return;
 
     setInterval(() => {
-      getRateLimits(accessToken).then((rateLimits) => {
-        setRateLimits(rateLimits);
-      });
+      getRateLimits(accessToken)
+        .then((rateLimits) => {
+          setRateLimits(rateLimits);
+        })
+        .catch(console.error);
     }, 5000);
   }, [accessToken]);
 

@@ -1,8 +1,14 @@
 import { EnvelopeIcon, GlobeEuropeAfricaIcon } from "@heroicons/react/24/solid";
 import { useLiveQuery } from "dexie-react-hooks";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { RepoContributorEvaluation, User, getEvaluation, getUser } from "~/db";
+import {
+  getEvaluation,
+  getUser,
+  type RepoContributorEvaluation,
+  type User,
+} from "~/db";
 
 export default function Contributor({
   evaluationId,
@@ -16,7 +22,9 @@ export default function Contributor({
 
   useEffect(() => {
     if (evaluation) {
-      getUser(evaluation.targetId).then((user) => setUser(user));
+      getUser(evaluation.targetId)
+        .then((user) => setUser(user))
+        .catch(console.error);
     }
   }, [evaluation]);
 
@@ -24,9 +32,11 @@ export default function Contributor({
 
   return (
     <div key={user.login} className="flex items-center">
-      <img
+      <Image
         src={user.avatarUrl}
         alt={user.login}
+        width={36}
+        height={36}
         className="mr-3 h-9 w-9 rounded-full"
       />
 

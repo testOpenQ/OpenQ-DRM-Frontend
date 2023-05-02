@@ -1,17 +1,17 @@
 import { Scanner } from "@mktcodelib/github-scanner";
 import {
-  Repo,
-  User,
   addEvaluation,
   addUser,
   getUserByLogin,
   updateEvaluation,
+  type Repo,
+  type User,
 } from "~/db";
-import { Evaluation } from "../Evaluation";
+import { Evaluator } from "../Evaluator";
 import {
   REPO_QUERY,
-  RepoQueryResponseData,
-  RepoQueryResponseDataCommitAuthor,
+  type RepoQueryResponseData,
+  type RepoQueryResponseDataCommitAuthor,
 } from "./queries";
 import { normalize } from "../../numbers";
 import { mapGraphQLUserToModel } from "~/lib/github/graphql";
@@ -53,12 +53,12 @@ export type RepoEvaluationResult = {
 
 const NUMBER_OF_CONTRIBUTORS = 10;
 
-export class RepoEvaluator extends Evaluation<Repo> {
+export class RepoEvaluator extends Evaluator<Repo> {
   constructor(repo: Repo, accessToken: string) {
     super(repo, accessToken);
   }
 
-  async evaluate(params: RepoEvaluationParams): Promise<number> {
+  async evaluate(params: RepoEvaluationParams) {
     const evaluationId = await addEvaluation({
       type: "repo",
       targetId: this.target.id,
@@ -113,13 +113,13 @@ export class RepoEvaluator extends Evaluation<Repo> {
           childEvaluationIds.push(childEvaluationId);
         }
 
-        updateEvaluation(evaluationId, {
+        await updateEvaluation(evaluationId, {
           result,
           children: childEvaluationIds,
         });
       },
-      done: () => {
-        updateEvaluation(evaluationId, { done: 1 });
+      done: async () => {
+        await updateEvaluation(evaluationId, { done: 1 });
       },
     });
 
@@ -211,7 +211,7 @@ export class RepoEvaluator extends Evaluation<Repo> {
   calculateTrend(normalizedNumbers: number[]) {
     const diffs = normalizedNumbers
       .slice(1)
-      .map((value, index) => value - normalizedNumbers[index]!);
+      .map((value, index, array) => value - (array[index - 1] ?? 0));
     const sum = diffs.reduce((acc, curr) => acc + curr, 0);
     const trend = sum / diffs.length;
 

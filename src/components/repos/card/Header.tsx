@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import { Repo } from "~/db";
+import type { Repo } from "~/db";
 import LoadingSpinner from "../../LoadingSpinner";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../../base/DiscreetButton";
@@ -20,7 +20,7 @@ export default function CardHeader({
 
   const [isEvaluating, setIsEvaluating] = useState(false);
 
-  async function evaluateRepo() {
+  function evaluateRepo() {
     if (!accessToken) return;
 
     setIsEvaluating(true);
@@ -33,12 +33,14 @@ export default function CardHeader({
     until.setHours(0, 0, 0, 0);
 
     const evaluation = new RepoEvaluator(repo, accessToken);
-    await evaluation.evaluate({
-      since: since.toISOString(),
-      until: until.toISOString(),
-    });
+    evaluation
+      .evaluate({
+        since: since.toISOString(),
+        until: until.toISOString(),
+      })
+      .catch(console.error);
 
-    setIsEvaluating(false);
+    setIsEvaluating(false); // TODO: this state needs to be managed by the RepoEvaluator
   }
 
   return (

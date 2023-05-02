@@ -1,7 +1,7 @@
 import { useLatestEvaluation } from "~/store/EvaluationProvider";
 import Contributor from "./developers/Developer";
 import WaitingForFirstEvaluation from "../WaitingForFirstEvaluation";
-import { RepoEvaluation } from "~/db";
+import type { RepoEvaluation } from "~/db";
 
 export default function DevelopersTab() {
   const latestEvaluation = useLatestEvaluation<RepoEvaluation>();

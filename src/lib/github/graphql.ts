@@ -1,5 +1,5 @@
-import { UserModel } from "~/db";
-import { GithubGraphQLUser } from "../types";
+import type { UserModel } from "~/db";
+import type { GithubGraphQLUser } from "../types";
 
 export function mapGraphQLUserToModel(user: GithubGraphQLUser): UserModel {
   return {

@@ -1,5 +1,5 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
 import Button from "~/components/base/Button";
@@ -9,7 +9,7 @@ import { type Campaign, deleteCampaign } from "~/db";
 export default function DeleteButton({ campaign }: { campaign: Campaign }) {
   const router = useRouter();
 
-  let [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   function closeConfirmModal() {
     setIsOpen(false);

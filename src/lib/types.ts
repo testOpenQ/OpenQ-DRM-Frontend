@@ -32,6 +32,45 @@ export type GithubRestRepo = {
   subscribers_count: number;
 };
 
+export function isGithubRestRepo(obj: unknown): obj is GithubRestRepo {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "id" in obj &&
+    "node_id" in obj &&
+    "name" in obj &&
+    "full_name" in obj &&
+    "private" in obj &&
+    "owner" in obj &&
+    obj.owner !== null &&
+    typeof obj.owner === "object" &&
+    "login" in obj.owner &&
+    "avatar_url" in obj.owner &&
+    "description" in obj &&
+    "fork" in obj &&
+    "created_at" in obj &&
+    "updated_at" in obj &&
+    "pushed_at" in obj &&
+    "homepage" in obj &&
+    "size" in obj &&
+    "stargazers_count" in obj &&
+    "watchers_count" in obj &&
+    "language" in obj &&
+    "has_issues" in obj &&
+    "has_projects" in obj &&
+    "has_discussions" in obj &&
+    "forks_count" in obj &&
+    "archived" in obj &&
+    "disabled" in obj &&
+    "open_issues_count" in obj &&
+    "license" in obj &&
+    "topics" in obj &&
+    "visibility" in obj &&
+    "default_branch" in obj &&
+    "subscribers_count" in obj
+  );
+}
+
 export type GithubRestUser = {
   login: string;
   id: number;
@@ -52,6 +91,63 @@ export type GithubRestUser = {
   created_at: string;
   updated_at: string;
 };
+
+export function isGithubRestUser(obj: unknown): obj is GithubRestUser {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "login" in obj &&
+    "id" in obj &&
+    "node_id" in obj &&
+    "avatar_url" in obj &&
+    "gravatar_id" in obj &&
+    "name" in obj &&
+    "company" in obj &&
+    "blog" in obj &&
+    "location" in obj &&
+    "email" in obj &&
+    "hireable" in obj &&
+    "bio" in obj &&
+    "twitter_username" in obj &&
+    "followers" in obj &&
+    "following" in obj &&
+    "type" in obj &&
+    "created_at" in obj &&
+    "updated_at" in obj
+  );
+}
+
+export type GitHubRestCodeSearchResultItem = {
+  repository: GithubRestRepo;
+};
+
+export function isGitHubRestCodeSearchResultItem(
+  obj: unknown
+): obj is GitHubRestCodeSearchResultItem {
+  return (
+    typeof obj === "object" && obj !== null && "name" in obj && "path" in obj
+  );
+}
+
+export type GitHubRestCodeSearchResult = {
+  total_count: number;
+  incomplete_results: boolean;
+  items: GitHubRestCodeSearchResultItem[];
+};
+
+export function isGitHubRestCodeSearchResult(
+  obj: unknown
+): obj is GitHubRestCodeSearchResult {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "total_count" in obj &&
+    "incomplete_results" in obj &&
+    "items" in obj &&
+    Array.isArray(obj.items) &&
+    obj.items.every(isGitHubRestCodeSearchResultItem)
+  );
+}
 
 export type GithubGraphQLUser = {
   id: string;
@@ -88,6 +184,19 @@ export type RateLimits = {
 export type RateLimitsResponse = {
   resources: RateLimits;
 };
+
+export function isRateLimitsResponse(obj: unknown): obj is RateLimitsResponse {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    "resources" in obj &&
+    typeof obj.resources === "object" &&
+    obj.resources !== null &&
+    "core" in obj.resources &&
+    "graphql" in obj.resources &&
+    "search" in obj.resources
+  );
+}
 
 export type DepsJson = {
   name: string;

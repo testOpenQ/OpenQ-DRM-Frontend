@@ -1,6 +1,11 @@
 import { useLiveQuery } from "dexie-react-hooks";
-import React, { Context, ReactNode, createContext, useContext } from "react";
-import { Evaluation, getEvaluationsByTypeAndTagetId } from "~/db";
+import React, {
+  type Context,
+  type ReactNode,
+  createContext,
+  useContext,
+} from "react";
+import { type Evaluation, getEvaluationsByTypeAndTagetId } from "~/db";
 
 const EvaluationContext = createContext<Evaluation[] | undefined>(undefined);
 const LatestEvaluationContext = createContext<Evaluation | undefined>(

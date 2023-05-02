@@ -1,4 +1,4 @@
-import { Campaign, Repo, getRepos } from "~/db";
+import { getRepos, type Campaign, type Repo } from "~/db";
 import RepoCard from "../repos/card/Card";
 import { useEffect, useState } from "react";
 import { ScoresProvider } from "~/store/ScoresProvider";
@@ -9,12 +9,14 @@ export default function EvaluationsOverview({
   campaigns: Campaign[];
 }) {
   const repoIds = campaigns.map((campaign) => campaign.repoIds).flat();
-  const uniqueRepoIds = [...new Set(repoIds)];
   const [repos, setRepos] = useState<Repo[]>([]);
 
   useEffect(() => {
-    getRepos(uniqueRepoIds).then((repos) => setRepos(repos));
-  }, [uniqueRepoIds]);
+    const uniqueRepoIds = [...new Set(repoIds)];
+    getRepos(uniqueRepoIds)
+      .then((repos) => setRepos(repos))
+      .catch(console.error);
+  });
 
   return (
     <ScoresProvider>

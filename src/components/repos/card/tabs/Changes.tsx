@@ -3,17 +3,17 @@ import { useEffect, useState } from "react";
 import LoadingSpinner from "~/components/LoadingSpinner";
 import Button from "~/components/base/Button";
 import {
-  type Repo,
   addCommitSummary,
   getRepoCommitSummaries,
-  CommitSummary,
-  RepoEvaluation,
+  type RepoEvaluation,
+  type Repo,
+  type CommitSummary,
 } from "~/db";
 import useLocalStorage from "~/hooks/useLocalstorage";
 import CardActivityChart from "../ActivityChart";
 import { useLatestEvaluation } from "~/store/EvaluationProvider";
-import { RepoQueryResponseDataCommitAuthor } from "~/lib/evaluation/Repo/queries";
-import { RepoEvaluationResult } from "~/lib/evaluation/Repo/RepoEvaluator";
+import type { RepoQueryResponseDataCommitAuthor } from "~/lib/evaluation/Repo/queries";
+import type { RepoEvaluationResult } from "~/lib/evaluation/Repo/RepoEvaluator";
 import WaitingForFirstEvaluation from "../WaitingForFirstEvaluation";
 
 export default function ChangesTab({ repo }: { repo: Repo }) {
@@ -30,8 +30,8 @@ export default function ChangesTab({ repo }: { repo: Repo }) {
   );
 
   useEffect(() => {
-    if (summaries && summaries.length > 0) {
-      setLatestSummary(summaries[0]!);
+    if (summaries && summaries[0]) {
+      setLatestSummary(summaries[0]);
     }
   }, [summaries]);
 

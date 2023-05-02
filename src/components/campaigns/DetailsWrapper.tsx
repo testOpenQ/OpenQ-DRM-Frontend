@@ -1,11 +1,11 @@
 import {
-  Org,
-  Repo,
-  User,
   getCampaign,
   getOrgs,
   getRepos,
   getUsers,
+  type Org,
+  type Repo,
+  type User,
 } from "~/db";
 import { useRouter } from "next/router";
 import { useLiveQuery } from "dexie-react-hooks";
@@ -22,9 +22,9 @@ export default function Wrapper({ campaignId }: { campaignId: string }) {
 
   useEffect(() => {
     if (campaign) {
-      getOrgs(campaign.orgIds).then(setOrgs);
-      getUsers(campaign.userIds).then(setUsers);
-      getRepos(campaign.repoIds).then(setRepos);
+      getOrgs(campaign.orgIds).then(setOrgs).catch(console.error);
+      getUsers(campaign.userIds).then(setUsers).catch(console.error);
+      getRepos(campaign.repoIds).then(setRepos).catch(console.error);
 
       if (
         campaign.orgIds.length +
@@ -32,10 +32,10 @@ export default function Wrapper({ campaignId }: { campaignId: string }) {
           campaign.repoIds.length ===
         0
       ) {
-        router.push(`/campaigns/${campaignId}/edit`).catch(console.error);
+        router.push(`/campaigns/${campaign.id}/edit`).catch(console.error);
       }
     }
-  }, [campaign]);
+  }, [campaign, router]);
 
   if (!campaign) return <>Campaign does not exist.</>;
 
