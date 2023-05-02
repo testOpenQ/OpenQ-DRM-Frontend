@@ -23,11 +23,24 @@ export default function EvaluationsOverview({
   return (
     <ScoresProvider>
       <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
-        {repos.map((repo) => (
-          <EvaluationProvider target={repo} type="repo" key={repo.id}>
-            <RepoCard repo={repo} />
-          </EvaluationProvider>
-        ))}
+        <div className="space-y-6">
+          {repos
+            .filter((_, i) => !(i % 2))
+            .map((repo) => (
+              <EvaluationProvider target={repo} type="repo" key={repo.id}>
+                <RepoCard repo={repo} />
+              </EvaluationProvider>
+            ))}
+        </div>
+        <div className="space-y-6">
+          {repos
+            .filter((_, i) => !!(i % 2))
+            .map((repo) => (
+              <EvaluationProvider target={repo} type="repo" key={repo.id}>
+                <RepoCard repo={repo} />
+              </EvaluationProvider>
+            ))}
+        </div>
       </div>
     </ScoresProvider>
   );

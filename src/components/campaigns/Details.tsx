@@ -22,11 +22,24 @@ export default function CampaignsDetails({
           <h2 className="text-3xl font-bold text-indigo-700">Repositories</h2>
           <ScoresProvider>
             <div className="my-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
-              {repos.map((repo) => (
-                <EvaluationProvider target={repo} type="repo" key={repo.id}>
-                  <RepoCard campaignId={campaign.id} repo={repo} />
-                </EvaluationProvider>
-              ))}
+              <div className="space-y-6">
+                {repos
+                  .filter((_, i) => !(i % 2))
+                  .map((repo) => (
+                    <EvaluationProvider target={repo} type="repo" key={repo.id}>
+                      <RepoCard campaignId={campaign.id} repo={repo} />
+                    </EvaluationProvider>
+                  ))}
+              </div>
+              <div className="space-y-6">
+                {repos
+                  .filter((_, i) => !!(i % 2))
+                  .map((repo) => (
+                    <EvaluationProvider target={repo} type="repo" key={repo.id}>
+                      <RepoCard campaignId={campaign.id} repo={repo} />
+                    </EvaluationProvider>
+                  ))}
+              </div>
             </div>
           </ScoresProvider>
         </>
