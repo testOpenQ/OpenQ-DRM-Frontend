@@ -11,6 +11,7 @@ const EvaluationContext = createContext<Evaluation[] | undefined>(undefined);
 const LatestEvaluationContext = createContext<Evaluation | undefined>(
   undefined
 );
+const IsEvaluatingContext = createContext<boolean>(false);
 
 type EvaluationTarget = {
   id: number;
@@ -34,6 +35,10 @@ export function useLatestEvaluation<TEvaluation = Evaluation>():
   );
 }
 
+export function useIsEvaluating(): boolean {
+  return useContext(IsEvaluatingContext);
+}
+
 export function EvaluationProvider({
   children,
   type,
@@ -50,10 +55,14 @@ export function EvaluationProvider({
 
   const latestEvaluation = evaluations?.[0];
 
+  const isEvaluating = !!latestEvaluation && !latestEvaluation.done;
+
   return (
     <EvaluationContext.Provider value={evaluations}>
       <LatestEvaluationContext.Provider value={latestEvaluation}>
-        {children}
+        <IsEvaluatingContext.Provider value={isEvaluating}>
+          {children}
+        </IsEvaluatingContext.Provider>
       </LatestEvaluationContext.Provider>
     </EvaluationContext.Provider>
   );

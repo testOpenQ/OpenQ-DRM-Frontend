@@ -6,7 +6,7 @@ import DiscreetButton from "../../base/DiscreetButton";
 import Image from "next/image";
 import DeleteButton from "./DeleteButton";
 import { RepoEvaluator } from "~/lib/evaluation/Repo/RepoEvaluator";
-import { useState } from "react";
+import { useIsEvaluating } from "~/store/EvaluationProvider";
 
 export default function CardHeader({
   campaignId,
@@ -18,12 +18,10 @@ export default function CardHeader({
   const { data } = useSession();
   const accessToken = data?.accessToken;
 
-  const [isEvaluating, setIsEvaluating] = useState(false);
+  const isEvaluating = useIsEvaluating();
 
   function evaluateRepo() {
     if (!accessToken) return;
-
-    setIsEvaluating(true);
 
     const since = new Date();
     since.setHours(0, 0, 0, 0);
@@ -39,8 +37,6 @@ export default function CardHeader({
         until: until.toISOString(),
       })
       .catch(console.error);
-
-    setIsEvaluating(false); // TODO: this state needs to be managed by the RepoEvaluator
   }
 
   return (

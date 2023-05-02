@@ -6,6 +6,7 @@ import {
   updateEvaluation,
   type Repo,
   type User,
+  getEvaluation,
 } from "~/db";
 import { Evaluator } from "../Evaluator";
 import {
@@ -119,7 +120,20 @@ export class RepoEvaluator extends Evaluator<Repo> {
         });
       },
       done: async () => {
-        await updateEvaluation(evaluationId, { done: 1 });
+        const watchChildren = setInterval(async () => {
+          const childEvaluations = await Promise.all(
+            childEvaluationIds.map((id) => getEvaluation(id))
+          );
+
+          const allDone = childEvaluations.every(
+            (evaluation) => !evaluation || evaluation.done
+          );
+
+          if (allDone) {
+            await updateEvaluation(evaluationId, { done: 1 });
+            clearInterval(watchChildren);
+          }
+        }, 3000);
       },
     });
 
