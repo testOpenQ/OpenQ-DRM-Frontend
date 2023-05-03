@@ -5,41 +5,41 @@ import {
   PointElement,
   LineElement,
   Filler,
-  type ChartOptions,
   type ChartData,
 } from "chart.js";
 import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
-import { type RepoEvaluation } from "~/lib/githubData/repo/evaluate";
+import { options } from "~/lib/chartjs";
+import type { RepoEvaluationResult } from "~/lib/evaluation/Repo/RepoEvaluator";
 import { formatter } from "~/lib/numbers";
 
-function prepareChartData(repoEvaluation: RepoEvaluation) {
-  const commits = repoEvaluation.commitsByDayNormalized.commitCount;
+function prepareChartData(evaluationResult: RepoEvaluationResult) {
+  const commits = evaluationResult.commitsByDayNormalized.commitCount;
   commits.reverse();
-  const linesChanged = repoEvaluation.commitsByDayNormalized.linesChanged;
+  const linesChanged = evaluationResult.commitsByDayNormalized.linesChanged;
   linesChanged.reverse();
 
   return {
-    labels: Object.keys(repoEvaluation.commitsByDay),
+    labels: Object.keys(evaluationResult.commitsByDay),
     datasets: [
       {
         data: commits,
         borderColor: "white",
-        borderWidth: 3,
-        pointBorderWidth: 0,
-        pointRadius: 0,
-        pointHoverRadius: 0,
-        fill: true,
-        tension: 0.4,
-      },
-      {
-        data: linesChanged,
-        borderColor: "gray",
         borderWidth: 2,
         pointBorderWidth: 0,
         pointRadius: 0,
         pointHoverRadius: 0,
-        fill: true,
+        fill: false,
+        tension: 0.4,
+      },
+      {
+        data: linesChanged,
+        borderColor: "rgb(79 70 229)",
+        borderWidth: 2,
+        pointBorderWidth: 0,
+        pointRadius: 0,
+        pointHoverRadius: 0,
+        fill: false,
         tension: 0.4,
       },
     ],
@@ -47,9 +47,9 @@ function prepareChartData(repoEvaluation: RepoEvaluation) {
 }
 
 export default function CardActivityChart({
-  repoEvaluation,
+  evaluationResult,
 }: {
-  repoEvaluation: RepoEvaluation;
+  evaluationResult: RepoEvaluationResult;
 }) {
   ChartJS.register(
     CategoryScale,
@@ -60,51 +60,20 @@ export default function CardActivityChart({
   );
 
   const data: ChartData<"line"> = useMemo(
-    () => prepareChartData(repoEvaluation),
-    [repoEvaluation]
+    () => prepareChartData(evaluationResult),
+    [evaluationResult]
   );
 
-  const options: ChartOptions<"line"> = useMemo(() => {
-    return {
-      aspectRatio: 15,
-      layout: {
-        padding: {
-          top: 5,
-        },
-      },
-      plugins: {
-        legend: {
-          display: false,
-        },
-        title: {
-          display: false,
-        },
-        filler: {
-          drawTime: "beforeDatasetsDraw",
-          propagate: true,
-        },
-      },
-      scales: {
-        x: {
-          display: false,
-        },
-        y: {
-          display: false,
-        },
-      },
-    };
-  }, []);
-
   return (
-    <div className="bg-gray-900/50 pt-3">
+    <div className="pt-3">
       <div className="mb-3 flex items-center justify-center space-x-6 text-center text-xs text-gray-400">
         <div>
-          {formatter.format(repoEvaluation.commitCount)} commits
-          <div className="mr-2 mt-1 h-1 w-full rounded-full bg-white"></div>
+          {formatter.format(evaluationResult.commitCount)} changes
+          <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-white"></div>
         </div>
         <div>
-          {formatter.format(repoEvaluation.linesChanged)} changes
-          <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-gray-400"></div>
+          {formatter.format(evaluationResult.linesChanged)} lines
+          <div className="mr-2 mt-1 h-0.5 w-full rounded-full bg-indigo-600"></div>
         </div>
       </div>
       <Line data={data} options={options} />

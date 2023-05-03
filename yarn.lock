@@ -77,12 +77,12 @@
   resolved "https://registry.yarnpkg.com/@kurkle/color/-/color-0.3.2.tgz#5acd38242e8bde4f9986e7913c8fdf49d3aa199f"
   integrity sha512-fuscdXJ9G1qb7W8VdHi+IwRqij3lBkosAm4ydQtEmbY58OzHXqQhvlxqEkoz0yssNVn38bcpRWgA9PP+OGoisw==
 
-"@mktcodelib/github-scanner@^0.2.1":
-  version "0.2.1"
-  resolved "https://registry.yarnpkg.com/@mktcodelib/github-scanner/-/github-scanner-0.2.1.tgz#f9aec91c435c4f6fffb2f78ba3062b13632c9dd2"
-  integrity sha512-iRrQTRHYG8DD4MssXIrNVYo7LO3jbvQBOfdjsuoE6ivE44bThoVMhhiAiUmWNEysCfYZ64tLaplm+f4aVzZgPg==
+"@mktcodelib/github-scanner@^0.3.3":
+  version "0.3.3"
+  resolved "https://registry.yarnpkg.com/@mktcodelib/github-scanner/-/github-scanner-0.3.3.tgz#ccd5fbb1c9faef9bf3d73a0a7a55b01ab02f5fe8"
+  integrity sha512-QfNvuXnWccxDKQQ1R26DZXlFTyirjZdedZgbdCRa3oz0p1Zpns7DOpzr8FsZUqm64qracnRid9OrYY2yCWIhKg==
   dependencies:
-    "@mktcodelib/graphql-fetch-all" "^0.10.1"
+    "@mktcodelib/graphql-fetch-all" "^0.10.2"
     "@types/lodash" "^4.14.191"
     dexie "^3.2.3"
     graphql "^16.6.0"
@@ -90,10 +90,10 @@
     lodash "^4.17.21"
     rollup-plugin-node-polyfills "^0.2.1"
 
-"@mktcodelib/graphql-fetch-all@^0.10.1":
-  version "0.10.1"
-  resolved "https://registry.yarnpkg.com/@mktcodelib/graphql-fetch-all/-/graphql-fetch-all-0.10.1.tgz#a8e8ff8020c25d2729a5a6ed7aaf0d91c6621ef6"
-  integrity sha512-8gPFjJ8eQSZveZun1Tx9cTuN69YGqouqiyNtrWFStwnteD+7+ViyHd9NVQDC+oxlwJPKaC5oKWh6yergjA3BBQ==
+"@mktcodelib/graphql-fetch-all@^0.10.2":
+  version "0.10.2"
+  resolved "https://registry.yarnpkg.com/@mktcodelib/graphql-fetch-all/-/graphql-fetch-all-0.10.2.tgz#e8ff8da611bb88ec80dd56ae9ac258053e86dace"
+  integrity sha512-r0KhkOnTjRLDx1paXuhtiKDAmwPXmCkezZBHky4dBNwFfEU6pHg+BVtl+smZv0ml6IF5Fu4srrN0SUtFBW4lkg==
   dependencies:
     graphql "^16.6.0"
     graphql-tag "^2.12.6"

@@ -3,32 +3,21 @@ import { useEffect, useState } from "react";
 import LoadingSpinner from "~/components/LoadingSpinner";
 import Button from "~/components/base/Button";
 import {
+  type RepoEvaluation,
   type Repo,
-  addCommitSummary,
-  getRepoCommitSummaries,
   type CommitSummary,
-} from "~/db";
+} from "~/store/model";
+import { addCommitSummary, getRepoCommitSummaries } from "~/store";
 import useLocalStorage from "~/hooks/useLocalstorage";
-import type { RepoQueryResponseData } from "~/lib/githubData/repo/query";
+import CardActivityChart from "../ActivityChart";
+import { useLatestEvaluation } from "~/providers/EvaluationProvider";
+import type { RepoQueryResponseDataCommitAuthor } from "~/lib/evaluation/Repo/queries";
+import type { RepoEvaluationResult } from "~/lib/evaluation/Repo/RepoEvaluator";
+import WaitingForFirstEvaluation from "../WaitingForFirstEvaluation";
 
-type AuthorsByName = Map<
-  string,
-  RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0]["author"]
->;
-type RawCommit =
-  RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0];
+export default function ChangesTab({ repo }: { repo: Repo }) {
+  const latestEvaluation = useLatestEvaluation<RepoEvaluation>();
 
-export default function ChangesTab({
-  repo,
-  lastScanData,
-  since,
-  until,
-}: {
-  repo: Repo;
-  lastScanData: RepoQueryResponseData | null;
-  since: string;
-  until: string;
-}) {
   const [showCommitSummaryInfo, setShowCommitSummaryInfo] = useLocalStorage(
     "ui.info.commit-summary",
     true
@@ -40,50 +29,16 @@ export default function ChangesTab({
   );
 
   useEffect(() => {
-    if (summaries && summaries.length > 0) {
-      setLatestSummary(summaries[0]!);
+    if (summaries && summaries[0]) {
+      setLatestSummary(summaries[0]);
     }
   }, [summaries]);
 
-  const [authorsByName, setAuthorsByName] = useState<AuthorsByName>(new Map());
-  const [rawCommits, setRawCommits] = useState<RawCommit[]>([]);
-
-  useEffect(() => {
-    if (!lastScanData) {
-      return;
-    }
-
-    setAuthorsByName(() => {
-      const authors = new Map<
-        string,
-        RepoQueryResponseData["defaultBranchRef"]["target"]["history"]["nodes"][0]["author"]
-      >();
-
-      lastScanData.defaultBranchRef.target.history.nodes.forEach((commit) => {
-        if (commit.author.user?.login) {
-          authors.set(commit.author.user.login, commit.author);
-        }
-      });
-
-      return authors;
-    });
-
-    setRawCommits(
-      lastScanData.defaultBranchRef.target.history.nodes.filter(
-        (commit) => commit.author.user?.login
-      )
-    );
-  }, [lastScanData]);
-
   const [generatingSummary, setGeneratingSummary] = useState(false);
 
-  function generateSummary() {
-    if (!lastScanData) {
-      throw new Error("No data available.");
-    }
-
-    if (!rawCommits || rawCommits.length === 0) {
-      throw new Error("No commits available.");
+  function generateSummary(evaluationResult: RepoEvaluationResult | undefined) {
+    if (!evaluationResult) {
+      return;
     }
 
     setGeneratingSummary(true);
@@ -92,7 +47,7 @@ export default function ChangesTab({
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ commits: rawCommits }),
+      body: JSON.stringify({ commits: evaluationResult.commits }),
     })
       .then((res) => res.json())
       .then(
@@ -104,8 +59,8 @@ export default function ChangesTab({
             throw new Error("Invalid summary response");
           }
 
-          console.log(
-            "$" +
+          console.info(
+            "Summary cost: $" +
               (
                 (data.totalConsumedTokens.input * 0.03 +
                   data.totalConsumedTokens.output * 0.06) /
@@ -113,19 +68,29 @@ export default function ChangesTab({
               ).toFixed(2)
           );
 
+          const since = new Date();
+          since.setHours(0, 0, 0, 0);
+          since.setMonth(since.getMonth() - 1);
+
+          const until = new Date();
+          until.setHours(0, 0, 0, 0);
+
           setGeneratingSummary(false);
           addCommitSummary({
             repoId: repo.id,
             summary: data.report,
-            since,
-            until,
+            since: since.toISOString(),
+            until: until.toISOString(),
           }).catch(console.error);
         }
       )
       .catch(console.error);
   }
 
-  function getSummaryHtml(summary: string, authorsByName: AuthorsByName) {
+  function getSummaryHtml(
+    summary: string,
+    authors: RepoQueryResponseDataCommitAuthor[]
+  ) {
     let html = summary
       .replace(
         /(critical|severe|serious|bugs?|hot[ -]?fix|urgent|breaking change)/gi,
@@ -140,12 +105,12 @@ export default function ChangesTab({
         `<a href="https://github.com/${repo.fullName}/issues/$1" target="_blank" class="text-lime-400">(#$1)</a>`
       );
 
-    authorsByName.forEach((author, login) => {
+    authors.forEach((author) => {
       html = html.replace(
-        new RegExp(`${login}`, "gi"),
-        `<a href="https://github.com/${login}" target="_blank" class="font-bold pr-1 whitespace-nowrap">
+        new RegExp(`${author.user.login}`, "gi"),
+        `<a href="https://github.com/${author.user.login}" target="_blank" class="font-bold pr-1 whitespace-nowrap">
           <img src="${author.user.avatarUrl}" class="w-3 h-3 rounded-full inline-block ml-1" />
-          ${login}
+          ${author.user.login}
         </a>`
       );
     });
@@ -153,55 +118,61 @@ export default function ChangesTab({
     return html;
   }
 
+  if (!latestEvaluation || latestEvaluation.result === undefined) {
+    return <WaitingForFirstEvaluation />;
+  }
+
   return (
-    <div className="p-3">
-      {!lastScanData && (
-        <div className="text-center font-bold">No data available yet.</div>
-      )}
+    <>
+      <CardActivityChart evaluationResult={latestEvaluation.result} />
+      <div className="p-3">
+        {!generatingSummary && summaries?.length === 0 && (
+          <div className="flex flex-col items-center justify-center">
+            <Button
+              className="mt-2"
+              onClick={() => generateSummary(latestEvaluation.result)}
+              disabled={generatingSummary}
+            >
+              Generate summary
+            </Button>
+          </div>
+        )}
 
-      {!generatingSummary && summaries?.length === 0 && (
-        <div className="flex flex-col items-center justify-center">
-          <Button
-            className="mt-2"
-            onClick={generateSummary}
-            disabled={generatingSummary}
-          >
-            Generate summary
-          </Button>
-        </div>
-      )}
+        {generatingSummary && (
+          <div className="my-3 flex items-center justify-center">
+            <LoadingSpinner className="mr-2 opacity-50" />
+            Generating summary...
+          </div>
+        )}
 
-      {generatingSummary && (
-        <div className="my-3 flex items-center justify-center">
-          <LoadingSpinner className="mr-2 opacity-50" />
-          Generating summary...
-        </div>
-      )}
-
-      {latestSummary && (
-        <>
-          <div
-            className="leading-normal text-gray-300"
-            dangerouslySetInnerHTML={{
-              __html: getSummaryHtml(latestSummary.summary, authorsByName),
-            }}
-          />
-          {showCommitSummaryInfo && (
-            <div className="mt-2 text-xs font-bold">
-              This summary was generated automatically. It might not be
-              absolutely perfect but indicates the workload and general
-              direction of the project.{" "}
-              <a
-                href="#"
-                className="font-normal text-indigo-400"
-                onClick={() => setShowCommitSummaryInfo(false)}
-              >
-                Got it! Don&apos;t show this message any more.
-              </a>
-            </div>
-          )}
-        </>
-      )}
-    </div>
+        {latestSummary && (
+          <>
+            <div
+              className="mt-3 leading-normal text-gray-300"
+              dangerouslySetInnerHTML={{
+                __html: getSummaryHtml(
+                  latestSummary.summary,
+                  latestEvaluation.result.authors
+                ),
+              }}
+            />
+            {showCommitSummaryInfo && (
+              <div className="mt-2 text-xs font-bold">
+                This summary was generated automatically. It might not be
+                absolutely perfect but indicates the workload and general
+                direction of the project.{" "}
+                <a
+                  href="#"
+                  className="font-normal text-indigo-400"
+                  onClick={() => setShowCommitSummaryInfo(false)}
+                >
+                  Got it! Don&apos;t show this message any more.
+                </a>
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </>
   );
 }

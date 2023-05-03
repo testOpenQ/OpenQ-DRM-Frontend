@@ -1,27 +1,16 @@
 import { useState } from "react";
-import { type Repo } from "~/db";
+import type { Repo } from "~/store/model";
 import ChangesTab from "./Changes";
 import DiscreetButton from "../../../base/DiscreetButton";
-import { type RepoQueryResponseData } from "~/lib/githubData/repo/query";
+import DevelopersTab from "./Developers";
 
 enum CardTabs {
   Changes = "changes",
-  Issues = "issues",
-  Discussions = "discussions",
+  Conversation = "conversation",
   Developers = "developers",
 }
 
-export default function Tabs({
-  repo,
-  lastScanData,
-  since,
-  until,
-}: {
-  repo: Repo;
-  lastScanData: RepoQueryResponseData;
-  since: string;
-  until: string;
-}) {
+export default function Tabs({ repo }: { repo: Repo }) {
   const [showTab, setShowTab] = useState<CardTabs | null>(null);
 
   function handleClickTab(tab: CardTabs) {
@@ -34,7 +23,9 @@ export default function Tabs({
       <div className="flex">
         <DiscreetButton
           className={`w-full !rounded-b-none !rounded-tl-none text-sm font-normal ${
-            showTab === CardTabs.Changes ? "!bg-gray-900/50 !text-gray-300" : ""
+            showTab === CardTabs.Changes
+              ? "!bg-gray-900/50 !text-gray-300 hover:!bg-gray-900/50"
+              : ""
           }`}
           onClick={() => handleClickTab(CardTabs.Changes)}
         >
@@ -42,32 +33,22 @@ export default function Tabs({
         </DiscreetButton>
         <DiscreetButton
           className={`w-full !rounded-b-none text-sm font-normal ${
-            showTab === CardTabs.Issues ? "!bg-gray-900/50 !text-gray-300" : ""
-          }`}
-          onClick={() => handleClickTab(CardTabs.Issues)}
-          disabled
-        >
-          Issues
-        </DiscreetButton>
-        <DiscreetButton
-          className={`w-full !rounded-b-none text-sm font-normal ${
-            showTab === CardTabs.Discussions
-              ? "!bg-gray-900/50 !text-gray-300"
+            showTab === CardTabs.Conversation
+              ? "!bg-gray-900/50 !text-gray-300 hover:!bg-gray-900/50"
               : ""
           }`}
-          onClick={() => handleClickTab(CardTabs.Discussions)}
+          onClick={() => handleClickTab(CardTabs.Conversation)}
           disabled
         >
-          Discussions
+          Conversation
         </DiscreetButton>
         <DiscreetButton
           className={`w-full !rounded-b-none !rounded-tr-none text-sm font-normal ${
             showTab === CardTabs.Developers
-              ? "!bg-gray-900/50 !text-gray-300"
+              ? "!bg-gray-900/50 !text-gray-300 hover:!bg-gray-900/50"
               : ""
           }`}
           onClick={() => handleClickTab(CardTabs.Developers)}
-          disabled
         >
           Developers
         </DiscreetButton>
@@ -77,12 +58,14 @@ export default function Tabs({
           showTab === "changes" ? "" : "max-h-0"
         } overflow-auto bg-gray-900/50 transition-all`}
       >
-        <ChangesTab
-          repo={repo}
-          lastScanData={lastScanData}
-          since={since}
-          until={until}
-        />
+        <ChangesTab repo={repo} />
+      </div>
+      <div
+        className={`${
+          showTab === "developers" ? "" : "max-h-0"
+        } overflow-auto bg-gray-900/50 transition-all`}
+      >
+        <DevelopersTab />
       </div>
     </div>
   );

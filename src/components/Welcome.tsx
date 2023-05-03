@@ -1,4 +1,4 @@
-import { addCampaign } from "~/db";
+import { addCampaign } from "~/store";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import Button from "./base/Button";
@@ -12,7 +12,12 @@ export default function Welcome() {
 
   function handleAddCampaign() {
     setCampaignName("");
-    addCampaign({ name: campaignName })
+    addCampaign({
+      name: campaignName,
+      repoIds: [],
+      userIds: [],
+      orgIds: [],
+    })
       .then((id) => {
         router
           .push(`/campaigns/${id.toString()}`)

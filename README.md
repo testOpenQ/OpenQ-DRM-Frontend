@@ -3,7 +3,11 @@
 Install and run:
 
 ```bash
-git clone https://github.com/OpenQDev/OpenQ-DRM-Frontend && cd OpenQ-DRM-Frontend && cp .env.sample .env && yarn && yarn dev
+git clone https://github.com/OpenQDev/OpenQ-DRM-Frontend && cd OpenQ-DRM-Frontend
+```
+
+```bash
+cp .env.sample .env && yarn && yarn dev
 ```
 
 The app should be running now but you still need to fill in the blanks in the `.env` file.
@@ -43,7 +47,7 @@ After running the app for the first time, you'll find [a database named `@mktcod
 
 The stored "raw" data is then digested by functions that extract the desired essence from it.
 
-Find the related utilities in `src/lib/githubData`.
+Find the related utilities in `src/lib/evaluation`.
 
 Charts in the UI are handled by [Chart.js](https://www.chartjs.org/).
 
@@ -52,10 +56,10 @@ Charts in the UI are handled by [Chart.js](https://www.chartjs.org/).
 In addition to the database that contains the scans and is provided by the GitHub Scanner package, the DRM uses another, local database for managing other app data, like campaigns, repositories and users.
 
 ```ts
-import { db, scansDb } from "~/db";
+import { store, scansDb } from "~/store";
 
 // get all campaigns
-const campaigns = await db.campaigns.toArray();
+const campaigns = await store.campaigns.toArray();
 
 // get all scans
 const scans = await scansDb.scans.toArray();

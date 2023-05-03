@@ -1,4 +1,4 @@
-import { usePendingScans } from "~/store/PendingScansProvider";
+import { usePendingScans } from "~/providers/PendingScansProvider";
 
 export default function RequestInfo() {
   const pendingScans = usePendingScans();

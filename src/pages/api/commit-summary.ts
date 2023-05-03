@@ -4,6 +4,7 @@ import {
   type ChatCompletionRequestMessage,
 } from "openai";
 import { MAX_TOKENS_GPT4, completeChat, countTokens } from "~/server/gpt";
+import { htmlToMarkdown, markdownToText } from "~/server/utils/text";
 
 type ResponseData = {
   totalConsumedTokens: {
@@ -76,6 +77,8 @@ function sanitizeCommits(commits: Commit[]) {
         .replaceAll(URL_REGEX, "")
         .replace(/\s+/g, " ")
         .trim();
+
+      message = markdownToText(htmlToMarkdown(message));
 
       // https://git-scm.com/docs/git-commit#_discussion
       // a proper commit message is usually not longer than 50 characters
@@ -213,8 +216,6 @@ async function generateReport(commits: Commit[]) {
     totalConsumedTokens.input += completion.consumedTokens.input;
     totalConsumedTokens.output += completion.consumedTokens.output;
   }
-
-  console.log("\n\nREPORTS:\n\n", reports);
 
   let finalReport: string | undefined = undefined;
 

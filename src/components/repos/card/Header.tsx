@@ -1,68 +1,43 @@
 import { useSession } from "next-auth/react";
-import { type Repo, editRepo } from "~/db";
+import type { Repo } from "~/store/model";
 import LoadingSpinner from "../../LoadingSpinner";
 import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../../base/DiscreetButton";
 import Image from "next/image";
-import { Scanner } from "@mktcodelib/github-scanner";
-import {
-  REPO_QUERY,
-  type RepoQueryResponseData,
-} from "~/lib/githubData/repo/query";
-import { useEffect, useState } from "react";
 import DeleteButton from "./DeleteButton";
+import { RepoEvaluator } from "~/lib/evaluation/Repo/RepoEvaluator";
+import { useIsEvaluating } from "~/providers/EvaluationProvider";
 
 export default function CardHeader({
+  campaignId,
   repo,
-  since,
-  until,
 }: {
+  campaignId?: number;
   repo: Repo;
-  since: string;
-  until: string;
 }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
-  const [isScanning, setIsScanning] = useState(false);
 
-  async function scan() {
-    if (!accessToken) {
-      console.log("No access token set");
-      return;
-    }
+  const isEvaluating = useIsEvaluating();
 
-    if (isScanning) {
-      console.log("Already scanning");
-      return;
-    }
+  function evaluateRepo() {
+    if (!accessToken) return;
 
-    setIsScanning(true);
+    const since = new Date();
+    since.setHours(0, 0, 0, 0);
+    since.setMonth(since.getMonth() - 1);
 
-    const queryVariables = {
-      owner: repo.ownerLogin,
-      name: repo.name,
-      since,
-      until,
-      first: 50,
-    };
+    const until = new Date();
+    until.setHours(0, 0, 0, 0);
 
-    const scanner = new Scanner({ accessToken });
-    await scanner.scan<{ repository: RepoQueryResponseData }>(
-      REPO_QUERY,
-      queryVariables,
-      ({ scanId }) => {
-        editRepo(repo.id, { lastScanId: scanId }).catch(console.error);
-      }
-    );
-
-    setIsScanning(false);
+    const evaluation = new RepoEvaluator(repo, accessToken);
+    evaluation
+      .evaluate({
+        since: since.toISOString(),
+        until: until.toISOString(),
+      })
+      .catch(console.error);
   }
-
-  useEffect(() => {
-    if (!repo.lastScanId) {
-      scan().catch(console.error);
-    }
-  });
 
   return (
     <div className="flex items-center justify-between bg-gray-900/50 px-3 py-2 font-bold">
@@ -71,7 +46,7 @@ export default function CardHeader({
           src={repo.ownerAvatarUrl}
           width={24}
           height={24}
-          className="mr-2 rounded-full"
+          className="mr-2 rounded-full bg-white/5"
           alt="avatar"
         />
         {repo.fullName}
@@ -79,18 +54,19 @@ export default function CardHeader({
       <div className="flex">
         {accessToken && (
           <DiscreetButton
-            disabled={isScanning}
-            // eslint-disable-next-line @typescript-eslint/no-misused-promises
-            onClick={scan}
+            disabled={isEvaluating}
+            onClick={evaluateRepo}
             className={
-              isScanning ? "!cursor-default hover:!bg-transparent" : ""
+              isEvaluating ? "!cursor-default hover:!bg-transparent" : ""
             }
           >
-            {isScanning && <LoadingSpinner className="!h-4 !w-4" />}
-            {!isScanning && <ArrowPathIcon className="h-4 w-4" />}
+            {isEvaluating && <LoadingSpinner className="!h-4 !w-4" />}
+            {!isEvaluating && <ArrowPathIcon className="h-4 w-4" />}
           </DiscreetButton>
         )}
-        {!isScanning && <DeleteButton repo={repo} />}
+        {!isEvaluating && !!campaignId && (
+          <DeleteButton repo={repo} campaignId={campaignId} />
+        )}
       </div>
     </div>
   );

@@ -1466,6 +1466,7 @@ function createClient(url, headers) {
     });
     const res = await response.json();
     if (!res.data) {
+      console.error(res);
       throw new Error("Unexpected response from GitHub API");
     }
     return res.data;
@@ -7301,8 +7302,9 @@ DexiePromise.rejectionMapper = mapError;
 setDebug(debug, dexieStackFrameFilter);
 
 var name = "@mktcodelib/github-scanner";
-var version = "0.2.1";
-var description = "Utilities to fetch larger amounts of data from GitHub.";
+var version = "0.3.3";
+var description =
+  "Fetch and store larger amounts of GitHub data in the browser.";
 var main = "dist/index.js";
 var module$1 = "dist/index.mjs";
 var types = "dist/index.d.ts";
@@ -7322,7 +7324,7 @@ var repository = {
 var homepage =
   "https://github.com/mktcode/lib/tree/master/packages/github-scanner#readme";
 var dependencies = {
-  "@mktcodelib/graphql-fetch-all": "workspace:^0.10.0",
+  "@mktcodelib/graphql-fetch-all": "^0.10.2",
   "@types/lodash": "^4.14.191",
   dexie: "^3.2.3",
   graphql: "^16.6.0",
@@ -7415,6 +7417,14 @@ onmessage = (event) =>
     let finalData;
     let finalPaginators;
     let finalVariables;
+    postMessage({
+      type: "started",
+      payload: {
+        scanId,
+        paginators,
+        variables,
+      },
+    });
     try {
       for (
         var _d = true, fetcher_1 = __asyncValues(fetcher), fetcher_1_1;
