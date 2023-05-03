@@ -3,7 +3,11 @@
 Install and run:
 
 ```bash
-git clone https://github.com/OpenQDev/OpenQ-DRM-Frontend && cd OpenQ-DRM-Frontend && cp .env.sample .env && yarn && yarn dev
+git clone https://github.com/OpenQDev/OpenQ-DRM-Frontend && cd OpenQ-DRM-Frontend
+```
+
+```bash
+cp .env.sample .env && yarn && yarn dev
 ```
 
 The app should be running now but you still need to fill in the blanks in the `.env` file.
