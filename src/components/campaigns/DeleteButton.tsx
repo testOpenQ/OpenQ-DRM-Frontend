@@ -9,7 +9,7 @@ import { type Campaign, deleteCampaign } from "~/db";
 export default function DeleteButton({ campaign }: { campaign: Campaign }) {
   const router = useRouter();
 
-  let [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   function closeConfirmModal() {
     setIsOpen(false);

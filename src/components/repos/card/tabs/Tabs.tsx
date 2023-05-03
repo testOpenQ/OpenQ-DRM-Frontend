@@ -2,7 +2,7 @@ import { useState } from "react";
 import { type Repo } from "~/db";
 import ChangesTab from "./Changes";
 import DiscreetButton from "../../../base/DiscreetButton";
-import { RepoQueryResponseData } from "~/lib/githubData/repo/query";
+import { type RepoQueryResponseData } from "~/lib/githubData/repo/query";
 
 enum CardTabs {
   Changes = "changes",

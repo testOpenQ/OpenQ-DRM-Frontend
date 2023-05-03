@@ -6,6 +6,7 @@ import {
   InformationCircleIcon,
   ChartPieIcon,
   RectangleGroupIcon,
+  InboxIcon,
 } from "@heroicons/react/24/outline";
 import SidebarDivider from "./SidebarDivider";
 import ConnectGithub from "../ConnectGithub";
@@ -36,6 +37,12 @@ export default function Sidebar() {
             </SidebarLink>
           </div>
         ))}
+        <SidebarLink href="/users">
+          <div className="mr-3 p-1.5">
+            <InboxIcon className="h-5 w-5 text-gray-600 transition-all group-hover:text-gray-300" />
+          </div>
+          Inbox
+        </SidebarLink>
         <SidebarDivider />
 
         <SidebarDivider className="mt-auto" />

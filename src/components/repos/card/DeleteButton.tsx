@@ -3,10 +3,10 @@ import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { Fragment, useState } from "react";
 import Button from "~/components/base/Button";
 import DiscreetButton from "~/components/base/DiscreetButton";
-import { Repo, deleteRepo } from "~/db";
+import { type Repo, deleteRepo } from "~/db";
 
 export default function DeleteButton({ repo }: { repo: Repo }) {
-  let [isOpen, setIsOpen] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   function closeConfirmModal() {
     setIsOpen(false);

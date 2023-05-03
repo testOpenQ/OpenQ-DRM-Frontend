@@ -1,11 +1,14 @@
 import { useSession } from "next-auth/react";
-import { type Repo, deleteRepo, editRepo } from "~/db";
+import { type Repo, editRepo } from "~/db";
 import LoadingSpinner from "../../LoadingSpinner";
-import { ArrowPathIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
 import DiscreetButton from "../../base/DiscreetButton";
 import Image from "next/image";
 import { Scanner } from "@mktcodelib/github-scanner";
-import { REPO_QUERY, RepoQueryResponseData } from "~/lib/githubData/repo/query";
+import {
+  REPO_QUERY,
+  type RepoQueryResponseData,
+} from "~/lib/githubData/repo/query";
 import { useEffect, useState } from "react";
 import DeleteButton from "./DeleteButton";
 
@@ -20,7 +23,6 @@ export default function CardHeader({
 }) {
   const { data } = useSession();
   const accessToken = data?.accessToken;
-
   const [isScanning, setIsScanning] = useState(false);
 
   async function scan() {
@@ -58,7 +60,7 @@ export default function CardHeader({
 
   useEffect(() => {
     if (!repo.lastScanId) {
-      scan();
+      scan().catch(console.error);
     }
   });
 
@@ -78,6 +80,7 @@ export default function CardHeader({
         {accessToken && (
           <DiscreetButton
             disabled={isScanning}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
             onClick={scan}
             className={
               isScanning ? "!cursor-default hover:!bg-transparent" : ""

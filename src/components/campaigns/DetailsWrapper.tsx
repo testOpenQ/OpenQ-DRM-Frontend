@@ -5,7 +5,7 @@ import Details from "./Details";
 
 export default function Wrapper({ campaignId }: { campaignId: string }) {
   const router = useRouter();
-
+  console.log("?I exist");
   const campaign = useLiveQuery(getCampaign(campaignId), [campaignId]);
   const repos = useLiveQuery(() => getRepos(campaignId), [campaignId]);
   const users = useLiveQuery(() => getUsers(campaignId), [campaignId]);

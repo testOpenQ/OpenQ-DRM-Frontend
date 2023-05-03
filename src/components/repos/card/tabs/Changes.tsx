@@ -6,7 +6,7 @@ import {
   type Repo,
   addCommitSummary,
   getRepoCommitSummaries,
-  CommitSummary,
+  type CommitSummary,
 } from "~/db";
 import useLocalStorage from "~/hooks/useLocalstorage";
 import type { RepoQueryResponseData } from "~/lib/githubData/repo/query";

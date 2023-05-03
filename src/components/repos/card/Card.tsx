@@ -5,12 +5,12 @@ import { signIn, useSession } from "next-auth/react";
 import { scansDb, type Repo } from "~/db";
 import Button from "../../base/Button";
 import { generateFakeScores } from "~/lib/scores";
-import { Scan } from "@mktcodelib/github-scanner";
+import { type Scan } from "@mktcodelib/github-scanner";
 import CardHeader from "./Header";
 import Tabs from "./tabs/Tabs";
 import { useEffect, useState } from "react";
 import {
-  RepoEvaluation,
+  type RepoEvaluation,
   evaluateRepoData,
 } from "~/lib/githubData/repo/evaluate";
 import { useLiveQuery } from "dexie-react-hooks";
