@@ -1,10 +1,11 @@
 import { Dialog, Transition } from "@headlessui/react";
-import { TrashIcon, XMarkIcon } from "@heroicons/react/24/outline";
+import { TrashIcon } from "@heroicons/react/24/outline";
 import { useRouter } from "next/router";
 import { Fragment, useState } from "react";
 import Button from "~/components/base/Button";
 import DiscreetButton from "~/components/base/DiscreetButton";
-import { type Campaign, deleteCampaign } from "~/db";
+import type { Campaign } from "~/store/model";
+import { deleteCampaign } from "~/store";
 
 export default function DeleteButton({ campaign }: { campaign: Campaign }) {
   const router = useRouter();
