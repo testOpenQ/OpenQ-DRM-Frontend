@@ -1,7 +1,4 @@
-# OpenQ DRM
-
-Install and run:
-
+oops
 ```bash
 git clone https://github.com/OpenQDev/OpenQ-DRM-Frontend && cd OpenQ-DRM-Frontend
 ```
